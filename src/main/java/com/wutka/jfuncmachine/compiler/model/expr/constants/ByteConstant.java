@@ -7,7 +7,8 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class ByteConstant extends Expression {
     public final byte value;
 
-    public ByteConstant(byte value) {
+    public ByteConstant(byte value, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.value = value;
     }
 

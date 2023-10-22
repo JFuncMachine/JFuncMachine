@@ -8,7 +8,8 @@ public class CallJavaConstructor extends Expression {
     public final String className;
     public final String constructorName;
 
-    public CallJavaConstructor(String className, String constructorName) {
+    public CallJavaConstructor(String className, String constructorName, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.className = className;
         this.constructorName = constructorName;
     }

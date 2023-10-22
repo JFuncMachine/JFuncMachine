@@ -1,4 +1,4 @@
-package com.wutka.jfuncmachine.compiler.model.func;
+package com.wutka.jfuncmachine.compiler.model.expr;
 
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.Field;

@@ -8,7 +8,8 @@ public class GetJavaField extends Expression {
     public final String fieldName;
     public final Type fieldType;
 
-    public GetJavaField(String className, String fieldName, Type fieldType) {
+    public GetJavaField(String className, String fieldName, Type fieldType, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.className = className;
         this.fieldName = fieldName;
         this.fieldType = fieldType;

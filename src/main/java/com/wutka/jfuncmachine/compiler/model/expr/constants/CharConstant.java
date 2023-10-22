@@ -7,7 +7,8 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class CharConstant extends Expression {
     public final char value;
 
-    public CharConstant(char value) {
+    public CharConstant(char value, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.value = value;
     }
 

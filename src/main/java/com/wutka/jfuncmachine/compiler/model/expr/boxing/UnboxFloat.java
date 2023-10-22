@@ -7,7 +7,8 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class UnboxFloat extends Expression {
     Expression expr;
 
-    public UnboxFloat(Expression expr) {
+    public UnboxFloat(Expression expr, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.expr = expr;
     }
 

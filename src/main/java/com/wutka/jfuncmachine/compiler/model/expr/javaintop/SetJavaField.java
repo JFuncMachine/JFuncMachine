@@ -9,7 +9,8 @@ public class SetJavaField extends Expression {
     public final String fieldName;
     public final Expression expr;
 
-    public SetJavaField(String className, String fieldName, Expression expr) {
+    public SetJavaField(String className, String fieldName, Expression expr, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.className = className;
         this.fieldName = fieldName;
         this.expr = expr;

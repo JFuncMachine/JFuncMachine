@@ -10,7 +10,9 @@ public class CallJavaStaticMethod extends Expression {
     public final Expression[] arguments;
     public final boolean isVoid;
 
-    public CallJavaStaticMethod(String className, String methodName, Expression[] arguments, boolean isVoid) {
+    public CallJavaStaticMethod(String className, String methodName, Expression[] arguments, boolean isVoid,
+                                String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.className = className;
         this.methodName = methodName;
         this.arguments = arguments;

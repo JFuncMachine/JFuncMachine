@@ -7,7 +7,8 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class ToShort extends Expression {
     protected Expression expr;
 
-    public ToShort(Expression expr) {
+    public ToShort(Expression expr, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.expr = expr;
     }
 

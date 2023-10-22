@@ -6,7 +6,8 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class Block extends Expression {
     public final Expression[] expressions;
 
-    public Block (Expression[] expressions) {
+    public Block (Expression[] expressions, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.expressions = expressions;
     }
 

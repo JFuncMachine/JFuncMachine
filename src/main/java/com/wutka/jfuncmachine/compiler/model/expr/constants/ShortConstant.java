@@ -7,7 +7,8 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class ShortConstant extends Expression {
     public final short value;
 
-    public ShortConstant(short value) {
+    public ShortConstant(short value, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.value = value;
     }
 

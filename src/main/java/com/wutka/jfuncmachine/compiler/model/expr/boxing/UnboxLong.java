@@ -7,7 +7,8 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class UnboxLong extends Expression {
     Expression expr;
 
-    public UnboxLong(Expression expr) {
+    public UnboxLong(Expression expr, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.expr = expr;
     }
 

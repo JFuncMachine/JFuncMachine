@@ -6,7 +6,8 @@ public class Binding extends Expression {
     public final BindingPair[] bindings;
     public final Expression expr;
 
-    public Binding( BindingPair[] bindings, Expression expr) {
+    public Binding( BindingPair[] bindings, Expression expr, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.bindings = bindings;
         this.expr = expr;
     }

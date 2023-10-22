@@ -7,7 +7,8 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class IntConstant extends Expression {
     public final int value;
 
-    public IntConstant(int value) {
+    public IntConstant(int value, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.value = value;
     }
 

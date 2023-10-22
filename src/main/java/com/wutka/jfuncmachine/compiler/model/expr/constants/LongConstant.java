@@ -7,7 +7,8 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class LongConstant extends Expression {
     public final long value;
 
-    public LongConstant(long value) {
+    public LongConstant(long value, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.value = value;
     }
 

@@ -7,7 +7,8 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class FloatConstant extends Expression {
     public final float value;
 
-    public FloatConstant(float value) {
+    public FloatConstant(float value, String filename, int lineNumber) {
+        super(filename, lineNumber);
         this.value = value;
     }
 
