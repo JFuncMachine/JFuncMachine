@@ -8,4 +8,9 @@ public abstract class SourceElement {
         this.filename = filename;
         this.lineNumber = lineNumber;
     }
+
+    public RuntimeException generateException(String message) {
+        return new RuntimeException(
+                String.format("%s %d: %s", filename, lineNumber, message));
+    }
 }

@@ -1,6 +1,6 @@
 package com.wutka.jfuncmachine.compiler.model.types;
 
-record Char() implements Type {
+public record Char() implements Type {
     public boolean equals(Object other) {
         return other instanceof Char;
     }
