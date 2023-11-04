@@ -10,7 +10,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.9.1')
+    implementation 'org.ow2.asm:asm-tree:9.6'
+    testImplementation platform('org.junit:junit-bom:5.9.3')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
