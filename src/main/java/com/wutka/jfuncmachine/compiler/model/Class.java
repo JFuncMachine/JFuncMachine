@@ -1,7 +1,5 @@
 package com.wutka.jfuncmachine.compiler.model;
 
-import org.objectweb.asm.Opcodes;
-
 public class Class extends SourceElement {
     public enum Access {
         Public,

@@ -1,14 +1,29 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
-import com.wutka.jfuncmachine.compiler.model.types.*;
 import com.wutka.jfuncmachine.compiler.model.types.Boolean;
+import com.wutka.jfuncmachine.compiler.model.types.Char;
 import com.wutka.jfuncmachine.compiler.model.types.Double;
 import com.wutka.jfuncmachine.compiler.model.types.Float;
+import com.wutka.jfuncmachine.compiler.model.types.Int;
 import com.wutka.jfuncmachine.compiler.model.types.Long;
+import com.wutka.jfuncmachine.compiler.model.types.Type;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.IincInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.InvokeDynamicInsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.LookupSwitchInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MultiANewArrayInsnNode;
+import org.objectweb.asm.tree.TableSwitchInsnNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
-import java.lang.String;
 import java.lang.reflect.Method;
 
 public class InstructionGenerator {
