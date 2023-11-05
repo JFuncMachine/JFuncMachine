@@ -1,6 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.types;
 
 public class SimpleTypes {
+    public static final Type BOOLEAN = new Boolean();
     public static final Type BYTE = new Byte();
     public static final Type CHAR = new Char();
     public static final Type DOUBLE = new Double();
