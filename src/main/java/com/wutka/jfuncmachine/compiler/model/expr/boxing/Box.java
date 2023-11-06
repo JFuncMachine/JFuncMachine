@@ -9,24 +9,39 @@ import com.wutka.jfuncmachine.compiler.model.types.*;
 import java.lang.String;
 
 public class Box extends Expression {
-    public Expression expr;
+    public final Expression expr;
+    public final Type boxType;
 
     public Box(Expression expr) {
         super(null, 0);
         this.expr = expr;
+        this.boxType = expr.getType();
     }
 
     public Box(Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;
+        this.boxType = expr.getType();
+    }
+
+    public Box(Expression expr, Type boxType) {
+        super(null, 0);
+        this.expr = expr;
+        this.boxType = boxType;
+    }
+
+    public Box(Expression expr, Type boxType, String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.expr = expr;
+        this.boxType = boxType;
     }
 
     public Type getType() {
-        Type exprType = expr.getType();
+        Type exprType = boxType;
 
-        String boxType = exprType.getBoxType();
-        if (boxType != null) {
-            return new ObjectType(boxType);
+        String boxTypeName = exprType.getBoxType();
+        if (boxTypeName != null) {
+            return new ObjectType(boxTypeName);
         } else {
             return exprType;
         }
@@ -34,13 +49,11 @@ public class Box extends Expression {
 
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
-        Type exprType = expr.getType();
-
-        String boxName = exprType.getBoxType();
+        String boxName = boxType.getBoxType();
 
         if (boxName == null) return;
 
-        CallJavaConstructor cons = new CallJavaConstructor(boxName, new Expression[] { expr }, filename, lineNumber);
+        CallJavaConstructor cons = new CallJavaConstructor(boxName, new Type[] { boxType}, new Expression[] { expr }, filename, lineNumber);
         cons.generate(generator, env);
     }
 }

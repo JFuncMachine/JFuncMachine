@@ -21,6 +21,17 @@ public class CallJavaConstructor extends Expression {
         this.arguments = arguments;
     }
 
+    public CallJavaConstructor(String className, Type[] parameterTypes, Expression[] arguments, String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.className = className;
+        if (parameterTypes.length != arguments.length) {
+            throw generateException(String.format("Number of parameter types (%d) does not match number of arguments (%d",
+                    parameterTypes.length, arguments.length));
+        }
+        this.parameterTypes = parameterTypes;
+        this.arguments = arguments;
+    }
+
     public Type getType() {
         return new ObjectType(className);
     }
