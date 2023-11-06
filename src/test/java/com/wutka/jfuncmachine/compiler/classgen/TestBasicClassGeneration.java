@@ -6,6 +6,7 @@ import com.wutka.jfuncmachine.compiler.model.ClassField;
 import com.wutka.jfuncmachine.compiler.model.Method;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.expr.InlineCall;
+import com.wutka.jfuncmachine.compiler.model.expr.NewArrayWithValues;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Box;
 import com.wutka.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import com.wutka.jfuncmachine.compiler.model.expr.constants.StringConstant;
@@ -111,10 +112,12 @@ public class TestBasicClassGeneration {
                                         new Type[] { SimpleTypes.STRING, new ArrayType(new ObjectType("java.lang.Object"))},
                                         new Expression[]{
                                                 new StringConstant("The sum of 12 and 30 is %d", "inlineadd", 0),
-                                                new Box(new InlineCall(Inlines.IntAdd,
+                                                new NewArrayWithValues(new ObjectType(), new Expression[] {
+                                                    new Box(new InlineCall(Inlines.IntAdd,
                                                         new Expression[]{new IntConstant(12, "inlineadd", 0),
                                                                 new IntConstant(30, "inlineadd", 0)},
-                                                        "inlineadd", 0), "inlineadd", 0)
+                                                        "inlineadd", 0), "inlineadd", 0) },
+                                                   "inlineadd", 0)
                                         }, SimpleTypes.STRING, "inlineadd", 0)
                         },
                         // the function returns void (which in functional languages is called Unit)

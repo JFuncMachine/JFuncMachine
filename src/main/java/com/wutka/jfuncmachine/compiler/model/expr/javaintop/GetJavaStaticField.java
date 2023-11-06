@@ -24,6 +24,6 @@ public class GetJavaStaticField extends Expression {
 
     public void generate(InstructionGenerator instructionGenerator, Environment env) {
         instructionGenerator.getstatic(Naming.className(className),
-                fieldName, Naming.typeDescriptor(fieldType));
+                fieldName, fieldType.getTypeDescriptor());
     }
 }
