@@ -7,28 +7,25 @@ import com.wutka.jfuncmachine.compiler.model.Class;
 import com.wutka.jfuncmachine.compiler.model.Method;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
-public class CallMethod extends Expression {
+public class CallStaticMethod extends Expression {
     public final Class clazz;
     public final Method func;
-    public final Expression target;
     public final Expression[] arguments;
     public final Type returnType;
 
-    public CallMethod(Class clazz, Method func, Expression target, Expression[] arguments, Type returnType) {
+    public CallStaticMethod(Class clazz, Method func, Expression[] arguments, Type returnType) {
         super(null, 0);
         this.clazz = clazz;
         this.func = func;
-        this.target = target;
         this.arguments = arguments;
         this.returnType = returnType;
     }
 
-    public CallMethod(Class clazz, Method func, Expression target, Expression[] arguments, Type returnType,
-                      String filename, int lineNumber) {
+    public CallStaticMethod(Class clazz, Method func, Expression[] arguments, Type returnType,
+                            String filename, int lineNumber) {
         super(filename, lineNumber);
         this.clazz = clazz;
         this.func = func;
-        this.target = target;
         this.arguments = arguments;
         this.returnType = returnType;
     }
@@ -39,13 +36,12 @@ public class CallMethod extends Expression {
 
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
-        target.generate(generator, env);
         for (Expression expr: arguments) {
             expr.generate(generator, env);
         }
         Type[] parameterTypes = new Type[func.parameters.length];
         for (int i=0; i < parameterTypes.length; i++) parameterTypes[i] = func.parameters[i].type;
-        generator.invokevirtual(
+        generator.invokestatic(
                 Naming.className(clazz),
                 func.name, Naming.methodDescriptor(parameterTypes, returnType));
     }

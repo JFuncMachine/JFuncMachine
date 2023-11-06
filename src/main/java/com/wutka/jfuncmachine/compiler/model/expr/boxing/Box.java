@@ -4,6 +4,7 @@ import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.expr.javaintop.CallJavaConstructor;
+import com.wutka.jfuncmachine.compiler.model.expr.javaintop.CallJavaStaticMethod;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 
 import java.lang.String;
@@ -24,18 +25,6 @@ public class Box extends Expression {
         this.boxType = expr.getType();
     }
 
-    public Box(Expression expr, Type boxType) {
-        super(null, 0);
-        this.expr = expr;
-        this.boxType = boxType;
-    }
-
-    public Box(Expression expr, Type boxType, String filename, int lineNumber) {
-        super(filename, lineNumber);
-        this.expr = expr;
-        this.boxType = boxType;
-    }
-
     public Type getType() {
         Type exprType = boxType;
 
@@ -53,7 +42,9 @@ public class Box extends Expression {
 
         if (boxName == null) return;
 
-        CallJavaConstructor cons = new CallJavaConstructor(boxName, new Type[] { boxType}, new Expression[] { expr }, filename, lineNumber);
-        cons.generate(generator, env);
+        CallJavaStaticMethod method = new CallJavaStaticMethod(boxName, "valueOf",
+                new Type[] { boxType }, new Expression[] { expr },
+                new ObjectType(boxName), filename, lineNumber);
+        method.generate(generator, env);
     }
 }

@@ -83,7 +83,7 @@ public class ClassGenerator {
                 new InstructionGenerator(newMethod.instructions);
         Environment env = new Environment();
         for (Field f: method.parameters) {
-            env.allocate(f.name(), f.type());
+            env.allocate(f.name, f.type);
         }
         method.body.generate(instructionGenerator, env);
         instructionGenerator.return_by_type(method.expectedReturnType);

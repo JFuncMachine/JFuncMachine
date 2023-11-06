@@ -26,7 +26,7 @@ public class Naming {
     public static String methodDescriptor(Method method) {
         StringBuilder builder = new StringBuilder("(");
         for (Field f: method.parameters) {
-            builder.append(f.type().getTypeDescriptor());
+            builder.append(f.type.getTypeDescriptor());
         }
         builder.append(")");
         builder.append(method.getReturnType().getTypeDescriptor());

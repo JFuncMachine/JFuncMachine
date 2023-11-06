@@ -16,6 +16,8 @@ public record LongType() implements Type {
                 className.equals("java.lang.Double");
     }
 
+    public int getStackSize() { return 2; }
+
     public boolean equals(Object other) {
         return other instanceof LongType;
     }

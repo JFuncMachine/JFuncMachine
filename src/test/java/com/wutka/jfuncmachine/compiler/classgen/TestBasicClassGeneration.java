@@ -10,6 +10,7 @@ import com.wutka.jfuncmachine.compiler.model.expr.NewArrayWithValues;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Box;
 import com.wutka.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import com.wutka.jfuncmachine.compiler.model.expr.constants.StringConstant;
+import com.wutka.jfuncmachine.compiler.model.expr.conv.ToByte;
 import com.wutka.jfuncmachine.compiler.model.expr.javaintop.CallJavaMethod;
 import com.wutka.jfuncmachine.compiler.model.expr.javaintop.CallJavaStaticMethod;
 import com.wutka.jfuncmachine.compiler.model.expr.javaintop.GetJavaStaticField;
@@ -169,10 +170,10 @@ public class TestBasicClassGeneration {
                                         new Expression[]{
                                                 new StringConstant("The sum of 120 and 30 as a byte is %d", "inlineadd", 0),
                                                 new NewArrayWithValues(new ObjectType(), new Expression[] {
-                                                        new Box(new InlineCall(Inlines.IntAdd,
+                                                        new Box(new ToByte(new InlineCall(Inlines.IntAdd,
                                                                 new Expression[]{new IntConstant(120, "inlineadd", 0),
                                                                         new IntConstant(30, "inlineadd", 0)},
-                                                                "inlineadd", 0), SimpleTypes.BYTE, "inlineadd", 0) },
+                                                                "inlineadd", 0)), "inlineadd", 0) },
                                                         "inlineadd", 0)
                                         }, SimpleTypes.STRING, "inlineadd", 0)
                         },

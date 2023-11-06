@@ -28,7 +28,7 @@ public class Environment {
         if (!holes.isEmpty()) {
             loc = holes.removeFirst();
         } else {
-            nextVar++;
+            nextVar += type.getStackSize();
         }
 
         EnvVar newVar = new EnvVar(name, type, loc);
@@ -40,9 +40,9 @@ public class Environment {
         boolean found = false;
         for (String key: vars.keySet()) {
             if (vars.get(key).value == loc) {
-                vars.remove(key);
-                if (loc == nextVar - 1) {
-                    nextVar--;
+                EnvVar removeVar = vars.remove(key);
+                if (loc == nextVar - removeVar.type.getStackSize()) {
+                    nextVar -= removeVar.type.getStackSize();
                 } else {
                     holes.add(loc);
                 }
@@ -57,9 +57,9 @@ public class Environment {
 
     public void free(EnvVar envVar) {
         if (vars.containsKey(envVar.name)) {
-            vars.remove(envVar.name);
-            if (envVar.value == nextVar - 1) {
-                nextVar--;
+            EnvVar removeVar = vars.remove(envVar.name);
+            if (envVar.value == nextVar - removeVar.type.getStackSize()) {
+                nextVar -= removeVar.type.getStackSize();
             } else {
                 holes.add(envVar.value);
             }

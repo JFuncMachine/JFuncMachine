@@ -8,4 +8,6 @@ public sealed interface Type
     public default Type getUnboxedType() { return null; }
 
     public default boolean isUnboxableFrom(String className) { return false; }
+    public default int getStackSize() { return 1; }
+
 }

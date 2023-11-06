@@ -15,6 +15,8 @@ public record DoubleType() implements Type {
                 className.equals("java.lang.Byte");
     }
 
+    public int getStackSize() { return 2; }
+
     public boolean equals(Object other) {
         return other instanceof DoubleType;
     }

@@ -1,6 +1,10 @@
 package com.wutka.jfuncmachine.compiler.model.expr.conv;
 
+import com.wutka.jfuncmachine.compiler.classgen.Environment;
+import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
+import com.wutka.jfuncmachine.compiler.model.types.ByteType;
+import com.wutka.jfuncmachine.compiler.model.types.IntType;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -18,4 +22,19 @@ public class ToByte extends Expression {
     }
 
     public Type getType() { return SimpleTypes.BYTE; }
+
+    @Override
+    public void generate(InstructionGenerator generator, Environment env) {
+        Type exprType = expr.getType();
+
+        expr.generate(generator, env);
+
+        switch (exprType) {
+            case IntType i -> generator.i2b();
+            case ByteType b -> { }
+            default -> throw generateException(
+                    String.format("Can't convert %s into byte", exprType));
+            
+        }
+    }
 }

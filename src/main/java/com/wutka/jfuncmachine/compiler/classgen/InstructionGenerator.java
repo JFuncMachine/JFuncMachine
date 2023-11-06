@@ -280,4 +280,12 @@ public class InstructionGenerator {
     }
 
     public InstructionGenerator rawOpcode(int opcode) { instructionList.add(new InsnNode(opcode)); return this; }
+    public InstructionGenerator rawIntOpcode(int opcode, int index) {
+        instructionList.add(new IntInsnNode(opcode, index));
+        return this;
+    }
+    public InstructionGenerator rawJumpOpcode(int opcode, Label label) {
+        instructionList.add(new JumpInsnNode(opcode, new LabelNode(label.label)));
+        return this;
+    }
 }
