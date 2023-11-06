@@ -8,4 +8,6 @@ public record UnitType() implements Type {
     }
 
     public int hash() { return 19; }
+
+    public String toString() { return "UnitType"; }
 }

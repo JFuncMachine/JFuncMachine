@@ -5,4 +5,7 @@ public record ArrayType(Type containedType) implements Type {
         return "["+containedType.getTypeDescriptor();
     }
 
+    public String toString() {
+        return "ArrayType["+containedType.toString()+"]";
+    }
 }

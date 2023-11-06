@@ -12,6 +12,10 @@ public abstract class SourceElement {
     }
 
     public JFuncMachineException generateException(String message) {
-        return new JFuncMachineException(filename, lineNumber, message);
+        if (filename == null) {
+            return new JFuncMachineException(message);
+        } else {
+            return new JFuncMachineException(filename, lineNumber, message);
+        }
     }
 }

@@ -11,6 +11,11 @@ import java.lang.String;
 public class Box extends Expression {
     public Expression expr;
 
+    public Box(Expression expr) {
+        super(null, 0);
+        this.expr = expr;
+    }
+
     public Box(Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;

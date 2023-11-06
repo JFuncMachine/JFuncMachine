@@ -11,6 +11,20 @@ public final class ObjectType implements Type {
         this.className = "java.lang.Object";
     }
 
+    public Type getUnboxedType() {
+        return switch (className) {
+            case BooleanType.BOX_TYPE -> SimpleTypes.BOOLEAN;
+            case ByteType.BOX_TYPE -> SimpleTypes.BYTE;
+            case CharType.BOX_TYPE -> SimpleTypes.CHAR;
+            case DoubleType.BOX_TYPE -> SimpleTypes.DOUBLE;
+            case FloatType.BOX_TYPE -> SimpleTypes.FLOAT;
+            case IntType.BOX_TYPE -> SimpleTypes.INT;
+            case LongType.BOX_TYPE -> SimpleTypes.LONG;
+            case ShortType.BOX_TYPE -> SimpleTypes.SHORT;
+            default -> this;
+        };
+    }
+
     public ObjectType(String className) {
 
         this.className = className;
@@ -31,4 +45,7 @@ public final class ObjectType implements Type {
     public int hashCode() {
         return Objects.hash(className);
     }
+
+
+    public String toString() { return "ObjectType("+className+")"; }
 }

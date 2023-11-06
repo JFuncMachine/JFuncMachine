@@ -7,4 +7,7 @@ public record StringType() implements Type {
     }
 
     public int hash() { return 17; }
+
+
+    public String toString() { return "StringType"; }
 }

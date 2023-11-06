@@ -5,4 +5,7 @@ public sealed interface Type
 
     public default String getBoxType() { return null; }
     public String getTypeDescriptor();
+    public default Type getUnboxedType() { return null; }
+
+    public default boolean isUnboxableFrom(String className) { return false; }
 }
