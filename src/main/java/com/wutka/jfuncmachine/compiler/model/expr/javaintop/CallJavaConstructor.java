@@ -55,6 +55,12 @@ public class CallJavaConstructor extends Expression {
         return new ObjectType(className);
     }
 
+    public void findCaptured(Environment env) {
+        for (Expression expr: arguments) {
+            expr.findCaptured(env);
+        }
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         generator.new_object(Naming.className(className));

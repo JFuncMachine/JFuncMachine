@@ -5,9 +5,7 @@ import com.wutka.jfuncmachine.compiler.model.Method;
 import com.wutka.jfuncmachine.compiler.model.expr.Binding;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
-import java.util.HashMap;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Environment {
     protected final Environment parent;
@@ -16,6 +14,8 @@ public class Environment {
     protected final SortedSet<Integer> holes = new TreeSet<>();
     protected int nextVar;
     protected final Method currentMethod;
+    protected boolean headOfCapture;
+    protected Set<EnvVar> capturedLocations;
 
     public Environment(Method currentMethod) {
         parent = null;
@@ -106,5 +106,35 @@ public class Environment {
 
     public Method getCurrentMethod() {
         return currentMethod;
+    }
+
+    public void startCaptureAnalysis() {
+        headOfCapture = true;
+        capturedLocations = new HashSet<>();
+    }
+
+    public Set<EnvVar> getCaptured() {
+        headOfCapture = false;
+        return capturedLocations;
+    }
+
+    public void checkCaptured(String name) {
+        if (headOfCapture) {
+            if (vars.containsKey(name)) {
+                capturedLocations.add(vars.get(name));
+            } else if (parent != null) {
+                parent.checkCaptured(name, this);
+            }
+        } else {
+            return;
+        }
+    }
+
+    public void checkCaptured(String name, Environment headOfCapture) {
+        if (vars.containsKey(name)) {
+            headOfCapture.capturedLocations.add(vars.get(name));
+        } else if (parent != null) {
+            parent.checkCaptured(name, headOfCapture);
+        }
     }
 }

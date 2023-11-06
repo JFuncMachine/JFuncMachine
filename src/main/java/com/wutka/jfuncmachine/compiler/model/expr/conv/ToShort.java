@@ -24,6 +24,10 @@ public class ToShort extends Expression {
 
     public Type getType() { return SimpleTypes.SHORT; }
 
+    public void findCaptured(Environment env) {
+        expr.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         Type exprType = expr.getType();

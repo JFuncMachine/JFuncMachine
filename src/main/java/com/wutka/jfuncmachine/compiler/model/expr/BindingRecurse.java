@@ -27,6 +27,12 @@ public class BindingRecurse extends Expression {
         return SimpleTypes.UNIT;  // The recurse is not a function, so it shouldn't have a value
     }
 
+    public void findCaptured(Environment env) {
+        for (Expression expr: nextValues) {
+            expr.findCaptured(env);
+        }
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         Binding binding = env.getBinding(name);

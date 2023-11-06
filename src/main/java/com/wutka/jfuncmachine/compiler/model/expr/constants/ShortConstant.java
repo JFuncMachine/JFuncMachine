@@ -23,6 +23,8 @@ public class ShortConstant extends Expression {
         return SimpleTypes.SHORT;
     }
 
+    public void findCaptured(Environment env) {}
+
     public void generate(InstructionGenerator gen, Environment env) {
         gen.ldc(value);
     }

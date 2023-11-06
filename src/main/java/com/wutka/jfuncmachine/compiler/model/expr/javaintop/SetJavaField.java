@@ -37,6 +37,11 @@ public class SetJavaField extends Expression {
         return SimpleTypes.UNIT;
     }
 
+    public void findCaptured(Environment env) {
+        target.findCaptured(env);
+        expr.findCaptured(env);
+    }
+
     public void generate(InstructionGenerator instructionGenerator, Environment env) {
         target.generate(instructionGenerator, env);
         expr.generate(instructionGenerator, env);

@@ -58,6 +58,12 @@ public class CallJavaStaticMethod extends Expression {
         return returnType;
     }
 
+    public void findCaptured(Environment env) {
+        for (Expression expr: arguments) {
+            expr.findCaptured(env);
+        }
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         for (Expression expr: arguments) {

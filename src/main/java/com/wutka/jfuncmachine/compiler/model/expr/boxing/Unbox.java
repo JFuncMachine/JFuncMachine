@@ -46,6 +46,11 @@ public class Unbox extends Expression {
     public Type getType() { return expr.getType().getUnboxedType(); }
 
     @Override
+    public void findCaptured(Environment env) {
+        expr.findCaptured(env);
+    }
+
+    @Override
     public void generate(InstructionGenerator generator, Environment env) {
         Type exprType = expr.getType();
         String className = (exprType instanceof ObjectType ot) ? ot.className : null;

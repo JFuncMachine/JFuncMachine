@@ -57,6 +57,19 @@ public class If extends Expression {
         return trueExpr.getType();
     }
 
+    public void findCaptured(Environment env) {
+        if (comparison.numArgs > 0) {
+            comparison.expr1.findCaptured(env);
+        }
+        if (comparison.numArgs > 1) {
+            comparison.expr2.findCaptured(env);
+        }
+        trueExpr.findCaptured(env);
+        if (hasFalse) {
+            falseExpr.findCaptured(env);
+        }
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         if (comparison.numArgs > 0) {

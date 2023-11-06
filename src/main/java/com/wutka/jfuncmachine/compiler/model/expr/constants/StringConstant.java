@@ -23,6 +23,8 @@ public class StringConstant extends Expression {
         return SimpleTypes.STRING;
     }
 
+    public void findCaptured(Environment env) {}
+
     public void generate(InstructionGenerator gen, Environment env) {
         gen.ldc(value);
     }

@@ -12,6 +12,8 @@ public abstract class Expression extends SourceElement {
         super(filename, lineNumber);
     }
 
+    public abstract void findCaptured(Environment env);
+
     // TODO: Should be abstract, but for now, allow it to be implemented case-by-case
     public void generate(InstructionGenerator generator, Environment env) {
 

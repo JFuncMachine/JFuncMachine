@@ -28,6 +28,11 @@ public class Recurse extends Expression {
         return SimpleTypes.UNIT;  // The recurse is not a function, so it shouldn't have a value
     }
 
+    public void findCaptured(Environment env) {
+        throw generateException(
+                String.format("Can't call recurse to %s from a closure", name));
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         Method method = env.getCurrentMethod();

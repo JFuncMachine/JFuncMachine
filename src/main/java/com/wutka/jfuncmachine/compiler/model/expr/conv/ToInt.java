@@ -26,6 +26,10 @@ public class ToInt extends Expression {
 
     public Type getType() { return SimpleTypes.INT; }
 
+    public void findCaptured(Environment env) {
+        expr.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         Type exprType = expr.getType();

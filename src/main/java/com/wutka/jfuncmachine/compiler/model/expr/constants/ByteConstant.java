@@ -19,6 +19,8 @@ public class ByteConstant extends Expression {
         this.value = value;
     }
 
+    public void findCaptured(Environment env) {}
+
     public Type getType() {
         return SimpleTypes.BYTE;
     }

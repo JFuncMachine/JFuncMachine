@@ -26,6 +26,10 @@ public class SetValue extends Expression {
         return SimpleTypes.UNIT;
     }
 
+    public void findCaptured(Environment env) {
+        expression.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         EnvVar envVar = env.getVar(name);

@@ -23,6 +23,8 @@ public class CharConstant extends Expression {
         return SimpleTypes.CHAR;
     }
 
+    public void findCaptured(Environment env) {}
+
     public void generate(InstructionGenerator gen, Environment env) {
         gen.ldc(value);
     }

@@ -34,6 +34,10 @@ public class SetJavaStaticField extends Expression {
         return SimpleTypes.UNIT;
     }
 
+    public void findCaptured(Environment env) {
+        expr.findCaptured(env);
+    }
+
     public void generate(InstructionGenerator instructionGenerator, Environment env) {
         expr.generate(instructionGenerator, env);
 

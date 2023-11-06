@@ -34,6 +34,10 @@ public class GetValue extends Expression {
         return type;
     }
 
+    public void findCaptured(Environment env) {
+        env.checkCaptured(name);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
 

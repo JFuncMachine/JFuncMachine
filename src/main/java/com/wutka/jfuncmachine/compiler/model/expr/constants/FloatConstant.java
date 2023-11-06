@@ -23,6 +23,8 @@ public class FloatConstant extends Expression {
         return SimpleTypes.FLOAT;
     }
 
+    public void findCaptured(Environment env) {}
+
     public void generate(InstructionGenerator gen, Environment env) {
         gen.ldc(value);
     }

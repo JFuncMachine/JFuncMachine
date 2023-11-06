@@ -26,6 +26,10 @@ public class NewArray extends Expression {
         return new ArrayType(arrayType);
     }
 
+    public void findCaptured(Environment env) {
+        arraySize.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         arraySize.generate(generator, env);

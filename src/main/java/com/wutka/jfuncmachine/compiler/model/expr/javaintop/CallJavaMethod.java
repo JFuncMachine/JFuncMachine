@@ -69,6 +69,13 @@ public class CallJavaMethod extends Expression {
         return returnType;
     }
 
+    public void findCaptured(Environment env) {
+        for (Expression expr: arguments) {
+            expr.findCaptured(env);
+        }
+        target.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         target.generate(generator, env);

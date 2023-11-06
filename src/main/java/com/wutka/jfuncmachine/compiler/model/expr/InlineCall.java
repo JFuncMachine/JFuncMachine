@@ -7,27 +7,33 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class InlineCall extends Expression {
     public final InlineFunction func;
-    public final Expression[] parameters;
+    public final Expression[] arguments;
 
-    public InlineCall(InlineFunction func, Expression[] parameters) {
+    public InlineCall(InlineFunction func, Expression[] arguments) {
         super(null, 0);
         this.func = func;
-        this.parameters = parameters;
+        this.arguments = arguments;
     }
 
-    public InlineCall(InlineFunction func, Expression[] parameters, String filename, int lineNumber) {
+    public InlineCall(InlineFunction func, Expression[] arguments, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.func = func;
-        this.parameters = parameters;
+        this.arguments = arguments;
     }
 
     public Type getType() {
         return func.getReturnType();
     }
 
+    public void findCaptured(Environment env) {
+        for (Expression expr: arguments) {
+            expr.findCaptured(env);
+        }
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
-        for (Expression expr: parameters) {
+        for (Expression expr: arguments) {
             expr.generate(generator, env);
         }
         func.generate(generator, env);

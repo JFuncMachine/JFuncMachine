@@ -26,6 +26,12 @@ public class Block extends Expression {
         }
     }
 
+    public void findCaptured(Environment env) {
+        for (Expression expr: expressions) {
+            expr.findCaptured(env);
+        }
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         for (int i=0; i < expressions.length; i++) {

@@ -70,6 +70,18 @@ public class Binding extends Expression {
         return expr.getType();
     }
 
+    public void findCaptured(Environment env) {
+        Environment newEnv = new Environment(env);
+        for (BindingPair pair: bindings) {
+            if (visibility == Visibility.Recursive || visibility == Visibility.Next) {
+                pair.value.findCaptured(newEnv);
+            } else {
+                pair.value.findCaptured(env);
+            }
+        }
+        expr.findCaptured(newEnv);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
 

@@ -45,6 +45,12 @@ public class ArraySet extends Expression {
         return SimpleTypes.UNIT;
     }
 
+    public void findCaptured(Environment env) {
+        array.findCaptured(env);
+        index.findCaptured(env);
+        value.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         Type arrayType = array.getType();

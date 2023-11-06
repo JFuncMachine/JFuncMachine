@@ -25,6 +25,11 @@ public abstract class Compare extends Expression {
 
     public abstract int getOpcode();
 
+    public void findCaptured(Environment env) {
+        expr1.findCaptured(env);
+        expr2.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         expr1.generate(generator, env);

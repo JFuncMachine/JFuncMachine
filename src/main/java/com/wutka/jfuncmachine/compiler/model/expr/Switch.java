@@ -1,5 +1,6 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class Switch extends Expression {
@@ -43,4 +44,6 @@ public class Switch extends Expression {
     public Type getType() {
         return cases[0].expr.getType();
     }
+    public void findCaptured(Environment env) {}
+
 }

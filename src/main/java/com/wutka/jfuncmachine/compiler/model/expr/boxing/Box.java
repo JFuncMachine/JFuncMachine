@@ -37,6 +37,11 @@ public class Box extends Expression {
     }
 
     @Override
+    public void findCaptured(Environment env) {
+        expr.findCaptured(env);
+    }
+
+    @Override
     public void generate(InstructionGenerator generator, Environment env) {
         String boxName = boxType.getBoxType();
 

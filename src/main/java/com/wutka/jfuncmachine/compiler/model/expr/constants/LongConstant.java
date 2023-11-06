@@ -23,6 +23,8 @@ public class LongConstant extends Expression {
         return SimpleTypes.LONG;
     }
 
+    public void findCaptured(Environment env) {}
+
     public void generate(InstructionGenerator gen, Environment env) {
         gen.ldc(value);
     }

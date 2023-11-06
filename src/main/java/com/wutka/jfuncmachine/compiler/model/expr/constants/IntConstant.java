@@ -23,6 +23,8 @@ public class IntConstant extends Expression {
         return SimpleTypes.INT;
     }
 
+    public void findCaptured(Environment env) {}
+
     public void generate(InstructionGenerator gen, Environment env) {
         gen.ldc(value);
     }

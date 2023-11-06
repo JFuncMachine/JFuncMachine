@@ -23,6 +23,10 @@ public class ToByte extends Expression {
 
     public Type getType() { return SimpleTypes.BYTE; }
 
+    public void findCaptured(Environment env) {
+        expr.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         Type exprType = expr.getType();

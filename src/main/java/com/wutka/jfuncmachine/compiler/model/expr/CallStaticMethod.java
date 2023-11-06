@@ -34,6 +34,12 @@ public class CallStaticMethod extends Expression {
         return func.getReturnType();
     }
 
+    public void findCaptured(Environment env) {
+        for (Expression expr: arguments) {
+            expr.findCaptured(env);
+        }
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         for (Expression expr: arguments) {

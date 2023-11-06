@@ -26,6 +26,10 @@ public class ToFloat extends Expression {
 
     public Type getType() { return SimpleTypes.FLOAT; }
 
+    public void findCaptured(Environment env) {
+        expr.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         Type exprType = expr.getType();

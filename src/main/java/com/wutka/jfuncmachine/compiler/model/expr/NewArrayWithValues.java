@@ -39,6 +39,12 @@ public class NewArrayWithValues extends Expression {
         return new ArrayType(arrayType);
     }
 
+    public void findCaptured(Environment env) {
+        for (Expression expr: arrayValues) {
+            expr.findCaptured(env);
+        }
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         new IntConstant(arrayValues.length, filename, lineNumber).generate(generator, env);

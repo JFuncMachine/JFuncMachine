@@ -23,6 +23,10 @@ public class ToChar extends Expression {
 
     public Type getType() { return SimpleTypes.CHAR; }
 
+    public void findCaptured(Environment env) {
+        expr.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         Type exprType = expr.getType();

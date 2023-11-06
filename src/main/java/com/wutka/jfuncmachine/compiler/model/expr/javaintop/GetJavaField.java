@@ -33,6 +33,10 @@ public class GetJavaField extends Expression {
         return this.fieldType;
     }
 
+    public void findCaptured(Environment env) {
+        target.findCaptured(env);
+    }
+
     public void generate(InstructionGenerator instructionGenerator, Environment env) {
         target.generate(instructionGenerator, env);
 

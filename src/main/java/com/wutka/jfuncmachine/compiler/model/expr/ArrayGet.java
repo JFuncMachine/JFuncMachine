@@ -40,6 +40,11 @@ public class ArrayGet extends Expression {
         return array.getType();
     }
 
+    public void findCaptured(Environment env) {
+        array.findCaptured(env);
+        index.findCaptured(env);
+    }
+
     @Override
     public void generate(InstructionGenerator generator, Environment env) {
         Type arrayType = array.getType();

@@ -1,5 +1,6 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class TryCatchFinally extends Expression {
@@ -33,5 +34,7 @@ public class TryCatchFinally extends Expression {
     public Type getType() {
         return tryBody.getType();
     }
+
+    public void findCaptured(Environment env) {}
 
 }
