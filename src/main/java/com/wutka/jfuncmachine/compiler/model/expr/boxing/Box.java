@@ -1,5 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.expr.boxing;
 
+import com.wutka.jfuncmachine.compiler.classgen.Environment;
+import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 

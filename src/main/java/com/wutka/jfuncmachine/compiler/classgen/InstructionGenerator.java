@@ -278,4 +278,6 @@ public class InstructionGenerator {
         instructionList.add(new InsnNode(opcode));
         return this;
     }
+
+    public InstructionGenerator rawOpcode(int opcode) { instructionList.add(new InsnNode(opcode)); return this; }
 }

@@ -10,6 +10,7 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class CallJavaMethod extends Expression {
     public final String className;
     public final String methodName;
+    public Type[] parameterTypes;
     public final Expression target;
     public final Expression[] arguments;
     public final Type returnType;
@@ -20,6 +21,21 @@ public class CallJavaMethod extends Expression {
         super(filename, lineNumber);
         this.className = className;
         this.methodName = methodName;
+        this.parameterTypes = new Type[arguments.length];
+        for (int i=0; i < parameterTypes.length; i++) parameterTypes[i] = arguments[i].getType();
+        this.target = target;
+        this.arguments = arguments;
+        this.returnType = returnType;
+    }
+
+    public CallJavaMethod(String className, String methodName, Type[] parameterTypes,
+                          Expression target, Expression[] arguments,
+                          Type returnType,
+                          String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.className = className;
+        this.methodName = methodName;
+        this.parameterTypes = parameterTypes;
         this.target = target;
         this.arguments = arguments;
         this.returnType = returnType;
@@ -37,6 +53,6 @@ public class CallJavaMethod extends Expression {
         }
         generator.invokevirtual(
                 Naming.className(className),
-                methodName, Naming.methodDescriptor(arguments, returnType));
+                methodName, Naming.methodDescriptor(parameterTypes, returnType));
     }
 }

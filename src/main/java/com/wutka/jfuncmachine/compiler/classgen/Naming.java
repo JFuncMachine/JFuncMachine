@@ -42,10 +42,7 @@ public class Naming {
     }
     public static String methodDescriptor(Method method) {
         StringBuilder builder = new StringBuilder("(");
-        boolean first = true;
         for (Field f: method.parameters) {
-            if (!first) builder.append(',');
-            first = false;
             builder.append(typeDescriptor(f.type()));
         }
         builder.append(")");
@@ -55,11 +52,18 @@ public class Naming {
 
     public static String methodDescriptor(Expression[] arguments, Type returnType) {
         StringBuilder builder = new StringBuilder("(");
-        boolean first = true;
         for (Expression expr: arguments) {
-            if (!first) builder.append(',');
-            first = false;
             builder.append(typeDescriptor(expr.getType()));
+        }
+        builder.append(")");
+        builder.append(typeDescriptor(returnType));
+        return builder.toString();
+    }
+
+    public static String methodDescriptor(Type[] parameterTypes, Type returnType) {
+        StringBuilder builder = new StringBuilder("(");
+        for (Type type: parameterTypes) {
+            builder.append(typeDescriptor(type));
         }
         builder.append(")");
         builder.append(typeDescriptor(returnType));
