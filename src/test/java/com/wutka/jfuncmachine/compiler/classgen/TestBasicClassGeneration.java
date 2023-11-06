@@ -45,17 +45,29 @@ public class TestBasicClassGeneration {
     public void testHelloWorld()
             throws IOException, ClassNotFoundException {
 
+        // Create a public static method named "main"
         Method main = new Method("main", Access.PUBLIC + Access.STATIC,
+                // That takes one argument called "args" that is an array of String
                 new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING, 0)) },
+                // The only thing the function should do is call System.out.println
+                // So create an expression that calls the println method
                 new CallJavaMethod("java.io.PrintStream", "println",
+                        // Get the PrintStream object from System.out, that is the object
+                        // that we will be calling println on
                         new GetJavaStaticField("java.lang.System", "out",
                                 new ObjectType("java.io.PrintStream"), "helloworld.test", 0),
+                        // Load up the arguments to println, which is just one, that is a string constant
                         new Expression[] { new StringConstant("Hello World!", "helloworld.test", 0) },
+                        // the function returns void (which in functional languages is called Unit)
                         SimpleTypes.UNIT, "helloworld.test", 0),
+                // The main method returns void (Unit)
                 SimpleTypes.UNIT, "helloworld.test", 0);
 
+        // Create a com.wutka.test.HelloWorld class
         Class newClass = new Class("com.wutka.test", "HelloWorld",
+                // Make it a public class
                 Access.PUBLIC,
+                // Containing one method, the main method, and no fields
                 new Method[] { main }, new ClassField[0],
                 "helloworld.test", 1);
 
