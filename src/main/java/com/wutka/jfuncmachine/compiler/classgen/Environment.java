@@ -1,6 +1,8 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
 import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
+import com.wutka.jfuncmachine.compiler.model.Method;
+import com.wutka.jfuncmachine.compiler.model.expr.Binding;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 import java.util.HashMap;
@@ -10,17 +12,21 @@ import java.util.TreeSet;
 public class Environment {
     protected final Environment parent;
     protected final HashMap<String,EnvVar> vars = new HashMap<>();
+    protected final HashMap<String, Binding> bindings = new HashMap<>();
     protected final SortedSet<Integer> holes = new TreeSet<>();
     protected int nextVar;
+    protected final Method currentMethod;
 
-    public Environment() {
+    public Environment(Method currentMethod) {
         parent = null;
         nextVar = 0;
+        this.currentMethod = currentMethod;
     }
 
     public Environment(Environment parent) {
         this.parent = parent;
         nextVar = parent.nextVar;
+        this.currentMethod = parent.currentMethod;
     }
 
     public EnvVar allocate(String name, Type type) {
@@ -78,5 +84,27 @@ public class Environment {
         } else {
             return envVar;
         }
+    }
+
+    public void putBinding(String key, Binding binding) {
+        bindings.put(key, binding);
+    }
+
+    public Binding getBinding(String key) {
+        Binding binding = bindings.get(key);
+        if (binding == null) {
+            if (parent == null) {
+                throw new JFuncMachineException(
+                        String.format("Attemped to locate unknown named binding %s", key));
+            } else {
+                return parent.getBinding(key);
+            }
+        } else {
+            return binding;
+        }
+    }
+
+    public Method getCurrentMethod() {
+        return currentMethod;
     }
 }

@@ -3,6 +3,7 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 import com.wutka.jfuncmachine.compiler.classgen.EnvVar;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
+import com.wutka.jfuncmachine.compiler.classgen.Label;
 import com.wutka.jfuncmachine.compiler.model.types.BooleanType;
 import com.wutka.jfuncmachine.compiler.model.types.ByteType;
 import com.wutka.jfuncmachine.compiler.model.types.CharType;
@@ -15,7 +16,7 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 import org.objectweb.asm.Opcodes;
 
 public class Binding extends Expression {
-    enum Visibility {
+    public enum Visibility {
         Separate,
         Next,
         Recursive
@@ -24,20 +25,45 @@ public class Binding extends Expression {
     public final BindingPair[] bindings;
     public final Expression expr;
     public final Visibility visibility;
+    public final String name;
+    public final Label label;
 
-    public Binding( BindingPair[] bindings, Visibility visibility, Expression expr) {
+    public Binding(BindingPair[] bindings, Visibility visibility, Expression expr) {
         super(null, 0);
         this.bindings = bindings;
         this.visibility = visibility;
         this.expr = expr;
+        this.name = null;
+        label = null;
     }
 
-    public Binding( BindingPair[] bindings, Visibility visibility, Expression expr,
+    public Binding(BindingPair[] bindings, Visibility visibility, Expression expr,
                     String filename, int lineNumber) {
         super(filename, lineNumber);
         this.bindings = bindings;
         this.visibility = visibility;
         this.expr = expr;
+        this.name = null;
+        label = null;
+    }
+
+    public Binding(String name, BindingPair[] bindings, Visibility visibility, Expression expr) {
+        super(null, 0);
+        this.bindings = bindings;
+        this.visibility = visibility;
+        this.expr = expr;
+        this.name = name;
+        this.label = new Label();
+    }
+
+    public Binding(String name, BindingPair[] bindings, Visibility visibility, Expression expr,
+                   String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.bindings = bindings;
+        this.visibility = visibility;
+        this.expr = expr;
+        this.name = name;
+        this.label = new Label();
     }
 
     public Type getType() {
@@ -48,6 +74,8 @@ public class Binding extends Expression {
     public void generate(InstructionGenerator generator, Environment env) {
 
         Environment newEnv = new Environment(env);
+
+        Label label = null;
 
         for (BindingPair pair: bindings) {
             EnvVar envVar = null;
@@ -78,6 +106,9 @@ public class Binding extends Expression {
                 default -> Opcodes.ASTORE;
             };
             generator.rawIntOpcode(opcode, envVar.value);
+        }
+        if (name != null) {
+            generator.label(label);
         }
         expr.generate(generator, newEnv);
 

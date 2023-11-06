@@ -1,5 +1,6 @@
 package com.wutka.jfuncmachine.compiler.model;
 
+import com.wutka.jfuncmachine.compiler.classgen.Label;
 import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.Field;
@@ -13,6 +14,7 @@ public class Method extends SourceElement {
     public final Expression body;
     public final Type expectedReturnType;
     public final boolean tailCallable;
+    public final Label startLabel;
 
     public Method(String name, int access, Field[] parameters, Expression body, Type expectedReturnType) {
         super(null, 0);
@@ -27,6 +29,7 @@ public class Method extends SourceElement {
                     String.format("Function expects return type of %s but the return type is %s",
                             expectedReturnType, body.getType()));
         }
+        this.startLabel = new Label();
     }
 
     public Method(String name, int access, Field[] parameters, boolean tailCallable, Expression body,
@@ -43,6 +46,7 @@ public class Method extends SourceElement {
                     String.format("Function expects return type of %s but the return type is %s",
                             expectedReturnType, body.getType()));
         }
+        this.startLabel = new Label();
     }
 
     public Method(String name, int access, Field[] parameters, Expression body, Type expectedReturnType,
@@ -59,6 +63,7 @@ public class Method extends SourceElement {
                     String.format("Function expects return type of %s but the return type is %s",
                             expectedReturnType, body.getType()));
         }
+        this.startLabel = new Label();
     }
 
     public Method(String name, int access, Field[] parameters, boolean tailCallable, Expression body,
@@ -76,6 +81,7 @@ public class Method extends SourceElement {
                     String.format("Function expects return type of %s but the return type is %s",
                             expectedReturnType, body.getType()));
         }
+        this.startLabel = new Label();
     }
 
     public Type getReturnType() {
