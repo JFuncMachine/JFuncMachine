@@ -53,7 +53,7 @@ public class TestBasicClassGeneration {
         // Create a public static method named "main"
         Method main = new Method("main", Access.PUBLIC + Access.STATIC,
                 // That takes one argument called "args" that is an array of String
-                new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING, 0)) },
+                new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING)) },
                 // The only thing the function should do is call System.out.println
                 // So create an expression that calls the println method
                 new CallJavaMethod("java.io.PrintStream", "println",
@@ -97,7 +97,7 @@ public class TestBasicClassGeneration {
         // Create a public static method named "main"
         Method main = new Method("main", Access.PUBLIC + Access.STATIC,
                 // That takes one argument called "args" that is an array of String
-                new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING, 0)) },
+                new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING)) },
                 // The only thing the function should do is call System.out.println
                 // So create an expression that calls the println method
                 new CallJavaMethod("java.io.PrintStream", "println",
@@ -108,7 +108,7 @@ public class TestBasicClassGeneration {
                         // Load up the arguments to println, which is just one, that is a string constant
                         new Expression[]{
                                 new CallJavaStaticMethod("java.lang.String", "format",
-                                        new Type[] { SimpleTypes.STRING, new ArrayType(new ObjectType("java.lang.Object"), 0)},
+                                        new Type[] { SimpleTypes.STRING, new ArrayType(new ObjectType("java.lang.Object"))},
                                         new Expression[]{
                                                 new StringConstant("The sum of 12 and 30 is %d", "inlineadd", 0),
                                                 new Box(new InlineCall(Inlines.IntAdd,

@@ -1,3 +1,3 @@
 package com.wutka.jfuncmachine.compiler.model.types;
 
-public record ArrayType(Type containedType, int size) implements Type {}
+public record ArrayType(Type containedType) implements Type {}
