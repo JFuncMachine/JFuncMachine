@@ -10,6 +10,12 @@ public class NewArray extends Expression {
     public final Type arrayType;
     public final Expression arraySize;
 
+    public NewArray(Type arrayType, Expression arraySize) {
+        super(null, 0);
+        this.arrayType = arrayType;
+        this.arraySize = arraySize;
+    }
+
     public NewArray(Type arrayType, Expression arraySize, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.arrayType = arrayType;

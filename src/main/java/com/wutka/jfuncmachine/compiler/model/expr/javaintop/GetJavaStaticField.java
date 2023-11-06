@@ -11,6 +11,13 @@ public class GetJavaStaticField extends Expression {
     public final String fieldName;
     public final Type fieldType;
 
+    public GetJavaStaticField(String className, String fieldName, Type fieldType) {
+        super(null, 0);
+        this.className = className;
+        this.fieldName = fieldName;
+        this.fieldType = fieldType;
+    }
+
     public GetJavaStaticField(String className, String fieldName, Type fieldType, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;

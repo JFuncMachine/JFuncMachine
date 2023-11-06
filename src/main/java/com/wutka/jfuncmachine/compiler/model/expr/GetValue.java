@@ -6,6 +6,12 @@ public class GetValue extends Expression {
     public String name;
     public Type type;
 
+    public GetValue(String name, Type type) {
+        super(null, 0);
+        this.name = name;
+        this.type = type;
+    }
+
     public GetValue(String name, Type type, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.name = name;

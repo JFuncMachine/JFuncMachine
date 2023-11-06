@@ -7,6 +7,17 @@ public class If extends Expression {
     public final Expression trueExpr;
     public final Expression falseExpr;
 
+    public If(Expression testExpr, Expression trueExpr, Expression falseExpr) {
+        super(null, 0);
+        if (trueExpr.getType() != falseExpr.getType()) {
+            generateException(
+                    "True expression type is different from false expression type");
+        }
+        this.testExpr = testExpr;
+        this.trueExpr = trueExpr;
+        this.falseExpr = falseExpr;
+    }
+
     public If(Expression testExpr, Expression trueExpr, Expression falseExpr,
               String filename, int lineNumber) {
         super(filename, lineNumber);

@@ -8,7 +8,14 @@ public class CallMethod extends Expression {
     public final Method func;
     public final Expression[] parameters;
 
-    public CallMethod(Class clazz, Method func, String filename, int lineNumber, Expression[] parameters) {
+    public CallMethod(Class clazz, Method func, Expression[] parameters) {
+        super(null, 0);
+        this.clazz = clazz;
+        this.func = func;
+        this.parameters = parameters;
+    }
+
+    public CallMethod(Class clazz, Method func, Expression[] parameters, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.clazz = clazz;
         this.func = func;

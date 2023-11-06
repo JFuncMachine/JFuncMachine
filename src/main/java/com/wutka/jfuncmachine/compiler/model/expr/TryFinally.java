@@ -6,6 +6,12 @@ public class TryFinally extends Expression {
     public final Expression tryBody;
     public final Expression finallyBody;
 
+    public TryFinally(Expression tryBody, Expression finallyBody) {
+        super(null, 0);
+        this.tryBody = tryBody;
+        this.finallyBody = finallyBody;
+    }
+
     public TryFinally(Expression tryBody, Expression finallyBody,
                       String filename, int lineNumber) {
         super(filename, lineNumber);

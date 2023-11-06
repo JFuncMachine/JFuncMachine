@@ -10,6 +10,16 @@ public class TryCatchFinally extends Expression {
     public final Expression finallyBody;
 
     public TryCatchFinally(Expression tryBody, String catchClass, String catchVariable,
+                           Expression catchBody, Expression finallyBody) {
+        super(null, 0);
+        this.tryBody = tryBody;
+        this.catchClass = catchClass;
+        this.catchVariable = catchVariable;
+        this.catchBody = catchBody;
+        this.finallyBody = finallyBody;
+    }
+
+    public TryCatchFinally(Expression tryBody, String catchClass, String catchVariable,
                            Expression catchBody, Expression finallyBody,
                            String filename, int lineNumber) {
         super(filename, lineNumber);

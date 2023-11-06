@@ -14,6 +14,37 @@ public class Method extends SourceElement {
     public final Type expectedReturnType;
     public final boolean tailCallable;
 
+    public Method(String name, int access, Field[] parameters, Expression body, Type expectedReturnType) {
+        super(null, 0);
+        this.name = name;
+        this.access = access;
+        this.parameters = parameters;
+        this.tailCallable = true;
+        this.body = body;
+        this.expectedReturnType = expectedReturnType;
+        if (!body.getType().equals(expectedReturnType)) {
+            throw new JFuncMachineException(
+                    String.format("Function expects return type of %s but the return type is %s",
+                            expectedReturnType, body.getType()));
+        }
+    }
+
+    public Method(String name, int access, Field[] parameters, boolean tailCallable, Expression body,
+                  Type expectedReturnType) {
+        super(null, 0);
+        this.name = name;
+        this.access = access;
+        this.parameters = parameters;
+        this.tailCallable = tailCallable;
+        this.body = body;
+        this.expectedReturnType = expectedReturnType;
+        if (!body.getType().equals(expectedReturnType)) {
+            throw new JFuncMachineException(
+                    String.format("Function expects return type of %s but the return type is %s",
+                            expectedReturnType, body.getType()));
+        }
+    }
+
     public Method(String name, int access, Field[] parameters, Expression body, Type expectedReturnType,
                   String filename, int lineNumber) {
         super(filename, lineNumber);

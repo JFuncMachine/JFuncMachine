@@ -9,6 +9,11 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class DoubleConstant extends Expression {
     public final double value;
 
+    public DoubleConstant(double value) {
+        super(null, 0);
+        this.value = value;
+    }
+
     public DoubleConstant(double value, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.value = value;

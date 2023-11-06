@@ -7,6 +7,11 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class ToLong extends Expression {
     protected Expression expr;
 
+    public ToLong(Expression expr) {
+        super(null, 0);
+        this.expr = expr;
+    }
+
     public ToLong(Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;

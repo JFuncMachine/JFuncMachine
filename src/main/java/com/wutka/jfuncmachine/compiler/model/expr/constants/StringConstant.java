@@ -9,6 +9,11 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class StringConstant extends Expression {
     public final String value;
 
+    public StringConstant(String value) {
+        super(null, 0);
+        this.value = value;
+    }
+
     public StringConstant(String value, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.value = value;

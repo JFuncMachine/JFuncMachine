@@ -23,6 +23,12 @@ public class NewArrayWithValues extends Expression {
     public final Type arrayType;
     public final Expression[] arrayValues;
 
+    public NewArrayWithValues(Type arrayType, Expression[] arrayValues) {
+        super(null, 0);
+        this.arrayType = arrayType;
+        this.arrayValues = arrayValues;
+    }
+
     public NewArrayWithValues(Type arrayType, Expression[] arrayValues, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.arrayType = arrayType;

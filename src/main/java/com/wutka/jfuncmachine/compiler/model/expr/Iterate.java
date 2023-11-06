@@ -7,6 +7,13 @@ public class Iterate extends Expression {
     public final Expression[] values;
     public final Type type;
 
+    public Iterate(String loopName, Expression[] values, Type type) {
+        super(null, 0);
+        this.loopName = loopName;
+        this.values = values;
+        this.type = type;
+    }
+
     public Iterate(String loopName, Expression[] values, Type type,
                    String filename, int lineNumber) {
         super(filename, lineNumber);

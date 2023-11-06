@@ -16,6 +16,18 @@ public class CallJavaMethod extends Expression {
     public final Type returnType;
 
     public CallJavaMethod(String className, String methodName, Expression target, Expression[] arguments,
+                          Type returnType) {
+        super(null, 0);
+        this.className = className;
+        this.methodName = methodName;
+        this.parameterTypes = new Type[arguments.length];
+        for (int i=0; i < parameterTypes.length; i++) parameterTypes[i] = arguments[i].getType();
+        this.target = target;
+        this.arguments = arguments;
+        this.returnType = returnType;
+    }
+
+    public CallJavaMethod(String className, String methodName, Expression target, Expression[] arguments,
                           Type returnType,
                           String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -23,6 +35,18 @@ public class CallJavaMethod extends Expression {
         this.methodName = methodName;
         this.parameterTypes = new Type[arguments.length];
         for (int i=0; i < parameterTypes.length; i++) parameterTypes[i] = arguments[i].getType();
+        this.target = target;
+        this.arguments = arguments;
+        this.returnType = returnType;
+    }
+
+    public CallJavaMethod(String className, String methodName, Type[] parameterTypes,
+                          Expression target, Expression[] arguments,
+                          Type returnType) {
+        super(null, 0);
+        this.className = className;
+        this.methodName = methodName;
+        this.parameterTypes = parameterTypes;
         this.target = target;
         this.arguments = arguments;
         this.returnType = returnType;

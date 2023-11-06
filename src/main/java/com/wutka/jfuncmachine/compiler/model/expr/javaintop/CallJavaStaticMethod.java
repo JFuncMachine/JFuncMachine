@@ -14,12 +14,31 @@ public class CallJavaStaticMethod extends Expression {
     public final Expression[] arguments;
     public final Type returnType;
 
+    public CallJavaStaticMethod(String className, String methodName, Type[] parameterTypes, Expression[] arguments, Type returnType) {
+        super(null, 0);
+        this.className = className;
+        this.methodName = methodName;
+        this.parameterTypes = parameterTypes;
+        this.arguments = arguments;
+        this.returnType = returnType;
+    }
+
     public CallJavaStaticMethod(String className, String methodName, Type[] parameterTypes, Expression[] arguments, Type returnType,
                                 String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;
         this.methodName = methodName;
         this.parameterTypes = parameterTypes;
+        this.arguments = arguments;
+        this.returnType = returnType;
+    }
+
+    public CallJavaStaticMethod(String className, String methodName, Expression[] arguments, Type returnType) {
+        super(null, 0);
+        this.className = className;
+        this.methodName = methodName;
+        this.parameterTypes = new Type[arguments.length];
+        for (int i=0; i < arguments.length; i++) this.parameterTypes[i] = arguments[i].getType();
         this.arguments = arguments;
         this.returnType = returnType;
     }

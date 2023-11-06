@@ -9,6 +9,13 @@ public class SetJavaStaticField extends Expression {
     public final String fieldName;
     public final Expression expr;
 
+    public SetJavaStaticField(String className, String fieldName, Expression expr) {
+        super(null, 0);
+        this.className = className;
+        this.fieldName = fieldName;
+        this.expr = expr;
+    }
+
     public SetJavaStaticField(String className, String fieldName, Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;

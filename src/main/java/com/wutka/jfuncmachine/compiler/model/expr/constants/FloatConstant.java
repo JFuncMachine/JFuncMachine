@@ -9,6 +9,11 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class FloatConstant extends Expression {
     public final float value;
 
+    public FloatConstant(float value) {
+        super(null, 0);
+        this.value = value;
+    }
+
     public FloatConstant(float value, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.value = value;

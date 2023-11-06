@@ -9,6 +9,12 @@ public class InlineCall extends Expression {
     public final InlineFunction func;
     public final Expression[] parameters;
 
+    public InlineCall(InlineFunction func, Expression[] parameters) {
+        super(null, 0);
+        this.func = func;
+        this.parameters = parameters;
+    }
+
     public InlineCall(InlineFunction func, Expression[] parameters, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.func = func;

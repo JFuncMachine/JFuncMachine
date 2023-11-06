@@ -8,6 +8,13 @@ public class Lambda extends Expression {
     public final Expression body;
     public final String[] capturedValues;
 
+    public Lambda(Type[] parameterTypes, Expression body) {
+        super(null, 0);
+        this.parameterTypes = parameterTypes;
+        this.body = body;
+        this.capturedValues = computeCaptured();
+    }
+
     public Lambda(Type[] parameterTypes, Expression body, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.parameterTypes = parameterTypes;
