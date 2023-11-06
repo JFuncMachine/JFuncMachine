@@ -1,6 +1,6 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
-import com.wutka.jfuncmachine.compiler.model.types.Array;
+import com.wutka.jfuncmachine.compiler.model.types.ArrayType;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class ArrayGet extends Expression {
@@ -11,7 +11,7 @@ public class ArrayGet extends Expression {
         super(filename, lineNumber);
         this.array = array;
         this.index = index;
-        if (!(array.getType() instanceof Array)) {
+        if (!(array.getType() instanceof ArrayType)) {
             throw generateException("Target of array reference must be an array");
         }
     }

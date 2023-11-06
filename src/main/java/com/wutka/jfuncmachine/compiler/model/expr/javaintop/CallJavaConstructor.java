@@ -1,6 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.expr.javaintop;
 
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
+import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -15,6 +16,6 @@ public class CallJavaConstructor extends Expression {
     }
 
     public Type getType() {
-        return SimpleTypes.JAVA_OBJECT;
+        return new ObjectType(className);
     }
 }

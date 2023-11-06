@@ -1,8 +1,8 @@
 package com.wutka.jfuncmachine.compiler.model.types;
 
-public record Double() implements Type {
+public record DoubleType() implements Type {
     public boolean equals(Object other) {
-        return other instanceof Double;
+        return other instanceof DoubleType;
     }
 
     public int hash() { return 5; }

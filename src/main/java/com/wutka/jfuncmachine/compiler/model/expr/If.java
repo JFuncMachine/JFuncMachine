@@ -11,7 +11,7 @@ public class If extends Expression {
               String filename, int lineNumber) {
         super(filename, lineNumber);
         if (trueExpr.getType() != falseExpr.getType()) {
-            throw new RuntimeException(
+            generateException(
                     "True expression type is different from false expression type");
         }
         this.testExpr = testExpr;

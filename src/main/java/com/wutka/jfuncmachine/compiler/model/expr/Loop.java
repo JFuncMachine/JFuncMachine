@@ -1,14 +1,14 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
-import com.wutka.jfuncmachine.compiler.model.Field;
+import com.wutka.jfuncmachine.compiler.model.ClassField;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class Loop extends Expression {
     public final String name;
-    public final Field[] loopVariables;
+    public final ClassField[] loopVariables;
     public final Expression expression;
 
-    public Loop(String name, Field[] loopVariables, Expression expression,
+    public Loop(String name, ClassField[] loopVariables, Expression expression,
                 String filename, int lineNumber) {
         super(filename, lineNumber);
         this.name = name;

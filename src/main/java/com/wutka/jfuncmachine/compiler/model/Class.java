@@ -1,23 +1,17 @@
 package com.wutka.jfuncmachine.compiler.model;
 
 public class Class extends SourceElement {
-    public enum Access {
-        Public,
-        Private,
-        Protected
-    }
-
     public final String packageName;
     public final String name;
     public final String superPackageName;
     public final String superName;
-    public final Access access;
+    public final int access;
     public final Method[] methods;
-    public final Field[] fields;
+    public final ClassField[] fields;
 
     public Class(String packageName, String name,
-                 Access access,
-                 Method[] methods, Field[] fields,
+                 int access,
+                 Method[] methods, ClassField[] fields,
                  String filename, int lineNumber) {
         super(filename, lineNumber);
         this.packageName = packageName;
@@ -31,8 +25,8 @@ public class Class extends SourceElement {
 
     public Class(String packageName, String name,
                  Class superClass,
-                 Access access,
-                 Method[] methods, Field[] fields,
+                 int access,
+                 Method[] methods, ClassField[] fields,
                  String filename, int lineNumber) {
         super(filename, lineNumber);
         this.packageName = packageName;
@@ -46,8 +40,8 @@ public class Class extends SourceElement {
 
     public Class(String packageName, String name,
                  String superPackageName, String superName,
-                 Access access,
-                 Method[] methods, Field[] fields,
+                 int access,
+                 Method[] methods, ClassField[] fields,
                  String filename, int lineNumber) {
         super(filename, lineNumber);
         this.packageName = packageName;

@@ -1,8 +1,9 @@
 package com.wutka.jfuncmachine.compiler.model.expr.boxing;
 
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
-import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.compiler.model.types.*;
+
+import java.lang.String;
 
 public class Box extends Expression {
     public Expression expr;
@@ -13,6 +14,19 @@ public class Box extends Expression {
     }
 
     public Type getType() {
-        return SimpleTypes.JAVA_OBJECT;
+        Type exprType = expr.getType();
+
+        return switch (exprType) {
+            case BooleanType b -> new ObjectType("java.lang.Boolean");
+            case ByteType b -> new ObjectType("java.lang.Byte");
+            case CharType c -> new ObjectType("java.lang.Character");
+            case DoubleType d -> new ObjectType("java.lang.Double");
+            case FloatType f -> new ObjectType("java.lang.Float");
+            case IntType i -> new ObjectType("java.lang.Integer");
+            case LongType l -> new ObjectType("java.lang.Long");
+            case ShortType s -> new ObjectType("java.lang.Short");
+            case StringType s -> new ObjectType("java.lang.String");
+            default -> exprType;
+        };
     }
 }

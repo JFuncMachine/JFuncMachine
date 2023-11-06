@@ -18,6 +18,6 @@ public class CallJavaInterface extends Expression {
     }
 
     public Type getType() {
-        return SimpleTypes.JAVA_OBJECT;
+        return null;
     }
 }

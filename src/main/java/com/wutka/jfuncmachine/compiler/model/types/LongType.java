@@ -1,8 +1,8 @@
 package com.wutka.jfuncmachine.compiler.model.types;
 
-public record Long() implements Type {
+public record LongType() implements Type {
     public boolean equals(Object other) {
-        return other instanceof Long;
+        return other instanceof LongType;
     }
 
     public int hash() { return 13; }

@@ -1,9 +1,12 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
 import com.wutka.jfuncmachine.compiler.model.Class;
+import com.wutka.jfuncmachine.compiler.model.Method;
+import com.wutka.jfuncmachine.compiler.model.types.Field;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,16 +64,30 @@ public class ClassGenerator {
                     case 22 -> Opcodes.V22;
                     default -> Opcodes.V21;
                 };
-        newNode.access =
-                switch (clazz.access) {
-                    case Public -> Opcodes.ACC_PUBLIC;
-                    case Private -> Opcodes.ACC_PRIVATE;
-                    case Protected -> Opcodes.ACC_PROTECTED;
-                };
+        newNode.access = clazz.access;
         newNode.name = Naming.className(clazz);
         newNode.signature = Naming.classSignature(clazz);
         newNode.superName = Naming.className(clazz.superPackageName, clazz.superName);
 
+        for (Method method: clazz.methods) {
+            MethodNode methodNode = generateMethod(method);
+            newNode.methods.add(methodNode);
+        }
         return newNode;
+    }
+
+    public MethodNode generateMethod(Method method) {
+        MethodNode newMethod = new MethodNode(method.access, method.name,
+                Naming.methodDescriptor(method), null, null);
+        InstructionGenerator instructionGenerator =
+                new InstructionGenerator(newMethod.instructions);
+        Environment env = new Environment();
+        for (Field f: method.parameters) {
+            env.allocate(f.name(), f.type());
+        }
+        method.body.generate(instructionGenerator, env);
+        instructionGenerator.return_by_type(method.expectedReturnType);
+
+        return newMethod;
     }
 }

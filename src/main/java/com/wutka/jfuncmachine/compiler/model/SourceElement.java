@@ -1,5 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model;
 
+import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
+
 public abstract class SourceElement {
     public final String filename;
     public final int lineNumber;
@@ -9,8 +11,7 @@ public abstract class SourceElement {
         this.lineNumber = lineNumber;
     }
 
-    public RuntimeException generateException(String message) {
-        return new RuntimeException(
-                String.format("%s %d: %s", filename, lineNumber, message));
+    public JFuncMachineException generateException(String message) {
+        return new JFuncMachineException(filename, lineNumber, message);
     }
 }

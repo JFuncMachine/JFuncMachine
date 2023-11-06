@@ -8,22 +8,18 @@ public class CallJavaStaticMethod extends Expression {
     public final String className;
     public final String methodName;
     public final Expression[] arguments;
-    public final boolean isVoid;
+    public final Type returnType;
 
-    public CallJavaStaticMethod(String className, String methodName, Expression[] arguments, boolean isVoid,
+    public CallJavaStaticMethod(String className, String methodName, Expression[] arguments, Type returnType,
                                 String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;
         this.methodName = methodName;
         this.arguments = arguments;
-        this.isVoid = isVoid;
+        this.returnType = returnType;
     }
 
     public Type getType() {
-        if (isVoid) {
-            return SimpleTypes.UNIT;
-        } else {
-            return SimpleTypes.JAVA_OBJECT;
-        }
+        return returnType;
     }
 }

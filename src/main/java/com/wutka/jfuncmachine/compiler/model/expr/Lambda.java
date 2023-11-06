@@ -1,6 +1,6 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
-import com.wutka.jfuncmachine.compiler.model.types.Function;
+import com.wutka.jfuncmachine.compiler.model.types.FunctionType;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class Lambda extends Expression {
@@ -16,7 +16,7 @@ public class Lambda extends Expression {
     }
 
     public Type getType() {
-        return new Function(parameterTypes, body.getType());
+        return new FunctionType(parameterTypes, body.getType());
     }
 
     protected String[] computeCaptured() {
