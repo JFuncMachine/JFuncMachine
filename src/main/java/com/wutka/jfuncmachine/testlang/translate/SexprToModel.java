@@ -1,0 +1,523 @@
+package com.wutka.jfuncmachine.testlang.translate;
+
+import com.wutka.jfuncmachine.compiler.model.ClassDef;
+import com.wutka.jfuncmachine.compiler.model.expr.*;
+import com.wutka.jfuncmachine.compiler.model.expr.boxing.Box;
+import com.wutka.jfuncmachine.compiler.model.expr.boxing.Unbox;
+import com.wutka.jfuncmachine.compiler.model.expr.constants.*;
+import com.wutka.jfuncmachine.compiler.model.expr.conv.*;
+import com.wutka.jfuncmachine.compiler.model.expr.javaintop.*;
+import com.wutka.jfuncmachine.compiler.model.inline.Inlines;
+import com.wutka.jfuncmachine.compiler.model.types.*;
+import com.wutka.jfuncmachine.testlang.parser.*;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class SexprToModel {
+    public static Map<String, String> modelSymbolToClassMap = Stream.of(new String[][] {
+            { "Box", Box.class.getName() },
+            { "Unbox", Unbox.class.getName() },
+            { "ByteConstant", ByteConstant.class.getName() },
+            { "CharConstant", CharConstant.class.getName() },
+            { "DoubleConstant", DoubleConstant.class.getName() },
+            { "FloatConstant", FloatConstant.class.getName() },
+            { "IntConstant", IntConstant.class.getName() },
+            { "LongConstant", LongConstant.class.getName() },
+            { "ShortConstant", ShortConstant.class.getName() },
+            { "StringConstant", StringConstant.class.getName() },
+            { "ToByte", ToByte.class.getName() },
+            { "ToChar", ToChar.class.getName() },
+            { "ToDouble", ToDouble.class.getName() },
+            { "ToFloat", ToFloat.class.getName() },
+            { "ToInt", ToInt.class.getName() },
+            { "ToLong", ToLong.class.getName() },
+            { "ToShort", ToShort.class.getName() },
+            { "CallJavaConstructor", CallJavaConstructor.class.getName() },
+            { "CallJavaInterface", CallJavaInterface.class.getName() },
+            { "CallJavaMethod", CallJavaMethod.class.getName() },
+            { "CallJavaStaticMethod", CallJavaStaticMethod.class.getName() },
+            { "GetJavaField", GetJavaField.class.getName() },
+            { "GetJavaStaticField", GetJavaStaticField.class.getName() },
+            { "SetJavaField", SetJavaField.class.getName() },
+            { "SetJavaStaticField", SetJavaStaticField.class.getName() },
+            { "ArrayGet", ArrayGet.class.getName() },
+            { "ArraySet", ArraySet.class.getName() },
+            { "Binding", Binding.class.getName() },
+            { "BindingRecurse", BindingRecurse.class.getName() },
+            { "Block", Block.class.getName() },
+            { "CallMethod", CallMethod.class.getName() },
+            { "CallStaticMethod", CallStaticMethod.class.getName() },
+            { "CompareDoubleG", CompareDoubleG.class.getName() },
+            { "CompareDoubleL", CompareDoubleL.class.getName() },
+            { "CompareFloatG", CompareFloatG.class.getName() },
+            { "CompareFloatL", CompareFloatL.class.getName() },
+            { "CompareInt", CompareInt.class.getName() },
+            { "CompareLong", CompareLong.class.getName() },
+            { "CompareLong", CompareLong.class.getName() },
+            { "GetValue", GetValue.class.getName() },
+            { "If", If.class.getName() },
+            { "InlineCall", InlineCall.class.getName() },
+            { "Lambda", Lambda.class.getName() },
+            { "NewArray", NewArray.class.getName() },
+            { "NewArrayWithValues", NewArrayWithValues.class.getName() },
+            { "Recurse", Recurse.class.getName() },
+            { "SetValue", SetValue.class.getName() },
+            { "Switch", Switch.class.getName() },
+            { "SwitchCase", SwitchCase.class.getName() },
+            { "TryCatch", SwitchCase.class.getName() },
+            { "TryCatchFinally", SwitchCase.class.getName() },
+            { "TryFinally", SwitchCase.class.getName() },
+    }).collect(Collectors.toMap(data->data[0], data->data[1]));
+
+    public static Set<String> inlineSet = Stream.of(new String[] {
+            "IntAdd", "IntAnd", "IntDiv", "IntMul", "IntNeg", "IntOr", "IntRem", "IntShiftLeft",
+            "IntArithShiftRight", "IntLogicalShiftRight", "IntSub", "IntXor", "DoubleAdd",
+            "DoubleDiv", "DoubleMul", "DoubleNeg", "DoubleRem", "DoubleSub", "FloatAdd", "FloatDiv",
+            "FloatMul", "FloatNeg", "FloatRem", "FloatSub", "LongAdd", "LongAnd", "LongDiv",
+            "LongMul", "LongNeg", "LongOr", "LongRem", "LongShiftLeft", "LongArithShiftRight",
+            "LongLogicalShiftRight", "LongSub", "LongXor"
+    }).collect(Collectors.toSet());
+
+    public static Set<String> comparisonSet = Stream.of(new String[] {
+        "objectEQ", "objectNE", "intEQ", "intNE", "intLT", "intLE", "intGT", "intGE", "floatEQ",
+        "floatNE", "floatLTL", "floatLTG", "floatLEL", "floatLEG", "floatGTL", "floatGTG", "floatGEL",
+        "floatGEG", "doubleEQ", "doubleNE", "doubleLTL", "doubleLTG", "doubleLEL", "doubleLEG",
+        "doubleGTL", "doubleGTG", "doubleGEL", "doubleGEG", "longEQ", "longNE", "longLT", "longLE",
+        "longGT", "longGE", "isNull", "isNotNull", "EQ", "isFalse", "NE", "isTrue", "LT", "LE", "GT", "GE"
+    }).collect(Collectors.toSet());
+
+    public static Map<String, Type> simpleTypes = Stream.of(new Object[][] {
+            { "boolean", SimpleTypes.BOOLEAN },
+            { "byte", SimpleTypes.BYTE },
+            { "char", SimpleTypes.CHAR },
+            { "double", SimpleTypes.DOUBLE },
+            { "float", SimpleTypes.FLOAT },
+            { "int", SimpleTypes.INT },
+            { "long", SimpleTypes.LONG },
+            { "short", SimpleTypes.SHORT },
+            { "unit", SimpleTypes.UNIT }
+    }).collect(Collectors.toMap(data -> (String) data[0], data-> (Type) data[1]));
+
+    public static Set<String> typeSet = Stream.of(new String[] {
+            "array", "function", "object"
+    }).collect(Collectors.toSet());
+
+    public static ClassDef translateClass(SexprList list) {
+        Object translated = translate(list);
+        if (!(translated instanceof ClassDef)) {
+            throw new RuntimeException(
+                    String.format("Resulting object was %s not a Class", translated.getClass().getName()));
+        }
+        return (ClassDef) translated;
+    }
+
+    public static Object translate(SexprItem item) {
+        if (item instanceof SexprSymbol sym) {
+            if (inlineSet.contains(sym.value)) {
+                return translateInline(sym);
+            } else if (simpleTypes.containsKey(sym.value)) {
+                return simpleTypes.get(sym.value);
+            } else {
+                throw new RuntimeException(
+                        String.format("Unexpected symbol %s in %s line %d", sym.value, sym.filename, sym.lineNumber));
+            }
+        } else if (item instanceof SexprList list) {
+            return translateList(list);
+        } else {
+            throw new RuntimeException(
+                    String.format("Can't translate item of type %s in %s line %d",
+                            item.getClass().getSimpleName(), item.filename, item.lineNumber));
+        }
+    }
+
+    public static Object translateList(SexprList list) {
+        SexprItem item = list.value.get(0);
+        if (!(item instanceof SexprSymbol)) {
+            throw new RuntimeException(
+                    String.format("Expected first list item to be a symbol, not %s", item.getClass().getSimpleName()));
+        }
+        SexprSymbol sym = (SexprSymbol) item;
+        if (comparisonSet.contains(sym.value)) {
+            return translateComparison(sym, list.value.toArray(new SexprItem[0]));
+        } else if (modelSymbolToClassMap.containsKey(sym.value)) {
+            return translateModelSymbol(sym, list.value);
+        } else if (typeSet.contains(sym.value)) {
+            return translateComplexType(sym, list.value);
+        }
+        throw new RuntimeException(
+                String.format("Unexpected symbol %s in %s at line %s", sym.value, sym.filename, sym.lineNumber));
+    }
+
+    public static Object translateModelSymbol(SexprSymbol symbolSexpr, ArrayList<SexprItem> items) {
+        String symbol = symbolSexpr.value;
+       try {
+           Class<?> modelClass = Class.forName(symbol);
+           SexprItem[] params = new SexprItem[items.size()-1];
+           for (int i=0; i < params.length; i++) params[i] = items.get(i+1);
+
+           for (Constructor<?> cons: modelClass.getConstructors()) {
+               Class<?>[] parameterTypes = cons.getParameterTypes();
+               if (parameterTypes.length != params.length) {
+                   continue;
+               }
+
+               Object[] parameters = matchParameterList(parameterTypes, params);
+               if (parameters != null) {
+                   return cons.newInstance(parameters);
+               }
+           }
+           throw new RuntimeException(
+                   String.format("Unable to find matching parameter list for %s in %s at line %d",
+                           symbol, symbolSexpr.filename, symbolSexpr.lineNumber));
+       } catch (ClassNotFoundException exc) {
+           throw new RuntimeException(exc);
+       } catch (InvocationTargetException e) {
+           throw new RuntimeException(e);
+       } catch (InstantiationException e) {
+           throw new RuntimeException(e);
+       } catch (IllegalAccessException e) {
+           throw new RuntimeException(e);
+       }
+    }
+
+    public static Object[] matchParameterList(Class<?>[] parameterTypes, SexprItem[] params) {
+        Object[] results = new Object[parameterTypes.length];
+        for (int i=0; i < parameterTypes.length; i++) {
+            if (params[i] instanceof SexprSymbol sym) {
+                if (sym.value.equals("null")) {
+                    if (parameterTypes[i].isPrimitive()) {
+                        throw new RuntimeException(
+                                String.format("Can't pass null for type %s in %s line %d",
+                                        parameterTypes[i].getSimpleName(),
+                                        sym.filename, sym.lineNumber));
+                    }
+                    results[i] = null;
+                    continue;
+                }
+            }
+            Object result = matchParameter(parameterTypes[i], params[i]);
+            if (result == null) {
+                return null;
+            }
+        }
+        return results;
+    }
+
+    public static Object matchParameter(Class<?> parameterType, SexprItem param) {
+        if (parameterType.isPrimitive()) {
+            switch (parameterType.getSimpleName()) {
+                case "boolean" -> {
+                    if (param instanceof SexprInt intVal) {
+                        return intVal.value != 0;
+                    } else {
+                        return null;
+                    }
+                }
+                case "byte" -> {
+                    if (param instanceof SexprInt intVal) {
+                        return (byte) intVal.value;
+                    } else {
+                        return null;
+                    }
+                }
+                case "char" -> {
+                    if (param instanceof SexprInt intVal) {
+                        return (char) intVal.value;
+                    } else {
+                        return null;
+                    }
+                }
+                case "double" -> {
+                    if (param instanceof SexprFloat floatVal) {
+                        return floatVal.value;
+                    } else if (param instanceof SexprInt intVal) {
+                        return (double) intVal.value;
+                    } else {
+                        return null;
+                    }
+                }
+                case "float" -> {
+                    if (param instanceof SexprFloat floatVal) {
+                        return (float) floatVal.value;
+                    } else if (param instanceof SexprInt intVal) {
+                        return (float) intVal.value;
+                    } else {
+                        return null;
+                    }
+                }
+                case "int" -> {
+                    if (param instanceof SexprInt intVal) {
+                        return intVal.value;
+                    } else {
+                        return null;
+                    }
+                }
+                case "long" -> {
+                    if (param instanceof SexprInt intVal) {
+                        return (long) intVal.value;
+                    } else {
+                        return null;
+                    }
+                }
+                case "short" -> {
+                    if (param instanceof SexprInt intVal) {
+                        return (short) intVal.value;
+                    } else {
+                        return null;
+                    }
+                }
+                default -> { return null; }
+            }
+        }
+        if (parameterType.getName().startsWith("com.wutka.jfuncmachine")) {
+            if (param instanceof SexprList list) {
+                return translate(list);
+            } else if (param instanceof SexprSymbol sym) {
+                if (inlineSet.contains(sym.value)) {
+                    return translateInline(sym);
+                }
+                ArrayList<SexprItem> newList = new ArrayList<>();
+                newList.add(sym);
+                Object result = translate(new SexprList(
+                        newList, sym.filename, sym.lineNumber));
+                if (parameterType.isAssignableFrom(result.getClass())) {
+                    return result;
+                } else {
+                    throw new RuntimeException(
+                            String.format("Can't use %s as a %s parameter in %s line %d",
+                                    result.getClass().getSimpleName(),
+                                    parameterType.getSimpleName(),
+                                    sym.filename, sym.lineNumber));
+                }
+
+            }
+        }
+        switch (parameterType.getName()) {
+            case "java.lang.Boolean" -> {
+                if (param instanceof SexprInt intVal) {
+                    return intVal.value != 0;
+                } else {
+                    return null;
+                }
+            }
+            case "java.lang.Byte" -> {
+                if (param instanceof SexprInt intVal) {
+                    return (byte) intVal.value;
+                } else {
+                    return null;
+                }
+            }
+            case "java.lang.Char" -> {
+                if (param instanceof SexprInt intVal) {
+                    return (char) intVal.value;
+                } else {
+                    return null;
+                }
+            }
+            case "java.land.Double" -> {
+                if (param instanceof SexprFloat floatVal) {
+                    return floatVal.value;
+                } else if (param instanceof SexprInt intVal) {
+                    return (double) intVal.value;
+                } else {
+                    return null;
+                }
+            }
+            case "java.lang.Float" -> {
+                if (param instanceof SexprFloat floatVal) {
+                    return (float) floatVal.value;
+                } else if (param instanceof SexprInt intVal) {
+                    return (float) intVal.value;
+                } else {
+                    return null;
+                }
+            }
+            case "java.lang.Integer" -> {
+                if (param instanceof SexprInt intVal) {
+                    return intVal.value;
+                } else {
+                    return null;
+                }
+            }
+            case "java.lang.Long" -> {
+                if (param instanceof SexprInt intVal) {
+                    return (long) intVal.value;
+                } else {
+                    return null;
+                }
+            }
+            case "java.lang.Short" -> {
+                if (param instanceof SexprInt intVal) {
+                    return (short) intVal.value;
+                } else {
+                    return null;
+                }
+            }
+            case "java.lang.String" -> {
+                if (param instanceof SexprString stringVal) {
+                    return stringVal.value;
+                } else {
+                    throw new RuntimeException(
+                            String.format("Can't convert %s value to string in %s line %d",
+                                    param.getClass().getSimpleName(), param.filename, param.lineNumber));
+                }
+            }
+            default -> { return null; }
+        }
+    }
+
+    public static Object translateComparison(SexprSymbol sym, SexprItem[] params) {
+        for (Method method: Comparison.class.getMethods()) {
+            if (method.getName().equals(sym.value)) {
+                Class<?>[] parameterList = method.getParameterTypes();
+                if (parameterList.length != params.length) {
+                    throw new RuntimeException(
+                            String.format("Invalid number of parameters (%d) for comparison func %s in %s line %d",
+                                    params.length, sym.value, sym.filename, sym.lineNumber));
+                }
+                Object[] parameters = matchParameterList(parameterList, params);
+                if (parameters != null) {
+                    try {
+                        return method.invoke(null, parameters);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    } catch (InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    throw new RuntimeException(
+                            String.format("Can't match parameters for comparison func %s in %s line %d",
+                                    sym.value, sym.filename, sym.lineNumber));
+                }
+            }
+        }
+        throw new RuntimeException(
+                String.format("Internal error, %s should be a comparison function but there is no matching method in Inlines",
+                        sym.value, sym.filename, sym.lineNumber));
+    }
+
+    public static Object translateInline(SexprSymbol sym) {
+        for (Field field: Inlines.class.getFields()) {
+            if (field.getName().equals(sym.value)) {
+                try {
+                    return field.get(null);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        throw new RuntimeException(
+                String.format("Internal error, %s should be an inline function but there is no matching field in Inlines",
+                        sym.value, sym.filename, sym.lineNumber));
+
+    }
+
+    public static Type translateType(SexprItem item) {
+        if (item instanceof SexprSymbol sym) {
+            if (simpleTypes.containsKey(sym.value)) {
+                return simpleTypes.get(sym.value);
+            } else {
+                throw new RuntimeException(
+                        String.format("Invalid type name %s in %s line %d",
+                                sym.value, sym.filename, sym.lineNumber));
+            }
+        } else if (item instanceof SexprList list) {
+            SexprItem firstItem = list.value.get(0);
+            if (firstItem instanceof SexprSymbol sym) {
+                if (typeSet.contains(sym.value)) {
+                    return translateComplexType(sym, list.value);
+                } else {
+                    throw new RuntimeException(
+                            String.format("Invalid type name %s in %s line %d",
+                                    sym.value, sym.filename, sym.lineNumber));
+                }
+            } else {
+                throw new RuntimeException(
+                        String.format("Expected type name symbol, got %s in %s line %d",
+                                firstItem.getClass().getSimpleName(),
+                                firstItem.filename, firstItem.lineNumber));
+            }
+        } else {
+            throw new RuntimeException(
+                    String.format("Expecting type symbol or list, but got %s in %s line %d",
+                            item.getClass().getSimpleName(),
+                            item.filename, item.lineNumber));
+        }
+    }
+
+    public static Type translateComplexType(SexprSymbol sym, ArrayList<SexprItem> items) {
+        switch (sym.value) {
+            case "array" -> {
+                if (items.size() != 2) {
+                    throw new RuntimeException(
+                            String.format("array type parameter should have exactly one parameter in %s line %d",
+                                    sym.filename, sym.lineNumber));
+                }
+                SexprItem typeParam = items.get(1);
+                return new ArrayType(translateType(typeParam));
+            }
+            case "object" -> {
+                if (items.size() != 2) {
+                    throw new RuntimeException(
+                            String.format("object type parameter should have exactly one parameter in %s line %d",
+                                    sym.filename, sym.lineNumber));
+                }
+                SexprItem typeParam = items.get(1);
+                if (typeParam instanceof SexprSymbol typeSym) {
+                    return new ObjectType(typeSym.value);
+                } else if (typeParam instanceof SexprString typeString) {
+                    return new ObjectType(typeString.value);
+                } else {
+                    throw new RuntimeException(
+                            String.format("Invalid object type specifier of type %s in %s line %d",
+                                    typeParam.getClass().getSimpleName(), sym.filename, sym.lineNumber));
+                }
+            }
+            case "function" -> {
+                if (items.size() != 4) {
+                    throw new RuntimeException(
+                            String.format("function type parameter should have exactly three parameters in %s line %d",
+                                    sym.filename, sym.lineNumber));
+
+                }
+
+                String functionName;
+                SexprItem functionNameItem = items.get(1);
+                if (functionNameItem instanceof SexprSymbol funcSym) {
+                    functionName = funcSym.value;
+                } else {
+                    throw new RuntimeException(
+                            String.format("function type function name should be a symbol, not a %s in %s line %s",
+                                    functionNameItem.getClass().getSimpleName(),
+                                    functionNameItem.filename, functionNameItem.lineNumber));
+                }
+
+                Type[] paramTypes;
+
+                SexprItem params = items.get(2);
+                if (params instanceof SexprList paramList) {
+                    paramTypes = new Type[paramList.value.size()];
+                    for (int i=0; i < paramTypes.length; i++) {
+                        paramTypes[i] = translateType(paramList.value.get(i));
+                    }
+                } else {
+                    throw new RuntimeException(
+                            String.format("Invalid type parameter list for function %s, should be list, got %s in %s line %d",
+                            functionName, params.getClass().getSimpleName(), params.filename, params.lineNumber));
+                }
+                Type returnType = translateType(items.get(3));
+                return new FunctionType(functionName, paramTypes, returnType);
+            }
+            default -> throw new RuntimeException(
+                        String.format("Invalid type name %s in %s line %d", sym.value, sym.filename, sym.lineNumber));
+        }
+    }
+}

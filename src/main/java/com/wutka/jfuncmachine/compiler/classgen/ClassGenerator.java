@@ -1,8 +1,8 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
 import com.wutka.jfuncmachine.compiler.model.Access;
-import com.wutka.jfuncmachine.compiler.model.Class;
-import com.wutka.jfuncmachine.compiler.model.Method;
+import com.wutka.jfuncmachine.compiler.model.ClassDef;
+import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.Lambda;
 import com.wutka.jfuncmachine.compiler.model.types.Field;
 import org.objectweb.asm.ClassWriter;
@@ -29,7 +29,7 @@ public class ClassGenerator {
         this.options = options;
     }
 
-    public void generate(Class clazz, String outputDirectory)
+    public void generate(ClassDef clazz, String outputDirectory)
         throws IOException {
         ClassNode newNode = createClassNode(clazz);
 
@@ -42,7 +42,7 @@ public class ClassGenerator {
         Files.write(new File(outDir, clazz.name+".class").toPath(), writer.toByteArray());
     }
 
-    public ClassNode createClassNode(Class clazz) {
+    public ClassNode createClassNode(ClassDef clazz) {
         ClassNode newNode = new ClassNode();
         newNode.version =
                 switch (options.javaVersion) {
@@ -75,8 +75,8 @@ public class ClassGenerator {
         newNode.signature = Naming.classSignature(clazz);
         newNode.superName = Naming.className(clazz.superPackageName, clazz.superName);
 
-        for (Method method: clazz.methods) {
-            MethodNode methodNode = generateMethod(method, clazz);
+        for (MethodDef methodDef : clazz.methodDefs) {
+            MethodNode methodNode = generateMethod(methodDef, clazz);
             newNode.methods.add(methodNode);
         }
         newNode.methods.addAll(addedLambdas);
@@ -84,23 +84,23 @@ public class ClassGenerator {
         return newNode;
     }
 
-    public MethodNode generateMethod(Method method, Class clazz) {
-        MethodNode newMethod = new MethodNode(method.access, method.name,
-                Naming.methodDescriptor(method), null, null);
+    public MethodNode generateMethod(MethodDef methodDef, ClassDef clazz) {
+        MethodNode newMethod = new MethodNode(methodDef.access, methodDef.name,
+                Naming.methodDescriptor(methodDef), null, null);
         InstructionGenerator instructionGenerator =
                 new InstructionGenerator(this, clazz, newMethod.instructions);
-        Environment env = new Environment(method);
-        for (Field f: method.parameters) {
+        Environment env = new Environment(methodDef);
+        for (Field f: methodDef.parameters) {
             env.allocate(f.name, f.type);
         }
-        instructionGenerator.label(method.startLabel);
-        method.body.generate(instructionGenerator, env);
-        instructionGenerator.return_by_type(method.returnType);
+        instructionGenerator.label(methodDef.startLabel);
+        methodDef.body.generate(instructionGenerator, env);
+        instructionGenerator.return_by_type(methodDef.returnType);
 
         return newMethod;
     }
 
-    public MethodNode generateLambda(Lambda lambda, Class clazz) {
+    public MethodNode generateLambda(Lambda lambda, ClassDef clazz) {
         MethodNode newMethod = new MethodNode(Access.PRIVATE + Access.STATIC, lambda.name,
                 Naming.lambdaMethodDescriptor(lambda.capturedParameterTypes, lambda.parameterTypes, lambda.getType()),
                 null, null);

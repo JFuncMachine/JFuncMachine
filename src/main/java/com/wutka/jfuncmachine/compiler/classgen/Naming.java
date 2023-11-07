@@ -1,13 +1,12 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
-import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
-import com.wutka.jfuncmachine.compiler.model.Class;
-import com.wutka.jfuncmachine.compiler.model.Method;
+import com.wutka.jfuncmachine.compiler.model.ClassDef;
+import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 
 public class Naming {
-    public static String className(Class clazz) {
+    public static String className(ClassDef clazz) {
         return className(clazz.packageName, clazz.name);
     }
 
@@ -19,17 +18,17 @@ public class Naming {
         return name.replace('.', '/');
     }
 
-    public static String classSignature(Class clazz) {
+    public static String classSignature(ClassDef clazz) {
         return "L"+className(clazz)+";";
     }
 
-    public static String methodDescriptor(Method method) {
+    public static String methodDescriptor(MethodDef methodDef) {
         StringBuilder builder = new StringBuilder("(");
-        for (Field f: method.parameters) {
+        for (Field f: methodDef.parameters) {
             builder.append(f.type.getTypeDescriptor());
         }
         builder.append(")");
-        builder.append(method.getReturnType().getTypeDescriptor());
+        builder.append(methodDef.getReturnType().getTypeDescriptor());
         return builder.toString();
     }
 

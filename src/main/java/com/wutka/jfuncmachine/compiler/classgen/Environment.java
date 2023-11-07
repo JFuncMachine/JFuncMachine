@@ -1,7 +1,7 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
 import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
-import com.wutka.jfuncmachine.compiler.model.Method;
+import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.Binding;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -13,20 +13,20 @@ public class Environment {
     protected final HashMap<String, Binding> bindings = new HashMap<>();
     protected final SortedSet<Integer> holes = new TreeSet<>();
     protected int nextVar;
-    protected final Method currentMethod;
+    protected final MethodDef currentMethodDef;
     protected boolean headOfCapture;
     protected Set<EnvVar> capturedLocations;
 
-    public Environment(Method currentMethod) {
+    public Environment(MethodDef currentMethodDef) {
         parent = null;
         nextVar = 0;
-        this.currentMethod = currentMethod;
+        this.currentMethodDef = currentMethodDef;
     }
 
     public Environment(Environment parent) {
         this.parent = parent;
         nextVar = parent.nextVar;
-        this.currentMethod = parent.currentMethod;
+        this.currentMethodDef = parent.currentMethodDef;
     }
 
     public EnvVar allocate(String name, Type type) {
@@ -104,8 +104,8 @@ public class Environment {
         }
     }
 
-    public Method getCurrentMethod() {
-        return currentMethod;
+    public MethodDef getCurrentMethod() {
+        return currentMethodDef;
     }
 
     public void startCaptureAnalysis() {

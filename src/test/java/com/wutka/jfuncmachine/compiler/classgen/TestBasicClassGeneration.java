@@ -1,9 +1,9 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
 import com.wutka.jfuncmachine.compiler.model.Access;
-import com.wutka.jfuncmachine.compiler.model.Class;
+import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.ClassField;
-import com.wutka.jfuncmachine.compiler.model.Method;
+import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.expr.InlineCall;
 import com.wutka.jfuncmachine.compiler.model.expr.NewArrayWithValues;
@@ -29,9 +29,9 @@ public class TestBasicClassGeneration {
     @Test
     public void testEmptyClass()
         throws IOException, ClassNotFoundException {
-        Class newClass = new Class("com.wutka.test", "EmptyClass",
+        ClassDef newClass = new ClassDef("com.wutka.test", "EmptyClass",
                 Access.PUBLIC,
-                new Method[0], new ClassField[0],
+                new MethodDef[0], new ClassField[0],
                 "empty.test", 1);
 
 
@@ -53,7 +53,7 @@ public class TestBasicClassGeneration {
             throws IOException, ClassNotFoundException {
 
         // Create a public static method named "main"
-        Method main = new Method("main", Access.PUBLIC + Access.STATIC,
+        MethodDef main = new MethodDef("main", Access.PUBLIC + Access.STATIC,
                 // That takes one argument called "args" that is an array of String
                 new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING)) },
                 // The only thing the function should do is call System.out.println
@@ -71,11 +71,11 @@ public class TestBasicClassGeneration {
                 "helloworld.test", 0);
 
         // Create a com.wutka.test.HelloWorld class
-        Class newClass = new Class("com.wutka.test", "HelloWorld",
+        ClassDef newClass = new ClassDef("com.wutka.test", "HelloWorld",
                 // Make it a public class
                 Access.PUBLIC,
                 // Containing one method, the main method, and no fields
-                new Method[] { main }, new ClassField[0],
+                new MethodDef[] { main }, new ClassField[0],
                 "helloworld.test", 1);
 
 
@@ -97,7 +97,7 @@ public class TestBasicClassGeneration {
             throws IOException, ClassNotFoundException {
 
         // Create a public static method named "main"
-        Method main = new Method("main", Access.PUBLIC + Access.STATIC,
+        MethodDef main = new MethodDef("main", Access.PUBLIC + Access.STATIC,
                 // That takes one argument called "args" that is an array of String
                 new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING)) },
                 // The only thing the function should do is call System.out.println
@@ -127,11 +127,11 @@ public class TestBasicClassGeneration {
                 "inlineadd.test", 0);
 
         // Create a com.wutka.test.HelloWorld class
-        Class newClass = new Class("com.wutka.test", "InlineAdd",
+        ClassDef newClass = new ClassDef("com.wutka.test", "InlineAdd",
                 // Make it a public class
                 Access.PUBLIC,
                 // Containing one method, the main method, and no fields
-                new Method[] { main }, new ClassField[0],
+                new MethodDef[] { main }, new ClassField[0],
                 "helloworld.test", 1);
 
 
@@ -153,7 +153,7 @@ public class TestBasicClassGeneration {
             throws IOException, ClassNotFoundException {
 
         // Create a public static method named "main"
-        Method main = new Method("main", Access.PUBLIC + Access.STATIC,
+        MethodDef main = new MethodDef("main", Access.PUBLIC + Access.STATIC,
                 // That takes one argument called "args" that is an array of String
                 new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING)) },
                 // The only thing the function should do is call System.out.println
@@ -183,11 +183,11 @@ public class TestBasicClassGeneration {
                 "inlineadd.test", 0);
 
         // Create a com.wutka.test.HelloWorld class
-        Class newClass = new Class("com.wutka.test", "InlineAdd2",
+        ClassDef newClass = new ClassDef("com.wutka.test", "InlineAdd2",
                 // Make it a public class
                 Access.PUBLIC,
                 // Containing one method, the main method, and no fields
-                new Method[] { main }, new ClassField[0],
+                new MethodDef[] { main }, new ClassField[0],
                 "helloworld.test", 1);
 
 

@@ -14,29 +14,33 @@ public class Parser {
         ReadingString,
         AwaitingSeparator
     }
-    public SExprItem parseFile(String filename)
+    public static SexprItem parseFile(String filename)
         throws IOException {
         String fileString = Files.readString(new File(filename).toPath());
         return parseString(fileString, filename);
     }
 
-    public SExprItem parseString(String str, String filename)
+    public static SexprItem parseString(String str, String filename)
         throws IOException {
         int lineNumber = 1;
         char ch=' ';
         State state = State.AwaitingItem;
         StringBuilder builder = new StringBuilder();
         boolean gotDecimal = false;
-        Stack<ArrayList<SExprItem>> arrayStack = new Stack<>();
+        Stack<ArrayList<SexprItem>> arrayStack = new Stack<>();
         Stack<Integer> listStartStack = new Stack<>();
         arrayStack.push(new ArrayList<>());
         listStartStack.push(lineNumber);
 
-        for (int pos=0; pos < str.length(); pos++) {
+        for (int pos=0; pos <= str.length(); pos++) {
             if (ch == '\n') {
                 lineNumber++;
             }
-            ch = str.charAt(pos);
+            if (pos < str.length()) {
+                ch = str.charAt(pos);
+            } else {
+                ch = 0xffff;
+            }
 
             switch (state) {
                 case State.AwaitingItem -> {
@@ -44,8 +48,9 @@ public class Parser {
                         arrayStack.push(new ArrayList<>());
                         listStartStack.push(lineNumber);
                     } else if (ch == ')') {
-                        ArrayList<SExprItem> top = arrayStack.pop();
-                        arrayStack.peek().add(new SExprList(top, filename, listStartStack.pop()));
+                        ArrayList<SexprItem> top = arrayStack.pop();
+                        arrayStack.peek().add(new SexprList(top, filename, listStartStack.pop()));
+                    } else if (ch == 0xffff) {
                     } else if (Character.isDigit(ch)) {
                         state = State.ReadingNumber;
                         gotDecimal = false;
@@ -78,9 +83,9 @@ public class Parser {
                         gotDecimal = true;
                     } else {
                         if (gotDecimal) {
-                            arrayStack.peek().add(new SExprFloat(Double.parseDouble(builder.toString()), filename, lineNumber));
+                            arrayStack.peek().add(new SexprFloat(Double.parseDouble(builder.toString()), filename, lineNumber));
                         } else {
-                            arrayStack.peek().add(new SExprFloat(Integer.parseInt(builder.toString()), filename, lineNumber));
+                            arrayStack.peek().add(new SexprInt(Integer.parseInt(builder.toString()), filename, lineNumber));
                         }
                         pos--;
                         state = State.AwaitingSeparator;
@@ -88,7 +93,18 @@ public class Parser {
                 }
                 case State.ReadingString -> {
                     if (ch == '"') {
-                        arrayStack.peek().add(new SExprString(builder.toString(), filename, lineNumber));
+                        arrayStack.peek().add(new SexprString(builder.toString(), filename, lineNumber));
+                        state = State.AwaitingSeparator;
+                    } else {
+                        builder.append(ch);
+                    }
+                }
+                case State.ReadingSymbol -> {
+                    if (Character.isJavaIdentifierPart(ch) || ch == '.') {
+                        builder.append(ch);
+                    } else {
+                        arrayStack.peek().add(new SexprSymbol(builder.toString(), filename, lineNumber));
+                        pos--;
                         state = State.AwaitingSeparator;
                     }
                 }
@@ -98,6 +114,7 @@ public class Parser {
                         state = State.AwaitingItem;
                     } else if (Character.isWhitespace(ch)) {
                         state = State.AwaitingItem;
+                    } else if (ch == 0xffff) {
                     } else {
                         throw new IOException (
                                 String.format("Unexpected char %c (%02x) at position %d on line %d in %s",
@@ -113,7 +130,7 @@ public class Parser {
 
         }
 
-        ArrayList<SExprItem> top = arrayStack.pop();
+        ArrayList<SexprItem> top = arrayStack.pop();
         if (top.size() != 1) {
             throw new IOException("S-expression should contain only one item");
         }

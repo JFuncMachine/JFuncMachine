@@ -1,7 +1,7 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
 import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
-import com.wutka.jfuncmachine.compiler.model.Class;
+import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.expr.Lambda;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
@@ -29,10 +29,10 @@ import java.lang.reflect.Method;
 
 public class InstructionGenerator {
     protected ClassGenerator classGen;
-    protected Class generatingClass;
+    protected ClassDef generatingClass;
     protected InsnList instructionList;
 
-    protected InstructionGenerator(ClassGenerator classGen, Class generatingClass, InsnList instructionList) {
+    protected InstructionGenerator(ClassGenerator classGen, ClassDef generatingClass, InsnList instructionList) {
         this.classGen = classGen;
         this.generatingClass = generatingClass;
         this.instructionList = instructionList;
@@ -300,7 +300,7 @@ public class InstructionGenerator {
         return this;
     }
 
-    public Class getGeneratingClass() {
+    public ClassDef getGeneratingClass() {
         return generatingClass;
     }
 }

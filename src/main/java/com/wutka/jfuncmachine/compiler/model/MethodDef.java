@@ -6,7 +6,7 @@ import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.Field;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
-public class Method extends SourceElement {
+public class MethodDef extends SourceElement {
     public final String name;
     public final int access;
     public final Field[] parameters;
@@ -15,7 +15,7 @@ public class Method extends SourceElement {
     public final boolean tailCallable;
     public final Label startLabel;
 
-    public Method(String name, int access, Field[] parameters, Type returnType, Expression body) {
+    public MethodDef(String name, int access, Field[] parameters, Type returnType, Expression body) {
         super(null, 0);
         this.name = name;
         this.access = access;
@@ -31,7 +31,7 @@ public class Method extends SourceElement {
         this.startLabel = new Label();
     }
 
-    public Method(String name, int access, Field[] parameters, boolean tailCallable, Type returnType, Expression body) {
+    public MethodDef(String name, int access, Field[] parameters, boolean tailCallable, Type returnType, Expression body) {
         super(null, 0);
         this.name = name;
         this.access = access;
@@ -47,8 +47,8 @@ public class Method extends SourceElement {
         this.startLabel = new Label();
     }
 
-    public Method(String name, int access, Field[] parameters, Type returnType, Expression body,
-                  String filename, int lineNumber) {
+    public MethodDef(String name, int access, Field[] parameters, Type returnType, Expression body,
+                     String filename, int lineNumber) {
         super(filename, lineNumber);
         this.name = name;
         this.access = access;
@@ -64,8 +64,8 @@ public class Method extends SourceElement {
         this.startLabel = new Label();
     }
 
-    public Method(String name, int access, Field[] parameters, boolean tailCallable, Type returnType, Expression body,
-                  String filename, int lineNumber) {
+    public MethodDef(String name, int access, Field[] parameters, boolean tailCallable, Type returnType, Expression body,
+                     String filename, int lineNumber) {
         super(filename, lineNumber);
         this.name = name;
         this.access = access;

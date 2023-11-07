@@ -2,14 +2,14 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 
 import com.wutka.jfuncmachine.compiler.classgen.*;
 import com.wutka.jfuncmachine.compiler.model.Access;
-import com.wutka.jfuncmachine.compiler.model.Class;
-import com.wutka.jfuncmachine.compiler.model.Method;
+import com.wutka.jfuncmachine.compiler.model.ClassDef;
+import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
 import java.util.Set;
 
-public class Lambda extends Method {
+public class Lambda extends MethodDef {
     public Type[] capturedParameterTypes;
     public Type[] parameterTypes;
 
@@ -59,7 +59,7 @@ public class Lambda extends Method {
             generator.rawIntOpcode(opcode, envVar.value);
         }
 
-        Class generatingClass = generator.getGeneratingClass();
+        ClassDef generatingClass = generator.getGeneratingClass();
         generator.invokedynamic(name, Naming.methodDescriptor(capturedParameterTypes, returnType),
                 new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
                         "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
