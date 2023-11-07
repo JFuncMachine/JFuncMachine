@@ -1,4 +1,4 @@
-package com.wutka.jfuncmachine.testlang.parser;
+package com.wutka.jfuncmachine.sexprlang.parser;
 
 public final class SexprInt extends SexprItem {
     public final int value;

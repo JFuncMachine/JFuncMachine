@@ -1,6 +1,6 @@
 package com.wutka.jfuncmachine.compiler.testlang.parser;
 
-import com.wutka.jfuncmachine.testlang.parser.*;
+import com.wutka.jfuncmachine.sexprlang.parser.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,9 @@
-package com.wutka.jfuncmachine.testlang.translate;
+package com.wutka.jfuncmachine.sexprlang.translate;
 
+import com.wutka.jfuncmachine.compiler.model.Access;
 import com.wutka.jfuncmachine.compiler.model.ClassDef;
+import com.wutka.jfuncmachine.compiler.model.ClassField;
+import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.*;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Box;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Unbox;
@@ -9,12 +12,11 @@ import com.wutka.jfuncmachine.compiler.model.expr.conv.*;
 import com.wutka.jfuncmachine.compiler.model.expr.javaintop.*;
 import com.wutka.jfuncmachine.compiler.model.inline.Inlines;
 import com.wutka.jfuncmachine.compiler.model.types.*;
-import com.wutka.jfuncmachine.testlang.parser.*;
+import com.wutka.jfuncmachine.compiler.model.types.Field;
+import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.sexprlang.parser.*;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +63,6 @@ public class SexprToModel {
             { "CompareFloatL", CompareFloatL.class.getName() },
             { "CompareInt", CompareInt.class.getName() },
             { "CompareLong", CompareLong.class.getName() },
-            { "CompareLong", CompareLong.class.getName() },
             { "GetValue", GetValue.class.getName() },
             { "If", If.class.getName() },
             { "InlineCall", InlineCall.class.getName() },
@@ -75,6 +76,10 @@ public class SexprToModel {
             { "TryCatch", SwitchCase.class.getName() },
             { "TryCatchFinally", SwitchCase.class.getName() },
             { "TryFinally", SwitchCase.class.getName() },
+            { "ClassDef", ClassDef.class.getName() },
+            { "MethodDef", MethodDef.class.getName() },
+            { "ClassField", ClassField.class.getName() },
+            { "Field", com.wutka.jfuncmachine.compiler.model.types.Field.class.getName() }
     }).collect(Collectors.toMap(data->data[0], data->data[1]));
 
     public static Set<String> inlineSet = Stream.of(new String[] {
@@ -103,6 +108,7 @@ public class SexprToModel {
             { "int", SimpleTypes.INT },
             { "long", SimpleTypes.LONG },
             { "short", SimpleTypes.SHORT },
+            { "string", SimpleTypes.STRING },
             { "unit", SimpleTypes.UNIT }
     }).collect(Collectors.toMap(data -> (String) data[0], data-> (Type) data[1]));
 
@@ -140,11 +146,10 @@ public class SexprToModel {
 
     public static Object translateList(SexprList list) {
         SexprItem item = list.value.get(0);
-        if (!(item instanceof SexprSymbol)) {
+        if (!(item instanceof SexprSymbol sym)) {
             throw new RuntimeException(
                     String.format("Expected first list item to be a symbol, not %s", item.getClass().getSimpleName()));
         }
-        SexprSymbol sym = (SexprSymbol) item;
         if (comparisonSet.contains(sym.value)) {
             return translateComparison(sym, list.value.toArray(new SexprItem[0]));
         } else if (modelSymbolToClassMap.containsKey(sym.value)) {
@@ -159,17 +164,14 @@ public class SexprToModel {
     public static Object translateModelSymbol(SexprSymbol symbolSexpr, ArrayList<SexprItem> items) {
         String symbol = symbolSexpr.value;
        try {
-           Class<?> modelClass = Class.forName(symbol);
+           Class<?> modelClass = Class.forName(modelSymbolToClassMap.get(symbol));
            SexprItem[] params = new SexprItem[items.size()-1];
            for (int i=0; i < params.length; i++) params[i] = items.get(i+1);
 
            for (Constructor<?> cons: modelClass.getConstructors()) {
                Class<?>[] parameterTypes = cons.getParameterTypes();
-               if (parameterTypes.length != params.length) {
-                   continue;
-               }
 
-               Object[] parameters = matchParameterList(parameterTypes, params);
+               Object[] parameters = matchParameterList(symbolSexpr, parameterTypes, params);
                if (parameters != null) {
                    return cons.newInstance(parameters);
                }
@@ -188,9 +190,24 @@ public class SexprToModel {
        }
     }
 
-    public static Object[] matchParameterList(Class<?>[] parameterTypes, SexprItem[] params) {
+    public static Object[] matchParameterList(SexprSymbol classSym, Class<?>[] parameterTypes, SexprItem[] params) {
+        if ((parameterTypes.length != params.length) && (parameterTypes.length != params.length + 2)) {
+            return null;
+        }
+
+        boolean addFilenameLineNumber = false;
+
+        if (parameterTypes.length == params.length + 2) {
+            if (parameterTypes[parameterTypes.length - 2].getName().equals("java.lang.String") &&
+                    parameterTypes[parameterTypes.length - 1].getSimpleName().equals("int")) {
+                addFilenameLineNumber = true;
+            } else {
+                return null;
+            }
+        }
+
         Object[] results = new Object[parameterTypes.length];
-        for (int i=0; i < parameterTypes.length; i++) {
+        for (int i=0; i < params.length; i++) {
             if (params[i] instanceof SexprSymbol sym) {
                 if (sym.value.equals("null")) {
                     if (parameterTypes[i].isPrimitive()) {
@@ -207,6 +224,12 @@ public class SexprToModel {
             if (result == null) {
                 return null;
             }
+            results[i] = result;
+        }
+
+        if (addFilenameLineNumber) {
+            results[params.length] = classSym.filename;
+            results[params.length+1] = classSym.lineNumber;
         }
         return results;
     }
@@ -256,6 +279,8 @@ public class SexprToModel {
                 case "int" -> {
                     if (param instanceof SexprInt intVal) {
                         return intVal.value;
+                    } else if (isAccessList(param)) {
+                        return translateAccessList(param);
                     } else {
                         return null;
                     }
@@ -283,6 +308,8 @@ public class SexprToModel {
             } else if (param instanceof SexprSymbol sym) {
                 if (inlineSet.contains(sym.value)) {
                     return translateInline(sym);
+                } else if (simpleTypes.containsKey(sym.value)) {
+                    return simpleTypes.get(sym.value);
                 }
                 ArrayList<SexprItem> newList = new ArrayList<>();
                 newList.add(sym);
@@ -298,6 +325,39 @@ public class SexprToModel {
                                     sym.filename, sym.lineNumber));
                 }
 
+            }
+        }
+
+        if (parameterType.isArray()) {
+            Class<?> arrayType = parameterType.getComponentType();
+            if (param instanceof SexprList paramList) {
+                ArrayList<Object> parametersList = new ArrayList<>();
+                for (SexprItem item: paramList.value) {
+                    if (item instanceof SexprSymbol sym) {
+                        if (sym.value.equals("null")) {
+                            parametersList.add(null);
+                        } else {
+                            Object matchedParam = matchParameter(arrayType, sym);
+                            if (matchedParam != null) {
+                                parametersList.add(matchedParam);
+                            } else {
+                                return null;
+                            }
+                        }
+                    } else {
+                        Object matchedParam = matchParameter(arrayType, item);
+                        if (matchedParam == null) return null;
+                        parametersList.add(matchedParam);
+                    }
+                }
+
+                Object arrayResult = Array.newInstance(arrayType, parametersList.size());
+                for (int i=0; i < parametersList.size(); i++) {
+                    Array.set(arrayResult, i, parametersList.get(i));
+                }
+                return arrayResult;
+            } else {
+                return null;
             }
         }
         switch (parameterType.getName()) {
@@ -383,7 +443,7 @@ public class SexprToModel {
                             String.format("Invalid number of parameters (%d) for comparison func %s in %s line %d",
                                     params.length, sym.value, sym.filename, sym.lineNumber));
                 }
-                Object[] parameters = matchParameterList(parameterList, params);
+                Object[] parameters = matchParameterList(sym, parameterList, params);
                 if (parameters != null) {
                     try {
                         return method.invoke(null, parameters);
@@ -405,7 +465,7 @@ public class SexprToModel {
     }
 
     public static Object translateInline(SexprSymbol sym) {
-        for (Field field: Inlines.class.getFields()) {
+        for (java.lang.reflect.Field field: Inlines.class.getFields()) {
             if (field.getName().equals(sym.value)) {
                 try {
                     return field.get(null);
@@ -519,5 +579,42 @@ public class SexprToModel {
             default -> throw new RuntimeException(
                         String.format("Invalid type name %s in %s line %d", sym.value, sym.filename, sym.lineNumber));
         }
+    }
+
+    public static boolean isAccessList(SexprItem item) {
+        if (!(item instanceof SexprList list)) {
+            return false;
+        }
+
+        if (list.value.isEmpty()) return false;
+
+        if (!(list.value.get(0) instanceof SexprSymbol sym)) return false;
+
+        return sym.value.equals("Access");
+    }
+
+    public static int translateAccessList(SexprItem item) {
+        SexprList list = (SexprList) item;
+
+        int retval = 0;
+
+        for (int i=1; i < list.value.size(); i++) {
+            SexprItem listItem = list.value.get(i);
+            if (!(listItem instanceof SexprSymbol sym)) {
+                throw new RuntimeException(
+                        String.format("Invalid access specifier type %s in %s line %d",
+                                listItem.getClass().getSimpleName(), listItem.filename, listItem.lineNumber));
+            }
+
+            try {
+                java.lang.reflect.Field field = Access.class.getField(sym.value);
+                retval += field.getInt(null);
+            } catch (Exception exc) {
+                throw new RuntimeException(
+                    String.format("Invalid access specifier %s in %s line %d",
+                        sym.value, sym.filename, sym.lineNumber));
+            }
+        }
+        return retval;
     }
 }

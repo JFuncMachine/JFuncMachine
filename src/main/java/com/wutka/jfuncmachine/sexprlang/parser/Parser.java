@@ -1,4 +1,4 @@
-package com.wutka.jfuncmachine.testlang.parser;
+package com.wutka.jfuncmachine.sexprlang.parser;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,8 @@ public class Parser {
         ReadingNumber,
         ReadingSymbol,
         ReadingString,
-        AwaitingSeparator
+        AwaitingSeparator,
+        SkippingComment
     }
     public static SexprItem parseFile(String filename)
         throws IOException {
@@ -51,6 +52,7 @@ public class Parser {
                         ArrayList<SexprItem> top = arrayStack.pop();
                         arrayStack.peek().add(new SexprList(top, filename, listStartStack.pop()));
                     } else if (ch == 0xffff) {
+                    } else if (Character.isWhitespace(ch)) {
                     } else if (Character.isDigit(ch)) {
                         state = State.ReadingNumber;
                         gotDecimal = false;
@@ -63,6 +65,8 @@ public class Parser {
                     } else if (ch == '"') {
                         state = State.ReadingString;
                         builder = new StringBuilder();
+                    } else if (ch == '\'') {
+                        state = State.SkippingComment;
                     } else {
                         throw new IOException (
                                 String.format("Unexpected char %c (%02x) at position %d on line %d in %s",
@@ -97,6 +101,11 @@ public class Parser {
                         state = State.AwaitingSeparator;
                     } else {
                         builder.append(ch);
+                    }
+                }
+                case State.SkippingComment -> {
+                    if (ch == '\'') {
+                        state = State.AwaitingSeparator;
                     }
                 }
                 case State.ReadingSymbol -> {

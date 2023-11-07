@@ -1,4 +1,4 @@
-package com.wutka.jfuncmachine.testlang.parser;
+package com.wutka.jfuncmachine.sexprlang.parser;
 
 public sealed abstract class SexprItem
     permits SexprString, SexprInt, SexprFloat, SexprSymbol, SexprList
