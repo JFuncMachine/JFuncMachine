@@ -1,7 +1,9 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
+import com.wutka.jfuncmachine.compiler.model.Access;
 import com.wutka.jfuncmachine.compiler.model.Class;
 import com.wutka.jfuncmachine.compiler.model.Method;
+import com.wutka.jfuncmachine.compiler.model.expr.Lambda;
 import com.wutka.jfuncmachine.compiler.model.types.Field;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -11,9 +13,13 @@ import org.objectweb.asm.tree.MethodNode;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClassGenerator {
     public final ClassGeneratorOptions options;
+
+    public List<MethodNode> addedLambdas = new ArrayList<>();
 
     public ClassGenerator() {
         this.options = new ClassGeneratorOptions();
@@ -70,25 +76,45 @@ public class ClassGenerator {
         newNode.superName = Naming.className(clazz.superPackageName, clazz.superName);
 
         for (Method method: clazz.methods) {
-            MethodNode methodNode = generateMethod(method);
+            MethodNode methodNode = generateMethod(method, clazz);
             newNode.methods.add(methodNode);
         }
+        newNode.methods.addAll(addedLambdas);
+        addedLambdas.clear();
         return newNode;
     }
 
-    public MethodNode generateMethod(Method method) {
+    public MethodNode generateMethod(Method method, Class clazz) {
         MethodNode newMethod = new MethodNode(method.access, method.name,
                 Naming.methodDescriptor(method), null, null);
         InstructionGenerator instructionGenerator =
-                new InstructionGenerator(newMethod.instructions);
+                new InstructionGenerator(this, clazz, newMethod.instructions);
         Environment env = new Environment(method);
         for (Field f: method.parameters) {
             env.allocate(f.name, f.type);
         }
         instructionGenerator.label(method.startLabel);
         method.body.generate(instructionGenerator, env);
-        instructionGenerator.return_by_type(method.expectedReturnType);
+        instructionGenerator.return_by_type(method.returnType);
 
+        return newMethod;
+    }
+
+    public MethodNode generateLambda(Lambda lambda, Class clazz) {
+        MethodNode newMethod = new MethodNode(Access.PRIVATE + Access.STATIC, lambda.name,
+                Naming.lambdaMethodDescriptor(lambda.capturedParameterTypes, lambda.parameterTypes, lambda.getType()),
+                null, null);
+        InstructionGenerator instructionGenerator =
+                new InstructionGenerator(this, clazz, newMethod.instructions);
+        Environment env = new Environment(lambda);
+        for (Field f: lambda.parameters) {
+            env.allocate(f.name, f.type);
+        }
+        instructionGenerator.label(lambda.startLabel);
+        lambda.body.generate(instructionGenerator, env);
+        instructionGenerator.return_by_type(lambda.returnType);
+
+        addedLambdas.add(newMethod);
         return newMethod;
     }
 }

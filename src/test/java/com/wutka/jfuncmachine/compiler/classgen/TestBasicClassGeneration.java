@@ -58,7 +58,7 @@ public class TestBasicClassGeneration {
                 new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING)) },
                 // The only thing the function should do is call System.out.println
                 // So create an expression that calls the println method
-                new CallJavaMethod("java.io.PrintStream", "println",
+                SimpleTypes.UNIT, new CallJavaMethod("java.io.PrintStream", "println",
                         // Get the PrintStream object from System.out, that is the object
                         // that we will be calling println on
                         new GetJavaStaticField("java.lang.System", "out",
@@ -68,7 +68,7 @@ public class TestBasicClassGeneration {
                         // the function returns void (which in functional languages is called Unit)
                         SimpleTypes.UNIT, "helloworld.test", 0),
                 // The main method returns void (Unit)
-                SimpleTypes.UNIT, "helloworld.test", 0);
+                "helloworld.test", 0);
 
         // Create a com.wutka.test.HelloWorld class
         Class newClass = new Class("com.wutka.test", "HelloWorld",
@@ -102,7 +102,7 @@ public class TestBasicClassGeneration {
                 new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING)) },
                 // The only thing the function should do is call System.out.println
                 // So create an expression that calls the println method
-                new CallJavaMethod("java.io.PrintStream", "println",
+                SimpleTypes.UNIT, new CallJavaMethod("java.io.PrintStream", "println",
                         // Get the PrintStream object from System.out, that is the object
                         // that we will be calling println on
                         new GetJavaStaticField("java.lang.System", "out",
@@ -124,7 +124,7 @@ public class TestBasicClassGeneration {
                         // the function returns void (which in functional languages is called Unit)
                         SimpleTypes.UNIT, "inlineadd.test", 0),
                 // The main method returns void (Unit)
-                SimpleTypes.UNIT, "inlineadd.test", 0);
+                "inlineadd.test", 0);
 
         // Create a com.wutka.test.HelloWorld class
         Class newClass = new Class("com.wutka.test", "InlineAdd",
@@ -158,7 +158,7 @@ public class TestBasicClassGeneration {
                 new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING)) },
                 // The only thing the function should do is call System.out.println
                 // So create an expression that calls the println method
-                new CallJavaMethod("java.io.PrintStream", "println",
+                SimpleTypes.UNIT, new CallJavaMethod("java.io.PrintStream", "println",
                         // Get the PrintStream object from System.out, that is the object
                         // that we will be calling println on
                         new GetJavaStaticField("java.lang.System", "out",
@@ -180,7 +180,7 @@ public class TestBasicClassGeneration {
                         // the function returns void (which in functional languages is called Unit)
                         SimpleTypes.UNIT, "inlineadd.test", 0),
                 // The main method returns void (Unit)
-                SimpleTypes.UNIT, "inlineadd.test", 0);
+                "inlineadd.test", 0);
 
         // Create a com.wutka.test.HelloWorld class
         Class newClass = new Class("com.wutka.test", "InlineAdd2",

@@ -1,6 +1,8 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
 import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
+import com.wutka.jfuncmachine.compiler.model.Class;
+import com.wutka.jfuncmachine.compiler.model.expr.Lambda;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
 import com.wutka.jfuncmachine.compiler.model.types.FloatType;
@@ -26,9 +28,13 @@ import java.lang.String;
 import java.lang.reflect.Method;
 
 public class InstructionGenerator {
+    protected ClassGenerator classGen;
+    protected Class generatingClass;
     protected InsnList instructionList;
 
-    protected InstructionGenerator(InsnList instructionList) {
+    protected InstructionGenerator(ClassGenerator classGen, Class generatingClass, InsnList instructionList) {
+        this.classGen = classGen;
+        this.generatingClass = generatingClass;
         this.instructionList = instructionList;
     }
 
@@ -287,5 +293,14 @@ public class InstructionGenerator {
     public InstructionGenerator rawJumpOpcode(int opcode, Label label) {
         instructionList.add(new JumpInsnNode(opcode, new LabelNode(label.label)));
         return this;
+    }
+
+    public InstructionGenerator generateLambda(Lambda lambda) {
+        classGen.generateLambda(lambda, generatingClass);
+        return this;
+    }
+
+    public Class getGeneratingClass() {
+        return generatingClass;
     }
 }

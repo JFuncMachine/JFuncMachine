@@ -52,4 +52,18 @@ public class Naming {
         builder.append(returnType.getTypeDescriptor());
         return builder.toString();
     }
+
+    public static String lambdaMethodDescriptor(Type[] capturedParameterTypes, Type[] parameterTypes,
+                                                Type returnType) {
+        StringBuilder builder = new StringBuilder("(");
+        for (Type type: capturedParameterTypes) {
+            builder.append(type.getTypeDescriptor());
+        }
+        for (Type type: parameterTypes) {
+            builder.append(type.getTypeDescriptor());
+        }
+        builder.append(")");
+        builder.append(returnType.getTypeDescriptor());
+        return builder.toString();
+    }
 }
