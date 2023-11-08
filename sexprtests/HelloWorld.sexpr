@@ -4,7 +4,7 @@
       'param types:'
         ((Field "args" (array string)))
       'return type:' unit
-      'body':
+      'body:'
         (CallJavaMethod "java.io.PrintStream" "println"
           (GetJavaStaticField "java.lang.System" "out" (object java.io.PrintStream))
             ((StringConstant "Hello World!")) unit)
