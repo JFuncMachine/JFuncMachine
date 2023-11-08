@@ -2,6 +2,7 @@ package com.wutka.jfuncmachine.compiler.classgen;
 
 import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import com.wutka.jfuncmachine.compiler.model.ClassDef;
+import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.Lambda;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
@@ -145,6 +146,11 @@ public class InstructionGenerator {
     public InstructionGenerator ineg() { instructionList.add(new InsnNode(Opcodes.INEG)); return this; }
     public InstructionGenerator instance_of(String type) { instructionList.add(new TypeInsnNode(Opcodes.INSTANCEOF, type)); return this; }
     public InstructionGenerator invokedynamic(String name, String descriptor, Handle handle, Object... bootstrapArgs) {
+        for (int i=0; i < bootstrapArgs.length; i++) {
+            if (bootstrapArgs[i] instanceof Handle jfHandle) {
+                bootstrapArgs[i] = jfHandle.getAsmHandle();
+            }
+        }
         instructionList.add(new InvokeDynamicInsnNode(name, descriptor, handle.getAsmHandle(), bootstrapArgs));
         return this;
     }
@@ -295,8 +301,8 @@ public class InstructionGenerator {
         return this;
     }
 
-    public InstructionGenerator generateLambda(Lambda lambda) {
-        classGen.generateLambda(lambda, generatingClass);
+    public InstructionGenerator generateLambda(MethodDef lambda) {
+        classGen.addMethodToGenerate(lambda);
         return this;
     }
 

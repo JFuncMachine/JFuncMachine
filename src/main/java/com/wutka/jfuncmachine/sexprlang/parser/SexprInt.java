@@ -7,4 +7,6 @@ public final class SexprInt extends SexprItem {
         super(filename, lineNumber);
         this.value = value;
     }
+
+    public String toString() { return Integer.toString(value); }
 }

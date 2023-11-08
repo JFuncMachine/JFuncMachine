@@ -19,7 +19,7 @@ import java.util.List;
 public class ClassGenerator {
     public final ClassGeneratorOptions options;
 
-    public List<MethodNode> addedLambdas = new ArrayList<>();
+    public List<MethodDef> addedLambdas = new ArrayList<>();
 
     public ClassGenerator() {
         this.options = new ClassGeneratorOptions();
@@ -75,11 +75,16 @@ public class ClassGenerator {
         newNode.signature = Naming.classSignature(clazz);
         newNode.superName = Naming.className(clazz.superPackageName, clazz.superName);
 
+        addedLambdas.clear();
+
         for (MethodDef methodDef : clazz.methodDefs) {
             MethodNode methodNode = generateMethod(methodDef, clazz);
             newNode.methods.add(methodNode);
         }
-        newNode.methods.addAll(addedLambdas);
+        for (MethodDef methodDef : addedLambdas) {
+            MethodNode methodNode = generateMethod(methodDef, clazz);
+            newNode.methods.add(methodNode);
+        }
         addedLambdas.clear();
         return newNode;
     }
@@ -100,21 +105,7 @@ public class ClassGenerator {
         return newMethod;
     }
 
-    public MethodNode generateLambda(Lambda lambda, ClassDef clazz) {
-        MethodNode newMethod = new MethodNode(Access.PRIVATE + Access.STATIC, lambda.name,
-                Naming.lambdaMethodDescriptor(lambda.capturedParameterTypes, lambda.parameterTypes, lambda.getType()),
-                null, null);
-        InstructionGenerator instructionGenerator =
-                new InstructionGenerator(this, clazz, newMethod.instructions);
-        Environment env = new Environment(lambda);
-        for (Field f: lambda.parameters) {
-            env.allocate(f.name, f.type);
-        }
-        instructionGenerator.label(lambda.startLabel);
-        lambda.body.generate(instructionGenerator, env);
-        instructionGenerator.return_by_type(lambda.returnType);
-
-        addedLambdas.add(newMethod);
-        return newMethod;
+    public void addMethodToGenerate(MethodDef method) {
+        addedLambdas.add(method);
     }
 }

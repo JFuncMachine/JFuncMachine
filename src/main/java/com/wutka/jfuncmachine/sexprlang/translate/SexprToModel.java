@@ -42,6 +42,7 @@ public class SexprToModel {
             { "ToInt", ToInt.class.getName() },
             { "ToLong", ToLong.class.getName() },
             { "ToShort", ToShort.class.getName() },
+            { "ToUnit", ToUnit.class.getName() },
             { "CallJavaConstructor", CallJavaConstructor.class.getName() },
             { "CallJavaInterface", CallJavaInterface.class.getName() },
             { "CallJavaMethod", CallJavaMethod.class.getName() },
@@ -337,12 +338,7 @@ public class SexprToModel {
                         if (sym.value.equals("null")) {
                             parametersList.add(null);
                         } else {
-                            Object matchedParam = matchParameter(arrayType, sym);
-                            if (matchedParam != null) {
-                                parametersList.add(matchedParam);
-                            } else {
-                                return null;
-                            }
+                            return null;
                         }
                     } else {
                         Object matchedParam = matchParameter(arrayType, item);
@@ -424,6 +420,8 @@ public class SexprToModel {
             case "java.lang.String" -> {
                 if (param instanceof SexprString stringVal) {
                     return stringVal.value;
+                } else if (param instanceof SexprSymbol symbolVal) {
+                    return symbolVal.value;
                 } else {
                     throw new RuntimeException(
                             String.format("Can't convert %s value to string in %s line %d",

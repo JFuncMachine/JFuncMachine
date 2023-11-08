@@ -1,0 +1,17 @@
+(ClassDef "com.wutka.test" "CapturingLambda" (Access PUBLIC)
+  (
+    (MethodDef "createLambda" (Access PUBLIC STATIC)
+        ((Field "num" int))
+        (function mylambda (string int) int)
+        (Lambda "mylambda" ((Field thing string) (Field n int)) int
+            (InlineCall IntAdd ((GetValue n int) (GetValue num int)))))
+    (MethodDef "main" (Access PUBLIC STATIC)
+      'param types:'
+        ((Field "args" (array string)))
+      'return type:' unit
+      'body:ii'
+        (ToUnit (CallJavaStaticMethod "com.wutka.test.CapturingLambda" "createLambda"
+            ((IntConstant 5)) int))
+    )
+  )
+  ())

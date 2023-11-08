@@ -1,5 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.types;
 
+import java.util.Objects;
+
 public class Field {
     public final String name;
     public final Type type;
@@ -10,12 +12,15 @@ public class Field {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Field field = (Field) o;
+        return Objects.equals(name, field.name) && Objects.equals(type, field.type);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public int hashCode() {
+        return Objects.hash(name, type);
     }
 }
