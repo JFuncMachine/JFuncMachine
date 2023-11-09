@@ -23,13 +23,13 @@ public class Unbox extends Expression {
     public Unbox(Expression expr) {
         super(null, 0);
         this.expr = expr;
-        this.unboxedType = expr.getType();
+        this.unboxedType = expr.getType().getUnboxedType();
     }
 
     public Unbox(Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;
-        this.unboxedType = expr.getType();
+        this.unboxedType = expr.getType().getUnboxedType();
     }
 
     public Unbox(Expression expr, Type unboxedType) {
@@ -64,6 +64,8 @@ public class Unbox extends Expression {
             throw generateException(String.format("Value of type %s is not unboxable from type %s",
                     unboxedType, className));
         }
+
+        expr.generate(generator, env);
 
         CallJavaMethod method = switch (unboxedType) {
             case BooleanType b -> new CallJavaMethod(className, "booleanValue",

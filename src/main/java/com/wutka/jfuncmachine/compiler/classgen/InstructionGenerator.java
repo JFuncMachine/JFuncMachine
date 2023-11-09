@@ -3,7 +3,6 @@ package com.wutka.jfuncmachine.compiler.classgen;
 import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
-import com.wutka.jfuncmachine.compiler.model.expr.Lambda;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
 import com.wutka.jfuncmachine.compiler.model.types.FloatType;
@@ -308,5 +307,9 @@ public class InstructionGenerator {
 
     public ClassDef getGeneratingClass() {
         return generatingClass;
+    }
+
+    public LambdaInfo allocateLambda(FunctionType type, FunctionType extendedType) {
+        return classGen.allocateLambda(type, extendedType);
     }
 }

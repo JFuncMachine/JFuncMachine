@@ -10,15 +10,13 @@ import org.objectweb.asm.Opcodes;
 import java.util.Set;
 
 public class Lambda extends Expression {
-    public final String name;
     public final Field[] parameters;
     public final Expression body;
     public final Type returnType;
     public Type[] parameterTypes;
 
-    public Lambda(String name, Field[] parameters, Type returnType, Expression body) {
+    public Lambda(Field[] parameters, Type returnType, Expression body) {
         super(null, 0);
-        this.name = name;
         this.parameters = parameters;
         this.returnType = returnType;
         this.body = body;
@@ -26,10 +24,9 @@ public class Lambda extends Expression {
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
     }
 
-    public Lambda(String name, Field[] parameters, Type returnType, Expression body,
+    public Lambda(Field[] parameters, Type returnType, Expression body,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
-        this.name = name;
         this.parameters = parameters;
         this.returnType = returnType;
         this.body = body;
@@ -38,7 +35,7 @@ public class Lambda extends Expression {
     }
 
     public Type getType() {
-        return new FunctionType(name, parameterTypes, body.getType());
+        return new FunctionType(null, parameterTypes, body.getType());
     }
 
     public void findCaptured(Environment env) {}
@@ -57,14 +54,21 @@ public class Lambda extends Expression {
 
         Field[] allFields  =
                 new Field[capturedFields.length + parameters.length];
+        Type[] allParameterTypes =
+                new Type[capturedFields.length + parameters.length];
         for (int i=0; i < capturedFields.length; i++) {
             allFields[i] = capturedFields[i];
+            allParameterTypes[i] = capturedFields[i].type;
         }
         for (int i=0; i < parameterTypes.length; i++) {
             allFields[i+capturedParameterTypes.length] = parameters[i];
+            allParameterTypes[i+capturedParameterTypes.length] = parameters[i].type;
         }
 
-        MethodDef lambdaMethod = new MethodDef(name, Access.PRIVATE + Access.STATIC,
+        FunctionType extendedType = new FunctionType(null, allParameterTypes, returnType);
+        LambdaInfo lambdaInfo = generator.allocateLambda((FunctionType) getType(), extendedType);
+
+        MethodDef lambdaMethod = new MethodDef(lambdaInfo.name, Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
                 allFields, returnType, body);
         generator.generateLambda(lambdaMethod);
 
@@ -85,13 +89,14 @@ public class Lambda extends Expression {
         }
 
         ClassDef generatingClass = generator.getGeneratingClass();
-        generator.invokedynamic(name, Naming.methodDescriptor(capturedParameterTypes, returnType),
+        generator.invokedynamic("apply", Naming.methodDescriptor(capturedParameterTypes, returnType),
                 new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
                         "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
                         false),
-                Naming.methodDescriptor(capturedParameterTypes, returnType),
-                new Handle(Opcodes.H_INVOKESTATIC, Naming.className(generatingClass), name,
+                Naming.methodDescriptor(parameterTypes, returnType),
+                new Handle(Opcodes.H_INVOKESTATIC, lambdaInfo.packageName.replace('.', '/')+
+                        "/"+ generatingClass.name, lambdaInfo.name,
                         Naming.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false),
-                Naming.methodDescriptor(capturedParameterTypes, returnType));
+                Naming.methodDescriptor(parameterTypes, returnType));
     }
 }

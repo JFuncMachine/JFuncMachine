@@ -32,6 +32,16 @@ public class Naming {
         return builder.toString();
     }
 
+    public static String lambdaReturnDescriptor(MethodDef methodDef, String lambdaInterfaceName) {
+        StringBuilder builder = new StringBuilder("(");
+        for (Field f: methodDef.parameters) {
+            builder.append(f.type.getTypeDescriptor());
+        }
+        builder.append(")");
+        builder.append("L"+lambdaInterfaceName.replace('.', '/')+";");
+        return builder.toString();
+    }
+
     public static String methodDescriptor(Expression[] arguments, Type returnType) {
         StringBuilder builder = new StringBuilder("(");
         for (Expression expr: arguments) {

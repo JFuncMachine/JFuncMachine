@@ -523,7 +523,9 @@ public class SexprToModel {
                 return new ArrayType(translateType(typeParam));
             }
             case "object" -> {
-                if (items.size() != 2) {
+                if (items.size() == 1) {
+                    return new ObjectType();
+                } else if (items.size() != 2) {
                     throw new RuntimeException(
                             String.format("object type parameter should have exactly one parameter in %s line %d",
                                     sym.filename, sym.lineNumber));

@@ -4,6 +4,7 @@ import com.wutka.jfuncmachine.compiler.classgen.Label;
 import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.Field;
+import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class MethodDef extends SourceElement {
@@ -23,7 +24,7 @@ public class MethodDef extends SourceElement {
         this.tailCallable = true;
         this.body = body;
         this.returnType = returnType;
-        if (!body.getType().equals(returnType)) {
+        if (body != null && !body.getType().equals(returnType) && !returnType.equals(new ObjectType())) {
             throw new JFuncMachineException(
                     String.format("Function expects return type of %s but the return type is %s",
                             returnType, body.getType()));
@@ -39,7 +40,7 @@ public class MethodDef extends SourceElement {
         this.tailCallable = tailCallable;
         this.body = body;
         this.returnType = returnType;
-        if (!body.getType().equals(returnType)) {
+        if (body != null && !body.getType().equals(returnType) && !returnType.equals(new ObjectType())) {
             throw new JFuncMachineException(
                     String.format("Function expects return type of %s but the return type is %s",
                             returnType, body.getType()));
@@ -56,7 +57,7 @@ public class MethodDef extends SourceElement {
         this.tailCallable = true;
         this.body = body;
         this.returnType = returnType;
-        if (!body.getType().equals(returnType)) {
+        if (body != null && !body.getType().equals(returnType) && !returnType.equals(new ObjectType())) {
             throw new JFuncMachineException(
                     String.format("Function expects return type of %s but the return type is %s",
                             returnType, body.getType()));
@@ -73,7 +74,7 @@ public class MethodDef extends SourceElement {
         this.tailCallable = tailCallable;
         this.body = body;
         this.returnType = returnType;
-        if (!body.getType().equals(returnType)) {
+        if (body != null && !body.getType().equals(returnType) && !returnType.equals(new ObjectType())) {
             throw new JFuncMachineException(
                     String.format("Function expects return type of %s but the return type is %s",
                             returnType, body.getType()));
@@ -82,6 +83,6 @@ public class MethodDef extends SourceElement {
     }
 
     public Type getReturnType() {
-        return body.getType();
+        return returnType;
     }
 }
