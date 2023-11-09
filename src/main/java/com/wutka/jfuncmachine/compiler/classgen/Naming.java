@@ -62,6 +62,16 @@ public class Naming {
         return builder.toString();
     }
 
+    public static String lambdaInDyDescriptor(Type[] parameterTypes, String className) {
+        StringBuilder builder = new StringBuilder("(");
+        for (Type type: parameterTypes) {
+            builder.append(type.getTypeDescriptor());
+        }
+        builder.append(")");
+        builder.append("L"+className.replace('.', '/')+";");
+        return builder.toString();
+    }
+
     public static String lambdaMethodDescriptor(Type[] capturedParameterTypes, Type[] parameterTypes,
                                                 Type returnType) {
         StringBuilder builder = new StringBuilder("(");

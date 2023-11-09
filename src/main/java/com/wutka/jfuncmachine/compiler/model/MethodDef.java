@@ -24,11 +24,13 @@ public class MethodDef extends SourceElement {
         this.tailCallable = true;
         this.body = body;
         this.returnType = returnType;
+        /*
         if (body != null && !body.getType().equals(returnType) && !returnType.equals(new ObjectType())) {
             throw new JFuncMachineException(
                     String.format("Function expects return type of %s but the return type is %s",
                             returnType, body.getType()));
         }
+         */
         this.startLabel = new Label();
     }
 
@@ -40,11 +42,13 @@ public class MethodDef extends SourceElement {
         this.tailCallable = tailCallable;
         this.body = body;
         this.returnType = returnType;
+        /*
         if (body != null && !body.getType().equals(returnType) && !returnType.equals(new ObjectType())) {
             throw new JFuncMachineException(
                     String.format("Function expects return type of %s but the return type is %s",
                             returnType, body.getType()));
         }
+         */
         this.startLabel = new Label();
     }
 
@@ -57,11 +61,13 @@ public class MethodDef extends SourceElement {
         this.tailCallable = true;
         this.body = body;
         this.returnType = returnType;
+        /*
         if (body != null && !body.getType().equals(returnType) && !returnType.equals(new ObjectType())) {
             throw new JFuncMachineException(
                     String.format("Function expects return type of %s but the return type is %s",
                             returnType, body.getType()));
         }
+         */
         this.startLabel = new Label();
     }
 
@@ -74,11 +80,13 @@ public class MethodDef extends SourceElement {
         this.tailCallable = tailCallable;
         this.body = body;
         this.returnType = returnType;
+        /*
         if (body != null && !body.getType().equals(returnType) && !returnType.equals(new ObjectType())) {
             throw new JFuncMachineException(
                     String.format("Function expects return type of %s but the return type is %s",
                             returnType, body.getType()));
         }
+         */
         this.startLabel = new Label();
     }
 

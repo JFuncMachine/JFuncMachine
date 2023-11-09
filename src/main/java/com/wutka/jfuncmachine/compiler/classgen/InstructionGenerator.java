@@ -17,6 +17,7 @@ import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.LookupSwitchInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
@@ -305,11 +306,23 @@ public class InstructionGenerator {
         return this;
     }
 
+    public InstructionGenerator generateLocalVariable(String name, String typeDescriptor,
+                                                      Label startLoc, Label endLoc,
+                                                      int index) {
+//        instructionList.add(new LocalVariableNode(name, typeDescriptor, null,
+//                new LabelNode(startLoc.label), new LabelNode(endLoc.label), index));
+        return this;
+    }
+
     public ClassDef getGeneratingClass() {
         return generatingClass;
     }
 
-    public LambdaInfo allocateLambda(FunctionType type, FunctionType extendedType) {
-        return classGen.allocateLambda(type, extendedType);
+    public LambdaInfo allocateLambda(FunctionType type) {
+        return classGen.allocateLambda(type);
+    }
+
+    public LambdaIntInfo allocateLambdaInt(FunctionType type) {
+        return classGen.allocateLambdaInt(type);
     }
 }

@@ -54,6 +54,7 @@ public class SexprToModel {
             { "ArrayGet", ArrayGet.class.getName() },
             { "ArraySet", ArraySet.class.getName() },
             { "Binding", Binding.class.getName() },
+            { "BindingPair", Binding.BindingPair.class.getName() },
             { "BindingRecurse", BindingRecurse.class.getName() },
             { "Block", Block.class.getName() },
             { "CallMethod", CallMethod.class.getName() },
@@ -91,6 +92,12 @@ public class SexprToModel {
             "LongMul", "LongNeg", "LongOr", "LongRem", "LongShiftLeft", "LongArithShiftRight",
             "LongLogicalShiftRight", "LongSub", "LongXor"
     }).collect(Collectors.toSet());
+
+    public static Map<String, Binding.Visibility> visibilityMap = Stream.of(new Object[][] {
+        { "Visibility.Separate", Binding.Visibility.Separate },
+        { "Visibility.Next", Binding.Visibility.Next },
+        { "Visibility.Recursive", Binding.Visibility.Recursive }
+    }).collect(Collectors.toMap(data-> (String)data[0], data->(Binding.Visibility) data[1]));
 
     public static Set<String> comparisonSet = Stream.of(new String[] {
         "objectEQ", "objectNE", "intEQ", "intNE", "intLT", "intLE", "intGT", "intGE", "floatEQ",
@@ -132,6 +139,8 @@ public class SexprToModel {
                 return translateInline(sym);
             } else if (simpleTypes.containsKey(sym.value)) {
                 return simpleTypes.get(sym.value);
+            } else if (visibilityMap.containsKey(sym.value)) {
+                return visibilityMap.get(sym.value);
             } else {
                 throw new RuntimeException(
                         String.format("Unexpected symbol %s in %s line %d", sym.value, sym.filename, sym.lineNumber));
@@ -157,6 +166,8 @@ public class SexprToModel {
             return translateModelSymbol(sym, list.value);
         } else if (typeSet.contains(sym.value)) {
             return translateComplexType(sym, list.value);
+        } else if (visibilityMap.containsKey(sym.value)) {
+            return visibilityMap.get(sym.value);
         }
         throw new RuntimeException(
                 String.format("Unexpected symbol %s in %s at line %s", sym.value, sym.filename, sym.lineNumber));

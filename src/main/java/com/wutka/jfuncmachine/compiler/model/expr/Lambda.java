@@ -13,6 +13,7 @@ public class Lambda extends Expression {
     public final Field[] parameters;
     public final Expression body;
     public final Type returnType;
+    public final Type interfaceType;
     public Type[] parameterTypes;
 
     public Lambda(Field[] parameters, Type returnType, Expression body) {
@@ -22,6 +23,7 @@ public class Lambda extends Expression {
         this.body = body;
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
+        this.interfaceType = null;
     }
 
     public Lambda(Field[] parameters, Type returnType, Expression body,
@@ -32,10 +34,36 @@ public class Lambda extends Expression {
         this.body = body;
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
+        this.interfaceType = null;
+    }
+
+    public Lambda(Type interfaceType, Field[] parameters, Type returnType, Expression body) {
+        super(null, 0);
+        this.parameters = parameters;
+        this.returnType = returnType;
+        this.body = body;
+        parameterTypes = new Type[parameters.length];
+        for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
+        this.interfaceType = interfaceType;
+    }
+
+    public Lambda(Type interfaceType, Field[] parameters, Type returnType, Expression body,
+                  String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.parameters = parameters;
+        this.returnType = returnType;
+        this.body = body;
+        parameterTypes = new Type[parameters.length];
+        for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
+        this.interfaceType = interfaceType;
     }
 
     public Type getType() {
-        return new FunctionType(null, parameterTypes, body.getType());
+        if (interfaceType != null) {
+            return interfaceType;
+        } else {
+            return new FunctionType(null, parameterTypes, body.getType());
+        }
     }
 
     public void findCaptured(Environment env) {}
@@ -66,7 +94,14 @@ public class Lambda extends Expression {
         }
 
         FunctionType extendedType = new FunctionType(null, allParameterTypes, returnType);
-        LambdaInfo lambdaInfo = generator.allocateLambda((FunctionType) getType(), extendedType);
+        LambdaInfo lambdaInfo = generator.allocateLambda(extendedType);
+        LambdaIntInfo intInfo = null;
+        Type indyIntType = interfaceType;
+        if (indyIntType == null) {
+            intInfo = generator.allocateLambdaInt(new FunctionType(null, parameterTypes, returnType));
+            indyIntType = new FunctionType(null, capturedParameterTypes,
+                    new ObjectType(intInfo.packageName+"."+intInfo.name));
+        }
 
         MethodDef lambdaMethod = new MethodDef(lambdaInfo.name, Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
                 allFields, returnType, body);
@@ -88,15 +123,24 @@ public class Lambda extends Expression {
             generator.rawIntOpcode(opcode, envVar.value);
         }
 
+        String indyClass;
+        if (interfaceType == null) {
+            indyClass = intInfo.packageName + "." + intInfo.name;
+        } else {
+            indyClass = ((ObjectType) interfaceType).className;
+        }
+
+        Type[] objectTypes = new ObjectType[parameterTypes.length];
+        for (int i=0; i < objectTypes.length; i++) objectTypes[i] = new ObjectType();
         ClassDef generatingClass = generator.getGeneratingClass();
-        generator.invokedynamic("apply", Naming.methodDescriptor(capturedParameterTypes, returnType),
+        generator.invokedynamic("apply", Naming.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
                 new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
                         "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
                         false),
-                Naming.methodDescriptor(parameterTypes, returnType),
+                org.objectweb.asm.Type.getType(Naming.methodDescriptor(objectTypes, new ObjectType())),
                 new Handle(Opcodes.H_INVOKESTATIC, lambdaInfo.packageName.replace('.', '/')+
                         "/"+ generatingClass.name, lambdaInfo.name,
                         Naming.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false),
-                Naming.methodDescriptor(parameterTypes, returnType));
+                org.objectweb.asm.Type.getType(Naming.methodDescriptor(parameterTypes, returnType)));
     }
 }

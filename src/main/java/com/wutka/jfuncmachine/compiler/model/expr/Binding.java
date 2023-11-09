@@ -89,6 +89,8 @@ public class Binding extends Expression {
 
         Label label = null;
 
+        Label bindingEnd = new Label();
+
         for (BindingPair pair: bindings) {
             EnvVar envVar = null;
 
@@ -105,6 +107,8 @@ public class Binding extends Expression {
             if (visibility != Visibility.Recursive) {
                 envVar = newEnv.allocate(pair.name, pair.value.getType());
             }
+
+            Label bindingVarStart = new Label();
 
             int opcode = switch (pair.value.getType()) {
                 case BooleanType b -> Opcodes.ISTORE;
@@ -123,7 +127,7 @@ public class Binding extends Expression {
             generator.label(label);
         }
         expr.generate(generator, newEnv);
-
+        generator.label(bindingEnd);
     }
 
     public static class BindingPair {

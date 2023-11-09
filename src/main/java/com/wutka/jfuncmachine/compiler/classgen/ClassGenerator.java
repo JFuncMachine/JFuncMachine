@@ -29,7 +29,7 @@ public class ClassGenerator {
     public List<MethodDef> addedLambdas = new ArrayList<>();
     public int nextLambdaInt;
     public int nextLambda;
-    public Map<FunctionType, LambdaInterfaceInfo> interfaces = new HashMap<>();
+    public Map<FunctionType, LambdaIntInfo> interfaces = new HashMap<>();
 
     public ClassGenerator() {
         this.options = new ClassGeneratorOptions();
@@ -47,7 +47,7 @@ public class ClassGenerator {
 
         writeClassNode(newNode, outputDirectory);
 
-        for (LambdaInterfaceInfo info: interfaces.values()) {
+        for (LambdaIntInfo info: interfaces.values()) {
             generateLambdaInterface(info, outputDirectory);
         }
 
@@ -124,7 +124,7 @@ public class ClassGenerator {
     public MethodNode generateMethod(MethodDef methodDef, ClassDef clazz) {
         String methodSignature;
         if (methodDef.getReturnType() instanceof FunctionType funcType) {
-            LambdaInterfaceInfo info = interfaces.get(funcType);
+            LambdaIntInfo info = allocateLambdaInt(funcType);
             methodSignature = Naming.lambdaReturnDescriptor(methodDef,
                     info.packageName+"."+info.name);
         } else {
@@ -148,7 +148,7 @@ public class ClassGenerator {
         return newMethod;
     }
 
-    public void generateLambdaInterface(LambdaInterfaceInfo info, String outputDirectory)
+    public void generateLambdaInterface(LambdaIntInfo info, String outputDirectory)
         throws IOException {
         String className = info.name;
 
@@ -186,15 +186,17 @@ public class ClassGenerator {
         return name;
     }
 
-    public LambdaInfo allocateLambda(FunctionType type, FunctionType extendedType) {
-        LambdaInterfaceInfo intInfo;
-        if (interfaces.containsKey(type)) {
-            intInfo = interfaces.get(type);
-        } else {
-            intInfo = new LambdaInterfaceInfo(currentPackageName, generateLambdaIntName(), type);
-        }
+    public LambdaIntInfo allocateLambdaInt(FunctionType functionType) {
+        LambdaIntInfo info = interfaces.get(functionType);
+        if (info != null) return info;
+        info = new LambdaIntInfo(currentPackageName, generateLambdaIntName(), functionType);
+        interfaces.put(functionType, info);
+        return info;
+    }
 
-        LambdaInfo info = new LambdaInfo(currentPackageName, generateLambdaName(), intInfo, extendedType);
+    public LambdaInfo allocateLambda(FunctionType type) {
+
+        LambdaInfo info = new LambdaInfo(currentPackageName, generateLambdaName(), type);
 
         return info;
     }

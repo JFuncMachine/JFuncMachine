@@ -65,8 +65,6 @@ public class Unbox extends Expression {
                     unboxedType, className));
         }
 
-        expr.generate(generator, env);
-
         CallJavaMethod method = switch (unboxedType) {
             case BooleanType b -> new CallJavaMethod(className, "booleanValue",
                     new Type[0], expr, new Expression[0], SimpleTypes.BOOLEAN, filename, lineNumber);

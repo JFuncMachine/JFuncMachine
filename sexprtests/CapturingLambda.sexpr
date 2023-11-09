@@ -1,18 +1,25 @@
 (ClassDef "com.wutka.test" "CapturingLambda" (Access PUBLIC SUPER)
   (
     (MethodDef "createLambda" (Access PUBLIC STATIC)
-        ((Field "num" int))
-        '(function null (string int) int)'
-        object
-        (Lambda ((Field thing string) (Field n int)) int
-            (InlineCall IntAdd ((GetValue n int) (GetValue num int)))))
+        ((Field "num" (object java.lang.Integer)))
+        '(function null (string (object java.lang.Integer)) (object java.lang.Integer))'
+        (object java.util.function.BiFunction)
+        (Lambda (object java.util.function.BiFunction) ((Field thing string) (Field n (object java.lang.Integer))) (object java.lang.Integer)
+            (Box (InlineCall IntAdd ((Unbox (GetValue n (object java.lang.Integer)))
+            (Unbox (GetValue num (object java.lang.Integer)))) )))
+     )
     (MethodDef "main" (Access PUBLIC STATIC)
       'param types:'
         ((Field "args" (array string)))
       'return type:' unit
       'body:ii'
-        (ToUnit (CallJavaStaticMethod "com.wutka.test.CapturingLambda" "createLambda"
-            ((IntConstant 5)) object))
+        (Binding ((BindingPair "lam"
+                    (CallJavaStaticMethod "com.wutka.test.CapturingLambda" "createLambda"
+                        ((Box (IntConstant 5))) (object java.util.function.BiFunction))))
+                 Visibility.Separate
+            (CallJavaMethod "java.io.PrintStream" "println"
+                (GetJavaStaticField "java.lang.System" "out" (object java.io.PrintStream))
+                ((GetValue lam (object java.util.function.BiFunction))) unit))
     )
   )
   ())
