@@ -143,6 +143,10 @@ public class SexprToModel {
                 return simpleTypes.get(sym.value);
             } else if (visibilityMap.containsKey(sym.value)) {
                 return visibilityMap.get(sym.value);
+            } else if (sym.value.equals("true")) {
+                return Boolean.TRUE;
+            } else if (sym.value.equals("false")) {
+                return Boolean.FALSE;
             } else {
                 throw new RuntimeException(
                         String.format("Unexpected symbol %s in %s line %d", sym.value, sym.filename, sym.lineNumber));
@@ -254,6 +258,14 @@ public class SexprToModel {
                 case "boolean" -> {
                     if (param instanceof SexprInt intVal) {
                         return intVal.value != 0;
+                    } else if (param instanceof SexprSymbol sym) {
+                        if (sym.value.equals("true")) {
+                            return Boolean.TRUE;
+                        } else if (sym.value.equals("false")) {
+                            return Boolean.FALSE;
+                        } else {
+                            return null;
+                        }
                     } else {
                         return null;
                     }

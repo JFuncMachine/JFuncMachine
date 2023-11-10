@@ -14,43 +14,48 @@ public class Lambda extends Expression {
     public final Type returnType;
     public final Type interfaceType;
     public Type[] parameterTypes;
+    public final boolean useObjectInterface;
 
-    public Lambda(Field[] parameters, Type returnType, Expression body) {
+    public Lambda(Field[] parameters, Type returnType, boolean useObjectInterface, Expression body) {
         super(null, 0);
         this.parameters = parameters;
         this.returnType = returnType;
+        this.useObjectInterface = useObjectInterface;
         this.body = body;
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
         this.interfaceType = null;
     }
 
-    public Lambda(Field[] parameters, Type returnType, Expression body,
+    public Lambda(Field[] parameters, Type returnType, boolean useObjectInterface, Expression body,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
         this.parameters = parameters;
         this.returnType = returnType;
+        this.useObjectInterface = useObjectInterface;
         this.body = body;
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
         this.interfaceType = null;
     }
 
-    public Lambda(Type interfaceType, Field[] parameters, Type returnType, Expression body) {
+    public Lambda(Type interfaceType, Field[] parameters, Type returnType, boolean useObjectInterface, Expression body) {
         super(null, 0);
         this.parameters = parameters;
         this.returnType = returnType;
+        this.useObjectInterface = useObjectInterface;
         this.body = body;
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
         this.interfaceType = interfaceType;
     }
 
-    public Lambda(Type interfaceType, Field[] parameters, Type returnType, Expression body,
+    public Lambda(Type interfaceType, Field[] parameters, Type returnType, boolean useObjectInterface, Expression body,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
         this.parameters = parameters;
         this.returnType = returnType;
+        this.useObjectInterface = useObjectInterface;
         this.body = body;
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
@@ -142,6 +147,15 @@ public class Lambda extends Expression {
             indyClass = ((ObjectType) interfaceType).className;
         }
 
+        org.objectweb.asm.Type signatureType;
+        if (useObjectInterface) {
+            ObjectType[] objectParams = new ObjectType[parameters.length];
+            for (int i = 0; i < objectParams.length; i++) objectParams[i] = new ObjectType();
+            signatureType = org.objectweb.asm.Type.getType(Naming.methodDescriptor(objectParams, new ObjectType()));
+        } else {
+            signatureType = org.objectweb.asm.Type.getType(Naming.methodDescriptor(parameterTypes, returnType));
+        }
+
         // Call invokedynamic to generate a lambda method handle
         generator.instGen.invokedynamic(ClassGenerator.lambdaIntMethodName,
                 Naming.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
@@ -150,7 +164,7 @@ public class Lambda extends Expression {
                         "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
                         false),
                 // Create an ASM Type descriptor for this descriptor
-                org.objectweb.asm.Type.getType(Naming.methodDescriptor(parameterTypes, returnType)),
+                signatureType,
                 // Create a handle for the generated lambda method
                 new Handle(Opcodes.H_INVOKESTATIC, lambdaInfo.packageName.replace('.', '/')+
                         "/"+ generator.currentClass.name, lambdaInfo.name,

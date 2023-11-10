@@ -4,7 +4,7 @@
         ((Field "num" (object java.lang.Integer)))
         '(function (string (object java.lang.Integer)) (object java.lang.Integer))'
         (object java.util.function.BiFunction)
-        (Lambda (object java.util.function.BiFunction) ((Field thing string) (Field n (object java.lang.Integer))) (object java.lang.Integer)
+        (Lambda (object java.util.function.BiFunction) ((Field thing string) (Field n (object java.lang.Integer))) (object java.lang.Integer) true
             (Box (InlineCall IntAdd ((Unbox (GetValue n (object java.lang.Integer)))
             (Unbox (GetValue num (object java.lang.Integer)))) )))
      )
@@ -20,7 +20,8 @@
             (CallJavaMethod "java.io.PrintStream" "println"
                 (GetJavaStaticField "java.lang.System" "out" (object java.io.PrintStream))
                 ((Invoke "apply" (object java.util.function.BiFunction)
-                    (string (object java.lang.Integer)) (object java.lang.Integer)
+                    '(string (object java.lang.Integer)) (object java.lang.Integer)'
+                    (object object) object
                     (GetValue lam (object java.util.function.BiFunction))
                     ((StringConstant "foobar") (Box (IntConstant 42)))))
                      unit))
