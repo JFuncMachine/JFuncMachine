@@ -4,6 +4,7 @@ import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.classgen.Naming;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
+import com.wutka.jfuncmachine.compiler.model.types.FunctionType;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class CallJavaStaticMethod extends Expression {
@@ -70,6 +71,6 @@ public class CallJavaStaticMethod extends Expression {
         }
         generator.instGen.invokestatic(
                 Naming.className(className),
-                methodName, Naming.methodDescriptor(parameterTypes, returnType));
+                methodName, generator.methodDescriptor(parameterTypes, returnType));
     }
 }

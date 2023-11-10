@@ -564,7 +564,7 @@ public class SexprToModel {
                 }
             }
             case "function" -> {
-                if (items.size() != 4) {
+                if (items.size() != 3) {
                     throw new RuntimeException(
                             String.format("function type parameter should have exactly three parameters in %s line %d",
                                     sym.filename, sym.lineNumber));

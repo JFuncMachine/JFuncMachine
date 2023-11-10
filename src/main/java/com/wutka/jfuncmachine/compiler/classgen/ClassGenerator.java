@@ -6,6 +6,7 @@ import com.wutka.jfuncmachine.compiler.model.ClassField;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.types.Field;
 import com.wutka.jfuncmachine.compiler.model.types.FunctionType;
+import com.wutka.jfuncmachine.compiler.model.types.Type;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -178,6 +179,8 @@ public class ClassGenerator {
                 new MethodDef[] { interfaceMethod }, new ClassField[0]);
 
         ClassNode newNode = createClassNode(classDef);
+        currentClass = classDef;
+        currentMethod = interfaceMethod;
 
         writeClassNode(newNode, outputDirectory);
     }
@@ -215,5 +218,27 @@ public class ClassGenerator {
                 generateLambdaName(), type);
 
         return info;
+    }
+
+    public Type convertFunctionTypeToObjectType(Type type) {
+        if (!(type instanceof FunctionType ftype)) {
+            return type;
+        } else {
+            LambdaIntInfo intInfo = allocateLambdaInt(ftype);
+            return intInfo.getObjectType();
+        }
+    }
+
+    public Type[] convertFunctionTypesToObjectType(Type[] types) {
+        Type[] converted = new Type[types.length];
+        for (int i=0; i < types.length; i++) converted[i] = convertFunctionTypeToObjectType(types[i]);
+
+        return converted;
+    }
+
+    public String methodDescriptor(Type[] parameterTypes, Type returnType) {
+        return Naming.methodDescriptor(
+                convertFunctionTypesToObjectType(parameterTypes),
+                convertFunctionTypeToObjectType(returnType));
     }
 }
