@@ -12,11 +12,12 @@ import com.wutka.jfuncmachine.compiler.model.expr.conv.*;
 import com.wutka.jfuncmachine.compiler.model.expr.javaintop.*;
 import com.wutka.jfuncmachine.compiler.model.inline.Inlines;
 import com.wutka.jfuncmachine.compiler.model.types.*;
-import com.wutka.jfuncmachine.compiler.model.types.Field;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
 import com.wutka.jfuncmachine.sexprlang.parser.*;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -68,6 +69,7 @@ public class SexprToModel {
             { "GetValue", GetValue.class.getName() },
             { "If", If.class.getName() },
             { "InlineCall", InlineCall.class.getName() },
+            { "Invoke", Invoke.class.getName() },
             { "Lambda", Lambda.class.getName() },
             { "NewArray", NewArray.class.getName() },
             { "NewArrayWithValues", NewArrayWithValues.class.getName() },
@@ -348,14 +350,11 @@ public class SexprToModel {
                     if (item instanceof SexprSymbol sym) {
                         if (sym.value.equals("null")) {
                             parametersList.add(null);
-                        } else {
-                            return null;
                         }
-                    } else {
-                        Object matchedParam = matchParameter(arrayType, item);
-                        if (matchedParam == null) return null;
-                        parametersList.add(matchedParam);
                     }
+                    Object matchedParam = matchParameter(arrayType, item);
+                    if (matchedParam == null) return null;
+                    parametersList.add(matchedParam);
                 }
 
                 Object arrayResult = Array.newInstance(arrayType, parametersList.size());
@@ -560,20 +559,9 @@ public class SexprToModel {
 
                 }
 
-                String functionName;
-                SexprItem functionNameItem = items.get(1);
-                if (functionNameItem instanceof SexprSymbol funcSym) {
-                    functionName = funcSym.value;
-                } else {
-                    throw new RuntimeException(
-                            String.format("function type function name should be a symbol, not a %s in %s line %s",
-                                    functionNameItem.getClass().getSimpleName(),
-                                    functionNameItem.filename, functionNameItem.lineNumber));
-                }
-
                 Type[] paramTypes;
 
-                SexprItem params = items.get(2);
+                SexprItem params = items.get(1);
                 if (params instanceof SexprList paramList) {
                     paramTypes = new Type[paramList.value.size()];
                     for (int i=0; i < paramTypes.length; i++) {
@@ -581,11 +569,11 @@ public class SexprToModel {
                     }
                 } else {
                     throw new RuntimeException(
-                            String.format("Invalid type parameter list for function %s, should be list, got %s in %s line %d",
-                            functionName, params.getClass().getSimpleName(), params.filename, params.lineNumber));
+                            String.format("Invalid type parameter list for function, should be list, got %s in %s line %d",
+                            params.getClass().getSimpleName(), params.filename, params.lineNumber));
                 }
-                Type returnType = translateType(items.get(3));
-                return new FunctionType(functionName, paramTypes, returnType);
+                Type returnType = translateType(items.get(2));
+                return new FunctionType(paramTypes, returnType);
             }
             default -> throw new RuntimeException(
                         String.format("Invalid type name %s in %s line %d", sym.value, sym.filename, sym.lineNumber));

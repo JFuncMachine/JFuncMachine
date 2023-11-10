@@ -1,17 +1,8 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
-import com.wutka.jfuncmachine.compiler.model.types.ArrayType;
-import com.wutka.jfuncmachine.compiler.model.types.BooleanType;
-import com.wutka.jfuncmachine.compiler.model.types.ByteType;
-import com.wutka.jfuncmachine.compiler.model.types.CharType;
-import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
-import com.wutka.jfuncmachine.compiler.model.types.FloatType;
-import com.wutka.jfuncmachine.compiler.model.types.IntType;
-import com.wutka.jfuncmachine.compiler.model.types.LongType;
-import com.wutka.jfuncmachine.compiler.model.types.ShortType;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
 public class ArrayGet extends Expression {
@@ -46,7 +37,7 @@ public class ArrayGet extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         Type arrayType = array.getType();
 
         if (arrayType instanceof ArrayType at) {
@@ -67,7 +58,7 @@ public class ArrayGet extends Expression {
                 default -> Opcodes.AALOAD;
             };
 
-            generator.rawOpcode(opcode);
+            generator.instGen.rawOpcode(opcode);
         } else {
             throw generateException(
                     String.format("Tried to do ArrayGet on type %s", arrayType));

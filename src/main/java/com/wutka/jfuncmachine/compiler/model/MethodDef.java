@@ -1,10 +1,8 @@
 package com.wutka.jfuncmachine.compiler.model;
 
 import com.wutka.jfuncmachine.compiler.classgen.Label;
-import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.Field;
-import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class MethodDef extends SourceElement {

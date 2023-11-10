@@ -1,7 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public abstract class InlineFunction {
@@ -17,5 +17,5 @@ public abstract class InlineFunction {
         return returnType;
     }
 
-    public abstract void generate(InstructionGenerator generator, Environment env);
+    public abstract void generate(ClassGenerator generator, Environment env);
 }

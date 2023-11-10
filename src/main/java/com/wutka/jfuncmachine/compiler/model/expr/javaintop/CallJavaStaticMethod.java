@@ -1,10 +1,9 @@
 package com.wutka.jfuncmachine.compiler.model.expr.javaintop;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Naming;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
-import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class CallJavaStaticMethod extends Expression {
@@ -65,11 +64,11 @@ public class CallJavaStaticMethod extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         for (Expression expr: arguments) {
             expr.generate(generator, env);
         }
-        generator.invokestatic(
+        generator.instGen.invokestatic(
                 Naming.className(className),
                 methodName, Naming.methodDescriptor(parameterTypes, returnType));
     }

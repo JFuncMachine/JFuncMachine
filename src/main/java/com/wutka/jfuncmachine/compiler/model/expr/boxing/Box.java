@@ -1,13 +1,11 @@
 package com.wutka.jfuncmachine.compiler.model.expr.boxing;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
-import com.wutka.jfuncmachine.compiler.model.expr.javaintop.CallJavaConstructor;
 import com.wutka.jfuncmachine.compiler.model.expr.javaintop.CallJavaStaticMethod;
-import com.wutka.jfuncmachine.compiler.model.types.*;
-
-import java.lang.String;
+import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
+import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class Box extends Expression {
     public final Expression expr;
@@ -42,7 +40,7 @@ public class Box extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         String boxName = boxType.getBoxType();
 
         if (boxName == null) return;

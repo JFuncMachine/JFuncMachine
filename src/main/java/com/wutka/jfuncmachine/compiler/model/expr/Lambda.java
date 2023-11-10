@@ -2,7 +2,6 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 
 import com.wutka.jfuncmachine.compiler.classgen.*;
 import com.wutka.jfuncmachine.compiler.model.Access;
-import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
@@ -62,16 +61,19 @@ public class Lambda extends Expression {
         if (interfaceType != null) {
             return interfaceType;
         } else {
-            return new FunctionType(null, parameterTypes, body.getType());
+            return new FunctionType(parameterTypes, body.getType());
         }
     }
 
     public void findCaptured(Environment env) {}
 
-    public void generate(InstructionGenerator generator, Environment env) {
+    @Override
+    public void generate(ClassGenerator generator, Environment env) {
+        // Start a capture analysis to see what variables this lambda captures
         env.startCaptureAnalysis();
         body.findCaptured(env);
         Set<EnvVar> capturedValues = env.getCaptured();
+
         EnvVar[] envVars = capturedValues.toArray(new EnvVar[0]);
         Type[] capturedParameterTypes = new Type[envVars.length]       ;
         Field[] capturedFields = new Field[envVars.length];
@@ -80,6 +82,8 @@ public class Lambda extends Expression {
             capturedFields[i] = new Field(envVars[i].name, envVars[i].type);
         }
 
+        // The lambda's actual type will be a combination of the captured variables
+        // first followed by the declared parameters
         Field[] allFields  =
                 new Field[capturedFields.length + parameters.length];
         Type[] allParameterTypes =
@@ -93,19 +97,26 @@ public class Lambda extends Expression {
             allParameterTypes[i+capturedParameterTypes.length] = parameters[i].type;
         }
 
-        FunctionType extendedType = new FunctionType(null, allParameterTypes, returnType);
+        // extendedType is the type of the lambda with the captured parameters included
+        FunctionType extendedType = new FunctionType(
+                allParameterTypes, returnType);
+
+        // Allocate a method name for this lambda
         LambdaInfo lambdaInfo = generator.allocateLambda(extendedType);
         LambdaIntInfo intInfo = null;
-        Type indyIntType = interfaceType;
-        if (indyIntType == null) {
-            intInfo = generator.allocateLambdaInt(new FunctionType(null, parameterTypes, returnType));
-            indyIntType = new FunctionType(null, capturedParameterTypes,
-                    new ObjectType(intInfo.packageName+"."+intInfo.name));
+        if (interfaceType == null) {
+            // If there was no interface specified to indicate the return type, create one (if necessary)
+            intInfo = generator.allocateLambdaInt(new FunctionType(
+                    parameterTypes, returnType));
         }
 
-        MethodDef lambdaMethod = new MethodDef(lambdaInfo.name, Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
+        // Create a declaration for the lambda method
+        MethodDef lambdaMethod = new MethodDef(lambdaInfo.name,
+                Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
                 allFields, returnType, body);
-        generator.generateLambda(lambdaMethod);
+
+        // Schedule the generation of the lambda method
+        generator.addMethodToGenerate(lambdaMethod);
 
         for (EnvVar envVar: capturedValues) {
             int opcode = switch (envVar.type) {
@@ -120,27 +131,31 @@ public class Lambda extends Expression {
                 default -> Opcodes.ALOAD;
             };
 
-            generator.rawIntOpcode(opcode, envVar.value);
+            generator.instGen.rawIntOpcode(opcode, envVar.value);
         }
 
         String indyClass;
         if (interfaceType == null) {
+            // If there was no interface type specified, get the name of the interface generated for this lambda
             indyClass = intInfo.packageName + "." + intInfo.name;
         } else {
             indyClass = ((ObjectType) interfaceType).className;
         }
 
-        Type[] objectTypes = new ObjectType[parameterTypes.length];
-        for (int i=0; i < objectTypes.length; i++) objectTypes[i] = new ObjectType();
-        ClassDef generatingClass = generator.getGeneratingClass();
-        generator.invokedynamic("apply", Naming.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
+        // Call invokedynamic to generate a lambda method handle
+        generator.instGen.invokedynamic(ClassGenerator.lambdaIntMethodName,
+                Naming.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
+                // Boilerplate for Java's built-in lambda bootstrap
                 new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
                         "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
                         false),
-                org.objectweb.asm.Type.getType(Naming.methodDescriptor(objectTypes, new ObjectType())),
+                // Create an ASM Type descriptor for this descriptor
+                org.objectweb.asm.Type.getType(Naming.methodDescriptor(parameterTypes, returnType)),
+                // Create a handle for the generated lambda method
                 new Handle(Opcodes.H_INVOKESTATIC, lambdaInfo.packageName.replace('.', '/')+
-                        "/"+ generatingClass.name, lambdaInfo.name,
+                        "/"+ generator.currentClass.name, lambdaInfo.name,
                         Naming.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false),
+                // Create an another ASM Type descriptor for this descriptor
                 org.objectweb.asm.Type.getType(Naming.methodDescriptor(parameterTypes, returnType)));
     }
 }

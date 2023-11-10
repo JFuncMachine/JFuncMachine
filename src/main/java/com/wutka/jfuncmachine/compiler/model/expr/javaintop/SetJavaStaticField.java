@@ -1,7 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.expr.javaintop;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Naming;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
@@ -38,10 +38,10 @@ public class SetJavaStaticField extends Expression {
         expr.findCaptured(env);
     }
 
-    public void generate(InstructionGenerator instructionGenerator, Environment env) {
-        expr.generate(instructionGenerator, env);
+    public void generate(ClassGenerator generator, Environment env) {
+        expr.generate(generator, env);
 
-        instructionGenerator.putstatic(Naming.className(className),
+        generator.instGen.putstatic(Naming.className(className),
                 fieldName, fieldType.getTypeDescriptor());
     }
 }

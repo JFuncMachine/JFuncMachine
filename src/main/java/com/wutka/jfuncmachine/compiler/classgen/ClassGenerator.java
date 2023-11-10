@@ -10,6 +10,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InnerClassNode;
+import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.io.File;
@@ -21,15 +22,19 @@ import java.util.List;
 import java.util.Map;
 
 public class ClassGenerator {
+    public static final String lambdaIntMethodName = "apply";
     public final ClassGeneratorOptions options;
 
-    public String currentPackageName;
-    public String currentClassName;
+    public ClassDef currentClass;
+    public MethodDef currentMethod;
 
-    public List<MethodDef> addedLambdas = new ArrayList<>();
-    public int nextLambdaInt;
-    public int nextLambda;
-    public Map<FunctionType, LambdaIntInfo> interfaces = new HashMap<>();
+    protected List<MethodDef> addedLambdas = new ArrayList<>();
+    protected Map<FunctionType, LambdaIntInfo> interfaces = new HashMap<>();
+    protected List<LocalVariableNode> localVariables = new ArrayList<>();
+    protected int nextLambdaInt;
+    protected int nextLambda;
+
+    public InstructionGenerator instGen;
 
     public ClassGenerator() {
         this.options = new ClassGeneratorOptions();
@@ -41,8 +46,7 @@ public class ClassGenerator {
 
     public void generate(ClassDef clazz, String outputDirectory)
         throws IOException {
-        currentPackageName = clazz.packageName;
-        currentClassName = clazz.name;
+        this.currentClass = clazz;
         ClassNode newNode = createClassNode(clazz);
 
         writeClassNode(newNode, outputDirectory);
@@ -61,9 +65,10 @@ public class ClassGenerator {
         newNode.accept(writer);
 
         File outDir = new File(outputDirectory+File.separator+
-                currentPackageName.replace('.', File.separatorChar));
+                currentClass.packageName.replace('.', File.separatorChar));
         outDir.mkdirs();
-        Files.write(new File(outDir, currentClassName+".class").toPath(), writer.toByteArray());
+        Files.write(new File(outDir, currentClass.name+".class").toPath(),
+                writer.toByteArray());
     }
 
     public ClassNode createClassNode(ClassDef clazz) {
@@ -94,12 +99,15 @@ public class ClassGenerator {
                     case 22 -> Opcodes.V22;
                     default -> Opcodes.V21;
                 };
+
         newNode.access = clazz.access;
         newNode.name = Naming.className(clazz);
         newNode.signature = Naming.classSignature(clazz);
 
         if ((clazz.access & Opcodes.ACC_INTERFACE) == 0) {
             newNode.superName = Naming.className(clazz.superPackageName, clazz.superName);
+
+            // Assume that we are going to use lambdas at some point and just add this in now
             newNode.innerClasses.add(
                     new InnerClassNode("java/lang/invoke/MethodHandles$Lookup",
                             "java/lang/invoke/MethodHandles", "Lookup",
@@ -110,9 +118,11 @@ public class ClassGenerator {
 
         for (MethodDef methodDef : clazz.methodDefs) {
             MethodNode methodNode = generateMethod(methodDef, clazz);
+            currentMethod = methodDef;
             newNode.methods.add(methodNode);
         }
         for (MethodDef methodDef : addedLambdas) {
+            currentMethod = methodDef;
             MethodNode methodNode = generateMethod(methodDef, clazz);
             newNode.methods.add(methodNode);
         }
@@ -123,6 +133,7 @@ public class ClassGenerator {
 
     public MethodNode generateMethod(MethodDef methodDef, ClassDef clazz) {
         String methodSignature;
+        localVariables = new ArrayList<>();
         if (methodDef.getReturnType() instanceof FunctionType funcType) {
             LambdaIntInfo info = allocateLambdaInt(funcType);
             methodSignature = Naming.lambdaReturnDescriptor(methodDef,
@@ -133,16 +144,17 @@ public class ClassGenerator {
         MethodNode newMethod = new MethodNode(methodDef.access, methodDef.name,
                 methodSignature, null, null);
 
+        newMethod.localVariables = localVariables;
         if ((methodDef.access & Access.ABSTRACT) == 0) {
-            InstructionGenerator instructionGenerator =
+            instGen =
                     new InstructionGenerator(this, clazz, newMethod.instructions);
             Environment env = new Environment(methodDef);
             for (Field f : methodDef.parameters) {
                 env.allocate(f.name, f.type);
             }
-            instructionGenerator.label(methodDef.startLabel);
-            methodDef.body.generate(instructionGenerator, env);
-            instructionGenerator.return_by_type(methodDef.returnType);
+            instGen.label(methodDef.startLabel);
+            methodDef.body.generate(this, env);
+            instGen.return_by_type(methodDef.returnType);
         }
 
         return newMethod;
@@ -157,22 +169,24 @@ public class ClassGenerator {
             params[i] = new Field("param"+i, info.type.parameterTypes[i]);
         }
 
-        MethodDef interfaceMethod = new MethodDef("apply", Access.PUBLIC + Access.ABSTRACT,
+        MethodDef interfaceMethod = new MethodDef(ClassGenerator.lambdaIntMethodName,
+                Access.PUBLIC + Access.ABSTRACT,
                 params, info.type.returnType, null);
 
-        ClassDef classDef = new ClassDef(currentPackageName, className,
+        ClassDef classDef = new ClassDef(currentClass.packageName, className,
                 Access.INTERFACE + Access.PUBLIC + Access.ABSTRACT,
                 new MethodDef[] { interfaceMethod }, new ClassField[0]);
 
         ClassNode newNode = createClassNode(classDef);
 
-        currentClassName = className;
         writeClassNode(newNode, outputDirectory);
     }
 
     public void addMethodToGenerate(MethodDef method) {
         addedLambdas.add(method);
     }
+
+    public void addLocalVariable(LocalVariableNode node) { localVariables.add(node); }
 
     protected String generateLambdaName() {
         String name = "lambda$"+nextLambda;
@@ -181,7 +195,7 @@ public class ClassGenerator {
     }
 
     protected String generateLambdaIntName() {
-        String name = currentClassName+"$lambdaint$"+nextLambdaInt;
+        String name = currentClass.name+"$lambdaint$"+nextLambdaInt;
         nextLambdaInt++;
         return name;
     }
@@ -189,14 +203,16 @@ public class ClassGenerator {
     public LambdaIntInfo allocateLambdaInt(FunctionType functionType) {
         LambdaIntInfo info = interfaces.get(functionType);
         if (info != null) return info;
-        info = new LambdaIntInfo(currentPackageName, generateLambdaIntName(), functionType);
+        info = new LambdaIntInfo(currentClass.packageName, generateLambdaIntName(),
+                functionType);
         interfaces.put(functionType, info);
         return info;
     }
 
     public LambdaInfo allocateLambda(FunctionType type) {
 
-        LambdaInfo info = new LambdaInfo(currentPackageName, generateLambdaName(), type);
+        LambdaInfo info = new LambdaInfo(currentClass.packageName,
+                generateLambdaName(), type);
 
         return info;
     }

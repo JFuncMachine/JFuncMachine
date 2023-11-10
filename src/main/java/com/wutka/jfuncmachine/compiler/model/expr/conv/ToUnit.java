@@ -1,10 +1,8 @@
 package com.wutka.jfuncmachine.compiler.model.expr.conv;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
-import com.wutka.jfuncmachine.compiler.model.types.IntType;
-import com.wutka.jfuncmachine.compiler.model.types.ShortType;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 import com.wutka.jfuncmachine.compiler.model.types.UnitType;
@@ -29,7 +27,7 @@ public class ToUnit extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         Type exprType = expr.getType();
 
         expr.generate(generator, env);
@@ -38,9 +36,9 @@ public class ToUnit extends Expression {
             case UnitType u -> {}
             default -> {
                 if (exprType.getStackSize() == 2) {
-                    generator.pop2();
+                    generator.instGen.pop2();
                 } else {
-                    generator.pop();
+                    generator.instGen.pop();
                 }
             }
         }

@@ -3,7 +3,8 @@ package com.wutka.jfuncmachine.compiler.classgen;
 import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
-import com.wutka.jfuncmachine.compiler.model.types.*;
+import com.wutka.jfuncmachine.compiler.model.types.Field;
+import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class Naming {
     public static String className(ClassDef clazz) {

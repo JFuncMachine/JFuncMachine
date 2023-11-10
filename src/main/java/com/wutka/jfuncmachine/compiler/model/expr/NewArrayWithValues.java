@@ -1,23 +1,11 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
+import com.wutka.jfuncmachine.compiler.classgen.LambdaIntInfo;
 import com.wutka.jfuncmachine.compiler.classgen.Naming;
-import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import com.wutka.jfuncmachine.compiler.model.expr.constants.IntConstant;
-import com.wutka.jfuncmachine.compiler.model.types.ArrayType;
-import com.wutka.jfuncmachine.compiler.model.types.BooleanType;
-import com.wutka.jfuncmachine.compiler.model.types.ByteType;
-import com.wutka.jfuncmachine.compiler.model.types.CharType;
-import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
-import com.wutka.jfuncmachine.compiler.model.types.FloatType;
-import com.wutka.jfuncmachine.compiler.model.types.FunctionType;
-import com.wutka.jfuncmachine.compiler.model.types.IntType;
-import com.wutka.jfuncmachine.compiler.model.types.LongType;
-import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
-import com.wutka.jfuncmachine.compiler.model.types.ShortType;
-import com.wutka.jfuncmachine.compiler.model.types.StringType;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.compiler.model.types.*;
 
 public class NewArrayWithValues extends Expression {
     public final Type arrayType;
@@ -46,29 +34,32 @@ public class NewArrayWithValues extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         new IntConstant(arrayValues.length, filename, lineNumber).generate(generator, env);
         switch (arrayType) {
-            case ObjectType o -> generator.anewarray(Naming.className(o.className));
-            case StringType s -> generator.anewarray("java/lang/String");
-            case FunctionType s -> throw new JFuncMachineException("FunctionType not implemented");
-            default -> generator.newarray(arrayType);
+            case ObjectType o -> generator.instGen.anewarray(Naming.className(o.className));
+            case StringType s -> generator.instGen.anewarray("java/lang/String");
+            case FunctionType f -> {
+                LambdaIntInfo intInfo = generator.allocateLambdaInt(f);
+                generator.instGen.anewarray(Naming.className(intInfo.packageName + "." + intInfo.name));
+            }
+            default -> generator.instGen.newarray(arrayType);
         }
 
         for (int i=0; i < arrayValues.length; i++) {
-            generator.dup();
+            generator.instGen.dup();
             new IntConstant(i, filename, lineNumber).generate(generator, env);
             arrayValues[i].generate(generator, env);
             switch (arrayType) {
-                case BooleanType b -> generator.bastore();
-                case ByteType b -> generator.bastore();
-                case CharType c -> generator.castore();
-                case DoubleType d -> generator.dastore();
-                case FloatType f -> generator.fastore();
-                case IntType it -> generator.iastore();
-                case LongType l -> generator.lastore();
-                case ShortType s -> generator.sastore();
-                default -> generator.aastore();
+                case BooleanType b -> generator.instGen.bastore();
+                case ByteType b -> generator.instGen.bastore();
+                case CharType c -> generator.instGen.castore();
+                case DoubleType d -> generator.instGen.dastore();
+                case FloatType f -> generator.instGen.fastore();
+                case IntType it -> generator.instGen.iastore();
+                case LongType l -> generator.instGen.lastore();
+                case ShortType s -> generator.instGen.sastore();
+                default -> generator.instGen.aastore();
             }
         }
     }

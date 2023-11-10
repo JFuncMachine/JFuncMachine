@@ -1,7 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.InlineFunction;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -32,7 +32,7 @@ public class InlineCall extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         for (Expression expr: arguments) {
             expr.generate(generator, env);
         }

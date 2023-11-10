@@ -1,9 +1,9 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
+import com.wutka.jfuncmachine.compiler.classgen.LambdaIntInfo;
 import com.wutka.jfuncmachine.compiler.classgen.Naming;
-import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 
 public class NewArray extends Expression {
@@ -31,13 +31,16 @@ public class NewArray extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         arraySize.generate(generator, env);
         switch (arrayType) {
-            case ObjectType o -> generator.anewarray(Naming.className(o.className));
-            case StringType s -> generator.anewarray("java/lang/String");
-            case FunctionType s -> throw new JFuncMachineException("FunctionType not implemented");
-            default -> generator.newarray(arrayType);
+            case ObjectType o -> generator.instGen.anewarray(Naming.className(o.className));
+            case StringType s -> generator.instGen.anewarray("java/lang/String");
+            case FunctionType f -> {
+                LambdaIntInfo intInfo = generator.allocateLambdaInt(f);
+                generator.instGen.anewarray(Naming.className(intInfo.packageName+"."+intInfo.name));
+            }
+            default -> generator.instGen.newarray(arrayType);
         }
     }
 }

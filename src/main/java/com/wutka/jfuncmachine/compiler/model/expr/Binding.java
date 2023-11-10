@@ -1,18 +1,10 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.EnvVar;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Label;
-import com.wutka.jfuncmachine.compiler.model.types.BooleanType;
-import com.wutka.jfuncmachine.compiler.model.types.ByteType;
-import com.wutka.jfuncmachine.compiler.model.types.CharType;
-import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
-import com.wutka.jfuncmachine.compiler.model.types.FloatType;
-import com.wutka.jfuncmachine.compiler.model.types.IntType;
-import com.wutka.jfuncmachine.compiler.model.types.LongType;
-import com.wutka.jfuncmachine.compiler.model.types.ShortType;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
 public class Binding extends Expression {
@@ -83,7 +75,7 @@ public class Binding extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
 
         Environment newEnv = new Environment(env);
 
@@ -110,6 +102,10 @@ public class Binding extends Expression {
 
             Label bindingVarStart = new Label();
 
+            generator.instGen.generateLocalVariable(pair.name, pair.value.getType(),
+                    bindingVarStart, bindingEnd, envVar.value);
+            generator.instGen.label(bindingVarStart);
+
             int opcode = switch (pair.value.getType()) {
                 case BooleanType b -> Opcodes.ISTORE;
                 case ByteType b -> Opcodes.ISTORE;
@@ -121,13 +117,13 @@ public class Binding extends Expression {
                 case ShortType s -> Opcodes.ISTORE;
                 default -> Opcodes.ASTORE;
             };
-            generator.rawIntOpcode(opcode, envVar.value);
+            generator.instGen.rawIntOpcode(opcode, envVar.value);
         }
         if (name != null) {
-            generator.label(label);
+            generator.instGen.label(label);
         }
         expr.generate(generator, newEnv);
-        generator.label(bindingEnd);
+        generator.instGen.label(bindingEnd);
     }
 
     public static class BindingPair {

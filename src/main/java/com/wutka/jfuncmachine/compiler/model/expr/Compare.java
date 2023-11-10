@@ -1,7 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -31,9 +31,9 @@ public abstract class Compare extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         expr1.generate(generator, env);
         expr2.generate(generator, env);
-        generator.rawOpcode(getOpcode());
+        generator.instGen.rawOpcode(getOpcode());
     }
 }

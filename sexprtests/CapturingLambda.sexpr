@@ -2,7 +2,7 @@
   (
     (MethodDef "createLambda" (Access PUBLIC STATIC)
         ((Field "num" (object java.lang.Integer)))
-        '(function null (string (object java.lang.Integer)) (object java.lang.Integer))'
+        '(function (string (object java.lang.Integer)) (object java.lang.Integer))'
         (object java.util.function.BiFunction)
         (Lambda (object java.util.function.BiFunction) ((Field thing string) (Field n (object java.lang.Integer))) (object java.lang.Integer)
             (Box (InlineCall IntAdd ((Unbox (GetValue n (object java.lang.Integer)))
@@ -19,7 +19,11 @@
                  Visibility.Separate
             (CallJavaMethod "java.io.PrintStream" "println"
                 (GetJavaStaticField "java.lang.System" "out" (object java.io.PrintStream))
-                ((GetValue lam (object java.util.function.BiFunction))) unit))
+                ((Invoke "apply" (object java.util.function.BiFunction)
+                    (string (object java.lang.Integer)) (object java.lang.Integer)
+                    (GetValue lam (object java.util.function.BiFunction))
+                    ((StringConstant "foobar") (Box (IntConstant 42)))))
+                     unit))
     )
   )
   ())

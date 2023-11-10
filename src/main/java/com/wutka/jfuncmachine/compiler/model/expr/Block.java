@@ -1,7 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -33,14 +33,14 @@ public class Block extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         for (int i=0; i < expressions.length; i++) {
             expressions[i].generate(generator, env);
             if (i < expressions.length-1) {
                 if (expressions[i].getType().getStackSize() == 2) {
-                    generator.pop2();
+                    generator.instGen.pop2();
                 } else {
-                    generator.pop();
+                    generator.instGen.pop();
                 }
             }
         }

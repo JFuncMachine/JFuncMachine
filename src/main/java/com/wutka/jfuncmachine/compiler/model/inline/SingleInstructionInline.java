@@ -1,7 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.inline;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.InlineFunction;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -14,7 +14,7 @@ public class SingleInstructionInline extends InlineFunction {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
-        generator.rawOpcode(opcode);
+    public void generate(ClassGenerator generator, Environment env) {
+        generator.instGen.rawOpcode(opcode);
     }
 }

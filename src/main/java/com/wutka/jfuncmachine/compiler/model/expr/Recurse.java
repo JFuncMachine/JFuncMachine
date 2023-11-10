@@ -1,7 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
@@ -33,7 +33,7 @@ public class Recurse extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         MethodDef methodDef = env.getCurrentMethod();
         if (nextValues.length != methodDef.parameters.length) {
             throw generateException(
@@ -64,8 +64,8 @@ public class Recurse extends Expression {
                 case ShortType s -> Opcodes.ISTORE;
                 default -> Opcodes.ASTORE;
             };
-            generator.rawIntOpcode(opcode, i);
+            generator.instGen.rawIntOpcode(opcode, i);
         }
-        generator.gotolabel(methodDef.startLabel);
+        generator.instGen.gotolabel(methodDef.startLabel);
     }
 }

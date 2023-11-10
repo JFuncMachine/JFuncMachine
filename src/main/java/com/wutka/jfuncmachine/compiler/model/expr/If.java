@@ -1,7 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Label;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -71,7 +71,7 @@ public class If extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         if (comparison.numArgs > 0) {
             comparison.expr1.generate(generator, env);
         }
@@ -79,20 +79,20 @@ public class If extends Expression {
             comparison.expr2.generate(generator, env);
         }
         if (comparison.compareFirst) {
-            generator.rawOpcode(comparison.compareOpcode);
+            generator.instGen.rawOpcode(comparison.compareOpcode);
         }
         Label endLabel = new Label();
         if (hasFalse) {
             Label falseLabel = new Label();
-            generator.rawJumpOpcode(comparison.opcode, falseLabel);
+            generator.instGen.rawJumpOpcode(comparison.opcode, falseLabel);
             trueExpr.generate(generator, env);
-            generator.gotolabel(endLabel);
-            generator.label(falseLabel);
+            generator.instGen.gotolabel(endLabel);
+            generator.instGen.label(falseLabel);
             falseExpr.generate(generator, env);
         } else {
-            generator.rawJumpOpcode(comparison.opcode, endLabel);
+            generator.instGen.rawJumpOpcode(comparison.opcode, endLabel);
             trueExpr.generate(generator, env);
         }
-        generator.label(endLabel);
+        generator.instGen.label(endLabel);
     }
 }

@@ -4,28 +4,9 @@ import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.types.*;
-import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
-import com.wutka.jfuncmachine.compiler.model.types.FloatType;
-import com.wutka.jfuncmachine.compiler.model.types.LongType;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IincInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.InvokeDynamicInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.LocalVariableNode;
-import org.objectweb.asm.tree.LookupSwitchInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MultiANewArrayInsnNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
-import java.lang.String;
 import java.lang.reflect.Method;
 
 public class InstructionGenerator {
@@ -306,23 +287,12 @@ public class InstructionGenerator {
         return this;
     }
 
-    public InstructionGenerator generateLocalVariable(String name, String typeDescriptor,
+    public InstructionGenerator generateLocalVariable(String name, Type type,
                                                       Label startLoc, Label endLoc,
                                                       int index) {
-//        instructionList.add(new LocalVariableNode(name, typeDescriptor, null,
-//                new LabelNode(startLoc.label), new LabelNode(endLoc.label), index));
+        classGen.addLocalVariable(new LocalVariableNode(name, type.getTypeDescriptor(),
+                    type.getTypeDescriptor(),
+                new LabelNode(startLoc.label), new LabelNode(endLoc.label), index));
         return this;
-    }
-
-    public ClassDef getGeneratingClass() {
-        return generatingClass;
-    }
-
-    public LambdaInfo allocateLambda(FunctionType type) {
-        return classGen.allocateLambda(type);
-    }
-
-    public LambdaIntInfo allocateLambdaInt(FunctionType type) {
-        return classGen.allocateLambdaInt(type);
     }
 }

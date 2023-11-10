@@ -1,9 +1,8 @@
 package com.wutka.jfuncmachine.compiler.model.expr.conv;
 
+import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.InstructionGenerator;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
-import com.wutka.jfuncmachine.compiler.model.types.CharType;
 import com.wutka.jfuncmachine.compiler.model.types.IntType;
 import com.wutka.jfuncmachine.compiler.model.types.ShortType;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
@@ -29,13 +28,13 @@ public class ToShort extends Expression {
     }
 
     @Override
-    public void generate(InstructionGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env) {
         Type exprType = expr.getType();
 
         expr.generate(generator, env);
 
         switch (exprType) {
-            case IntType i -> generator.i2s();
+            case IntType i -> generator.instGen.i2s();
             case ShortType s -> {}
             default -> throw generateException(
                     String.format("Can't convert %s into short", exprType));

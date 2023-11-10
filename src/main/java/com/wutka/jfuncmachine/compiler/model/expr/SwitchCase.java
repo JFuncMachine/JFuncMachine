@@ -1,6 +1,5 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
-import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import com.wutka.jfuncmachine.compiler.model.SourceElement;
 
 public class SwitchCase extends SourceElement {
