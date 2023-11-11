@@ -284,6 +284,9 @@ public class InstructionGenerator {
     public InstructionGenerator sipush(int value) { instructionList.add(new IntInsnNode(Opcodes.SIPUSH, value)); return this; }
     public InstructionGenerator swap() { instructionList.add(new InsnNode(Opcodes.SWAP)); return this; }
     public InstructionGenerator trycatch(Label start, Label end, Label handler, String catchClass) {
+        if (catchClass != null) {
+            catchClass = catchClass.replace('.', '/');
+        }
         classGen.addTryCatch(new TryCatchBlockNode(new LabelNode(start.label), new LabelNode(end.label),
                 new LabelNode(handler.label), catchClass));
         return this;

@@ -1,0 +1,18 @@
+(ClassDef "com.wutka.test" "Finally" (Access PUBLIC)
+  (
+    (MethodDef "main" (Access PUBLIC STATIC)
+      {param types}
+        ((Field "args" (array string)))
+      {return type} unit
+      {body}
+        (TryCatchFinally
+          (Throw unit
+            (CallJavaConstructor "java.io.IOException" ((StringConstant "Uh oh"))))
+          ((Catch "java.io.IOException" x
+            (Throw unit (GetValue x (object "java.lang.Throwable")))))
+          (CallJavaMethod "java.io.PrintStream" "println"
+            (GetJavaStaticField "java.lang.System" "out" (object java.io.PrintStream))
+                ((StringConstant "Hello World!")) unit))
+    )
+  )
+  ())

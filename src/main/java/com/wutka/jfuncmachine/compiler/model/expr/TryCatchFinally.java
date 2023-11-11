@@ -72,12 +72,16 @@ public class TryCatchFinally extends Expression {
         tryBody.generate(generator, newEnv);
 
         if (finallyBody != null) {
+            Label finallyStart = new Label();
+            Label finallyEnd = new Label();
             EnvVar saveVar = null;
             if (!(tryBody.getType() instanceof UnitType)) {
+                generator.instGen.label(finallyStart);
                 saveVar = env.allocate(tryBody.getType());
+                generator.instGen.generateLocalVariable(saveVar.name, saveVar.type,
+                        finallyStart, finallyEnd, saveVar.value);
                 saveVar.generateSet(generator);
             }
-
 
             generator.instGen.label(bodyEnd);
 
@@ -87,42 +91,52 @@ public class TryCatchFinally extends Expression {
 
             if (!(tryBody.getType() instanceof UnitType)) {
                 saveVar.generateGet(generator);
+                generator.instGen.label(finallyEnd);
             }
         }
-        generator.instGen.gotolabel(bodyEnd);
+        generator.instGen.gotolabel(blockEnd);
 
         for (Catch catchExpr: catchExprs) {
             Label catchStart = new Label();
             Label catchEnd = new Label();
 
             generator.instGen.trycatch(blockStart, bodyEnd, catchStart, catchExpr.catchClass);
+            if (finallyBody != null) {
+                generator.instGen.trycatch(catchStart, catchEnd, finallyBlock, null);
+            }
             Environment catchEnv = new Environment(env);
             EnvVar excVar = catchEnv.allocate(catchExpr.catchVariable, new ObjectType(catchExpr.catchClass));
 
-            generator.instGen.trycatch(catchStart, catchEnd, finallyBlock, null);
-
             generator.instGen.label(catchStart);
+
+            generator.instGen.generateLocalVariable(excVar.name, excVar.type,
+                    catchStart, catchEnd, excVar.value);
 
             excVar.generateSet(generator);
 
-            catchExpr.body.generate(generator, newEnv);
+            catchExpr.body.generate(generator, catchEnv);
 
+            generator.instGen.label(catchEnd);
 
+            if (finallyBody != null) {
+                finallyBody.generate(generator, env);
+            }
 
-        }
-        if (!(tryBody.getType() instanceof UnitType) && (finallyBody != null)) {
-        } else {
-            tryBody.generate(generator, env);
+            generator.instGen.gotolabel(blockEnd);
         }
 
         if (finallyBody != null) {
+            generator.instGen.label(finallyBlock);
+            EnvVar var = env.allocate(new ObjectType("java.lang.Throwable"));
+            var.generateSet(generator);
+
             finallyBody.generate(generator, env);
-            if ()
+
+            var.generateGet(generator);
+            generator.instGen.athrow();
         }
 
-        generator.instGen.gotolabel(blockEnd);
-
-
+        generator.instGen.label(blockEnd);
     }
 
 }

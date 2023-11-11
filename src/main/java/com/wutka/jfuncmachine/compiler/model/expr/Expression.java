@@ -14,9 +14,6 @@ public abstract class Expression extends SourceElement {
 
     public abstract void findCaptured(Environment env);
 
-    // TODO: Should be abstract, but for now, allow it to be implemented case-by-case
-    public void generate(ClassGenerator generator, Environment env) {
-
-    }
+    public abstract void generate(ClassGenerator generator, Environment env);
 
 }

@@ -144,7 +144,7 @@ public class TestBasicClassGeneration {
             var loadedClass = loader.loadClass(newClass.getFullClassName());
             Assertions.assertEquals(newClass.packageName, loadedClass.getPackageName());
             Assertions.assertEquals(newClass.name, loadedClass.getSimpleName());
-            Assertions.assertEquals(newClass.getFullClassName(), loadedClass.getName()));
+            Assertions.assertEquals(newClass.getFullClassName(), loadedClass.getName());
         }
     }
 
