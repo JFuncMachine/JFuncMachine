@@ -1,12 +1,19 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
 public class ClassGeneratorOptionsBuilder {
-    public int javaVersion = 21;
-    public boolean localTailCallsToLoops = true;
-    public boolean fullTailCalls = false;
-    public boolean autobox = true;
+    public int javaVersion;
+    public boolean localTailCallsToLoops;
+    public boolean fullTailCalls;
+    public boolean autobox;
+    public boolean shortCircuitBooleans;
 
     public ClassGeneratorOptionsBuilder() {
+        ClassGeneratorOptions defaults = new ClassGeneratorOptions();
+        this.javaVersion = defaults.javaVersion;
+        this.localTailCallsToLoops = defaults.localTailCallsToLoops;
+        this.fullTailCalls = defaults.fullTailCalls;
+        this.autobox = defaults.autobox;
+        this.shortCircuitBooleans = defaults.shortCircuitBooleans;
 
     }
 
@@ -30,9 +37,14 @@ public class ClassGeneratorOptionsBuilder {
         return this;
     }
 
+    public ClassGeneratorOptionsBuilder withShortCircuitBooleans(boolean option) {
+        this.shortCircuitBooleans = option;
+        return this;
+    }
+
     public ClassGeneratorOptions build() {
         return new ClassGeneratorOptions(javaVersion, localTailCallsToLoops,
-                fullTailCalls, autobox);
+                fullTailCalls, autobox, shortCircuitBooleans);
     }
 
 }

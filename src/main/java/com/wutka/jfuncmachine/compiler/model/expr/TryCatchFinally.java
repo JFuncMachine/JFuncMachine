@@ -71,6 +71,8 @@ public class TryCatchFinally extends Expression {
 
         tryBody.generate(generator, newEnv);
 
+        generator.instGen.trycatch(blockStart, bodyEnd, finallyBlock, null);
+
         if (finallyBody != null) {
             Label finallyStart = new Label();
             Label finallyEnd = new Label();
@@ -85,7 +87,6 @@ public class TryCatchFinally extends Expression {
 
             generator.instGen.label(bodyEnd);
 
-            generator.instGen.trycatch(blockStart, bodyEnd, finallyBlock, null);
 
             finallyBody.generate(generator, env);
 
@@ -93,7 +94,10 @@ public class TryCatchFinally extends Expression {
                 saveVar.generateGet(generator);
                 generator.instGen.label(finallyEnd);
             }
+        } else {
+            generator.instGen.label(bodyEnd);
         }
+
         generator.instGen.gotolabel(blockEnd);
 
         for (Catch catchExpr: catchExprs) {
@@ -116,10 +120,31 @@ public class TryCatchFinally extends Expression {
 
             catchExpr.body.generate(generator, catchEnv);
 
-            generator.instGen.label(catchEnd);
 
             if (finallyBody != null) {
+                Label finallyStart = new Label();
+                Label finallyEnd = new Label();
+                EnvVar saveVar = null;
+                if (!(catchExpr.body.getType() instanceof UnitType)) {
+                    generator.instGen.label(finallyStart);
+                    saveVar = env.allocate(catchExpr.body.getType());
+                    generator.instGen.generateLocalVariable(saveVar.name, saveVar.type,
+                            finallyStart, finallyEnd, saveVar.value);
+                    saveVar.generateSet(generator);
+                }
+
+                generator.instGen.trycatch(blockStart, bodyEnd, finallyBlock, null);
+
                 finallyBody.generate(generator, env);
+
+                generator.instGen.label(catchEnd);
+
+                if (!(catchExpr.body.getType() instanceof UnitType)) {
+                    saveVar.generateGet(generator);
+                    generator.instGen.label(finallyEnd);
+                }
+            } else {
+                generator.instGen.label(catchEnd);
             }
 
             generator.instGen.gotolabel(blockEnd);
