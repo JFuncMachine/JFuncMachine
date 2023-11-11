@@ -5,8 +5,6 @@ public record FloatType() implements Type {
 
     public String getBoxType() { return BOX_TYPE; }
 
-    public String getTypeDescriptor() { return "F"; }
-
     public boolean isUnboxableFrom(String className) {
         return className.equals("java.lang.Float") ||
                 className.equals("java.lang.Double") ||

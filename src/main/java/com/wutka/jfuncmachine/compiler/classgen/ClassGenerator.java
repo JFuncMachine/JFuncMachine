@@ -4,15 +4,29 @@ import com.wutka.jfuncmachine.compiler.model.Access;
 import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.ClassField;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
+import com.wutka.jfuncmachine.compiler.model.expr.Expression;
+import com.wutka.jfuncmachine.compiler.model.types.ArrayType;
+import com.wutka.jfuncmachine.compiler.model.types.BooleanType;
+import com.wutka.jfuncmachine.compiler.model.types.ByteType;
+import com.wutka.jfuncmachine.compiler.model.types.CharType;
+import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
 import com.wutka.jfuncmachine.compiler.model.types.Field;
+import com.wutka.jfuncmachine.compiler.model.types.FloatType;
 import com.wutka.jfuncmachine.compiler.model.types.FunctionType;
+import com.wutka.jfuncmachine.compiler.model.types.IntType;
+import com.wutka.jfuncmachine.compiler.model.types.LongType;
+import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
+import com.wutka.jfuncmachine.compiler.model.types.ShortType;
+import com.wutka.jfuncmachine.compiler.model.types.StringType;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.compiler.model.types.UnitType;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InnerClassNode;
 import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TryCatchBlockNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +46,7 @@ public class ClassGenerator {
     protected List<MethodDef> addedLambdas = new ArrayList<>();
     protected Map<FunctionType, LambdaIntInfo> interfaces = new HashMap<>();
     protected List<LocalVariableNode> localVariables = new ArrayList<>();
+    protected List<TryCatchBlockNode> tryCatchBlocks = new ArrayList<>();
     protected int nextLambdaInt;
     protected int nextLambda;
 
@@ -102,11 +117,11 @@ public class ClassGenerator {
                 };
 
         newNode.access = clazz.access;
-        newNode.name = Naming.className(clazz);
-        newNode.signature = Naming.classSignature(clazz);
+        newNode.name = className(clazz);
+        newNode.signature = classSignature(clazz);
 
         if ((clazz.access & Opcodes.ACC_INTERFACE) == 0) {
-            newNode.superName = Naming.className(clazz.superPackageName, clazz.superName);
+            newNode.superName = className(clazz.superPackageName, clazz.superName);
 
             // Assume that we are going to use lambdas at some point and just add this in now
             newNode.innerClasses.add(
@@ -118,13 +133,17 @@ public class ClassGenerator {
         }
 
         for (MethodDef methodDef : clazz.methodDefs) {
-            MethodNode methodNode = generateMethod(methodDef, clazz);
             currentMethod = methodDef;
+            MethodNode methodNode = generateMethod(methodDef, clazz);
+            methodNode.tryCatchBlocks.addAll(tryCatchBlocks);
+            tryCatchBlocks.clear();
             newNode.methods.add(methodNode);
         }
         for (MethodDef methodDef : addedLambdas) {
             currentMethod = methodDef;
             MethodNode methodNode = generateMethod(methodDef, clazz);
+            methodNode.tryCatchBlocks.addAll(tryCatchBlocks);
+            tryCatchBlocks.clear();
             newNode.methods.add(methodNode);
         }
         addedLambdas.clear();
@@ -137,10 +156,10 @@ public class ClassGenerator {
         localVariables = new ArrayList<>();
         if (methodDef.getReturnType() instanceof FunctionType funcType) {
             LambdaIntInfo info = allocateLambdaInt(funcType);
-            methodSignature = Naming.lambdaReturnDescriptor(methodDef,
+            methodSignature = lambdaReturnDescriptor(methodDef,
                     info.packageName+"."+info.name);
         } else {
-            methodSignature = Naming.methodDescriptor(methodDef);
+            methodSignature = methodDescriptor(methodDef);
         }
         MethodNode newMethod = new MethodNode(methodDef.access, methodDef.name,
                 methodSignature, null, null);
@@ -191,6 +210,9 @@ public class ClassGenerator {
 
     public void addLocalVariable(LocalVariableNode node) { localVariables.add(node); }
 
+    public void addTryCatch(TryCatchBlockNode node) { tryCatchBlocks.add(node); }
+
+
     protected String generateLambdaName() {
         String name = "lambda$"+nextLambda;
         nextLambda++;
@@ -220,25 +242,105 @@ public class ClassGenerator {
         return info;
     }
 
-    public Type convertFunctionTypeToObjectType(Type type) {
-        if (!(type instanceof FunctionType ftype)) {
-            return type;
-        } else {
-            LambdaIntInfo intInfo = allocateLambdaInt(ftype);
-            return intInfo.getObjectType();
-        }
+    public String className(ClassDef clazz) {
+        return className(clazz.packageName, clazz.name);
     }
 
-    public Type[] convertFunctionTypesToObjectType(Type[] types) {
-        Type[] converted = new Type[types.length];
-        for (int i=0; i < types.length; i++) converted[i] = convertFunctionTypeToObjectType(types[i]);
+    public String className(String packageName, String name) {
+        return packageName.replace('.', '/')+"/"+name;
+    }
 
-        return converted;
+    public String className(String name) {
+        return name.replace('.', '/');
+    }
+
+    public String classSignature(ClassDef clazz) {
+        return "L"+className(clazz)+";";
+    }
+
+    public String methodDescriptor(MethodDef methodDef) {
+        StringBuilder builder = new StringBuilder("(");
+        for (Field f: methodDef.parameters) {
+            builder.append(getTypeDescriptor(f.type));
+        }
+        builder.append(")");
+        builder.append(getTypeDescriptor(methodDef.getReturnType()));
+        return builder.toString();
+    }
+
+    public String lambdaReturnDescriptor(MethodDef methodDef, String lambdaInterfaceName) {
+        StringBuilder builder = new StringBuilder("(");
+        for (Field f: methodDef.parameters) {
+            builder.append(getTypeDescriptor(f.type));
+        }
+        builder.append(")");
+        builder.append("L"+lambdaInterfaceName.replace('.', '/')+";");
+        return builder.toString();
+    }
+
+    public String methodDescriptor(Expression[] arguments, Type returnType) {
+        StringBuilder builder = new StringBuilder("(");
+        for (Expression expr: arguments) {
+            builder.append(getTypeDescriptor(expr.getType()));
+        }
+        builder.append(")");
+        builder.append(getTypeDescriptor(returnType));
+        return builder.toString();
     }
 
     public String methodDescriptor(Type[] parameterTypes, Type returnType) {
-        return Naming.methodDescriptor(
-                convertFunctionTypesToObjectType(parameterTypes),
-                convertFunctionTypeToObjectType(returnType));
+        StringBuilder builder = new StringBuilder("(");
+        for (Type type: parameterTypes) {
+            builder.append(getTypeDescriptor(type));
+        }
+        builder.append(")");
+        builder.append(getTypeDescriptor(returnType));
+        return builder.toString();
+    }
+
+    public String lambdaInDyDescriptor(Type[] parameterTypes, String className) {
+        StringBuilder builder = new StringBuilder("(");
+        for (Type type: parameterTypes) {
+            builder.append(getTypeDescriptor(type));
+        }
+        builder.append(")");
+        builder.append("L"+className.replace('.', '/')+";");
+        return builder.toString();
+    }
+
+    public String lambdaMethodDescriptor(Type[] capturedParameterTypes, Type[] parameterTypes,
+                                                Type returnType) {
+        StringBuilder builder = new StringBuilder("(");
+        for (Type type: capturedParameterTypes) {
+            builder.append(getTypeDescriptor(type));
+        }
+        for (Type type: parameterTypes) {
+            builder.append(getTypeDescriptor(type));
+        }
+        builder.append(")");
+        builder.append(getTypeDescriptor(returnType));
+        return builder.toString();
+    }
+
+    // This used to be in the Type interface, but because of the way interfaces are
+    // allocated for function types, the interface for a function type isn't known
+    // until generation time
+    public String getTypeDescriptor(Type type) {
+        return switch (type) {
+            case ArrayType at -> "[" + getTypeDescriptor(at.containedType());
+            case BooleanType b -> "Z";
+            case ByteType b -> "B";
+            case CharType c -> "C";
+            case DoubleType d -> "D";
+            case FloatType f -> "F";
+            case FunctionType f -> getTypeDescriptor(allocateLambdaInt(f).getObjectType());
+            case IntType i -> "I";
+            case LongType l -> "J";
+            case ObjectType o -> "L" + o.className.replace('.', '/') + ";";
+            case ShortType s -> "S";
+            case StringType s -> "Ljava/lang/String;";
+            case UnitType v -> "V";
+
+        };
     }
 }

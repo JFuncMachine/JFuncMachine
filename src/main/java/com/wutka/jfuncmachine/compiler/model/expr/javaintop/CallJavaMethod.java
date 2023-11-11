@@ -2,7 +2,6 @@ package com.wutka.jfuncmachine.compiler.model.expr.javaintop;
 
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.Naming;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -82,7 +81,7 @@ public class CallJavaMethod extends Expression {
             expr.generate(generator, env);
         }
         generator.instGen.invokevirtual(
-                Naming.className(className),
-                methodName, Naming.methodDescriptor(parameterTypes, returnType));
+                generator.className(className),
+                methodName, generator.methodDescriptor(parameterTypes, returnType));
     }
 }

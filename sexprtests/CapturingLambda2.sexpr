@@ -1,27 +1,37 @@
 (ClassDef "com.wutka.test" "CapturingLambda2" (Access PUBLIC SUPER)
-  (
+  {list of class methods} (
     (MethodDef "createLambda" (Access PUBLIC STATIC)
         ((Field "num" int))
         (function (string int) int)
-        (Lambda ((Field thing string) (Field n int)) int false
+        (Lambda
+            {param types} ((Field thing string) (Field n int))
+            {return type} int
+            {don't create an object-only interface} false
             (InlineCall IntAdd
                 ((GetValue n int)
                  (GetValue num int))))
      )
     (MethodDef "main" (Access PUBLIC STATIC)
-      'param types:'
+      {param types:}
         ((Field "args" (array string)))
-      'return type:' unit
-      'body:ii'
-        (Binding ((BindingPair "lam"
-                    (CallJavaStaticMethod "com.wutka.test.CapturingLambda2" "createLambda"
-                        ((IntConstant 5)) (function (string int) int))))
-                 Visibility.Separate
+      {return type} unit
+      {body}
+        (Binding
+        {Create a variable named lam that holds the func ref returned by createLambda}
+            ((BindingPair "lam"
+                    {Call createLambda passing it an int constant 5}
+                    (CallStaticMethod "createLambda" (int) (function (string int) int)
+                        ((IntConstant 5)) )))
+            {the visibility determines whether other bindings can see previous ones}
+            Visibility.Separate
+            {Invoke System.out.println}
             (CallJavaMethod "java.io.PrintStream" "println"
                 (GetJavaStaticField "java.lang.System" "out" (object java.io.PrintStream))
+                {Print the result of invoking the function ref stored in the lam variable}
                 ((Invoke (GetValue lam (function (string int) int))
-                    ((StringConstant "foobar") (Box (IntConstant 42)))))
+                    ((StringConstant "foobar") (IntConstant 42))))
                      unit))
     )
   )
-  ())
+  {Empty list of class fields} ()
+)

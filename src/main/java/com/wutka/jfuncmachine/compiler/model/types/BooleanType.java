@@ -5,8 +5,6 @@ public record BooleanType() implements Type {
 
     public String getBoxType() { return BOX_TYPE; }
 
-    public String getTypeDescriptor() { return "Z"; }
-
     public boolean isUnboxableFrom(String className) {
         return className.equals("java.lang.Boolean");
     }

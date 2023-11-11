@@ -5,8 +5,6 @@ public record ByteType() implements Type {
 
     public String getBoxType() { return BOX_TYPE; }
 
-    public String getTypeDescriptor() { return "B"; }
-
     public boolean isUnboxableFrom(String className) {
         return className.equals("java.lang.Byte") ||
                 className.equals("java.lang.Integer") ||

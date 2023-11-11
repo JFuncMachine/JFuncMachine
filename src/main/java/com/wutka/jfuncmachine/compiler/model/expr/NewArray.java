@@ -3,7 +3,6 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.classgen.LambdaIntInfo;
-import com.wutka.jfuncmachine.compiler.classgen.Naming;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 
 public class NewArray extends Expression {
@@ -34,11 +33,11 @@ public class NewArray extends Expression {
     public void generate(ClassGenerator generator, Environment env) {
         arraySize.generate(generator, env);
         switch (arrayType) {
-            case ObjectType o -> generator.instGen.anewarray(Naming.className(o.className));
+            case ObjectType o -> generator.instGen.anewarray(generator.className(o.className));
             case StringType s -> generator.instGen.anewarray("java/lang/String");
             case FunctionType f -> {
                 LambdaIntInfo intInfo = generator.allocateLambdaInt(f);
-                generator.instGen.anewarray(Naming.className(intInfo.packageName+"."+intInfo.name));
+                generator.instGen.anewarray(generator.className(intInfo.packageName+"."+intInfo.name));
             }
             default -> generator.instGen.newarray(arrayType);
         }

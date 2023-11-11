@@ -5,8 +5,6 @@ public record ShortType() implements Type {
 
     public String getBoxType() { return BOX_TYPE; }
 
-    public String getTypeDescriptor() { return "S"; }
-
     public boolean isUnboxableFrom(String className) {
         return className.equals("java.lang.Short") ||
                 className.equals("java.lang.Integer") ||

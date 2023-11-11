@@ -172,10 +172,51 @@ public class InstructionGenerator {
     public InstructionGenerator lcmp() { instructionList.add(new InsnNode(Opcodes.LCMP)); return this; }
     public InstructionGenerator lconst_0() { instructionList.add(new InsnNode(Opcodes.LCONST_0)); return this; }
     public InstructionGenerator lconst_1() { instructionList.add(new InsnNode(Opcodes.LCONST_1)); return this; }
-    public InstructionGenerator ldc(double d) { instructionList.add(new LdcInsnNode(d)); return this; }
-    public InstructionGenerator ldc(int i) { instructionList.add(new LdcInsnNode(i)); return this; }
-    public InstructionGenerator ldc(float f) { instructionList.add(new LdcInsnNode(f)); return this; }
-    public InstructionGenerator ldc(long l) { instructionList.add(new LdcInsnNode(l)); return this; }
+    public InstructionGenerator ldc(double d) {
+        if (d == 0.0) {
+            return dconst_0();
+        } else if (d == 1.0) {
+            return dconst_1();
+        } else {
+            instructionList.add(new LdcInsnNode(d));
+            return this;
+        }
+    }
+    public InstructionGenerator ldc(int i) {
+        switch (i) {
+            case -1 -> iconst_m1();
+            case 0 -> iconst_0();
+            case 1 -> iconst_1();
+            case 2 -> iconst_2();
+            case 3 -> iconst_3();
+            case 4 -> iconst_4();
+            case 5 -> iconst_5();
+            default -> instructionList.add(new LdcInsnNode(i));
+        }
+        return this;
+    }
+    public InstructionGenerator ldc(float f) {
+        if (f == 0.0) {
+            return fconst_0();
+        } else if (f == 1.0) {
+            return fconst_1();
+        } else if (f == 2.0) {
+            return fconst_2();
+        } else {
+            instructionList.add(new LdcInsnNode(f));
+            return this;
+        }
+    }
+    public InstructionGenerator ldc(long l) {
+        if (l == 0) {
+            return lconst_0();
+        } else if (l == 1) {
+            return lconst_1();
+        } else {
+            instructionList.add(new LdcInsnNode(l));
+            return this;
+        }
+    }
     public InstructionGenerator ldc(String s) { instructionList.add(new LdcInsnNode(s)); return this; }
     public InstructionGenerator ldc(Method m) { instructionList.add(new LdcInsnNode(m)); return this; }
     public InstructionGenerator ldc(Handle h) { instructionList.add(new LdcInsnNode(h.getAsmHandle())); return this; }
@@ -242,6 +283,11 @@ public class InstructionGenerator {
     public InstructionGenerator sastore() { instructionList.add(new InsnNode(Opcodes.SASTORE)); return this; }
     public InstructionGenerator sipush(int value) { instructionList.add(new IntInsnNode(Opcodes.SIPUSH, value)); return this; }
     public InstructionGenerator swap() { instructionList.add(new InsnNode(Opcodes.SWAP)); return this; }
+    public InstructionGenerator trycatch(Label start, Label end, Label handler, String catchClass) {
+        classGen.addTryCatch(new TryCatchBlockNode(new LabelNode(start.label), new LabelNode(end.label),
+                new LabelNode(handler.label), catchClass));
+        return this;
+    }
     public InstructionGenerator tableswitch(int min, int max, Label default_label, Label[] labels) {
         LabelNode[] labelNodes = new LabelNode[labels.length];
         for (int i=0; i < labels.length; i++) {
@@ -290,8 +336,8 @@ public class InstructionGenerator {
     public InstructionGenerator generateLocalVariable(String name, Type type,
                                                       Label startLoc, Label endLoc,
                                                       int index) {
-        classGen.addLocalVariable(new LocalVariableNode(name, type.getTypeDescriptor(),
-                    type.getTypeDescriptor(),
+        classGen.addLocalVariable(new LocalVariableNode(name, classGen.getTypeDescriptor(type),
+                    classGen.getTypeDescriptor(type),
                 new LabelNode(startLoc.label), new LabelNode(endLoc.label), index));
         return this;
     }

@@ -4,8 +4,6 @@ public record DoubleType() implements Type {
     public static final String BOX_TYPE = "java.lang.Double";
     public String getBoxType() { return BOX_TYPE; }
 
-    public String getTypeDescriptor() { return "D"; }
-
     public boolean isUnboxableFrom(String className) {
         return className.equals("java.lang.Double") ||
                 className.equals("java.lang.Float") ||

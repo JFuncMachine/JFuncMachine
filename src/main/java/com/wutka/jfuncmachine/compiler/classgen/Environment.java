@@ -42,6 +42,11 @@ public class Environment {
         return newVar;
     }
 
+    public EnvVar allocate(Type type) {
+        String name = UUID.randomUUID().toString();
+        return allocate(name, type);
+    }
+
     public void free(int loc) {
         boolean found = false;
         for (String key: vars.keySet()) {

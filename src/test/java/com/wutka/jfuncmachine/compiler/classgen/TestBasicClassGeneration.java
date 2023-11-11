@@ -41,10 +41,10 @@ public class TestBasicClassGeneration {
         try (var loader = new URLClassLoader(new URL[] {
                 new File("testclasspath").toURI().toURL()
         })) {
-            var loadedClass = loader.loadClass(newClass.packageName + "." + newClass.name);
+            var loadedClass = loader.loadClass(newClass.getFullClassName());
             Assertions.assertEquals(newClass.packageName, loadedClass.getPackageName());
             Assertions.assertEquals(newClass.name, loadedClass.getSimpleName());
-            Assertions.assertEquals(newClass.packageName + "." + newClass.name, loadedClass.getName());
+            Assertions.assertEquals(newClass.getFullClassName(), loadedClass.getName());
         }
     }
 
@@ -85,10 +85,10 @@ public class TestBasicClassGeneration {
         try (var loader = new URLClassLoader(new URL[] {
                 new File("testclasspath").toURI().toURL()
         })) {
-            var loadedClass = loader.loadClass(newClass.packageName + "." + newClass.name);
+            var loadedClass = loader.loadClass(newClass.getFullClassName());
             Assertions.assertEquals(newClass.packageName, loadedClass.getPackageName());
             Assertions.assertEquals(newClass.name, loadedClass.getSimpleName());
-            Assertions.assertEquals(newClass.packageName + "." + newClass.name, loadedClass.getName());
+            Assertions.assertEquals(newClass.getFullClassName(), loadedClass.getName());
         }
     }
 
@@ -141,10 +141,10 @@ public class TestBasicClassGeneration {
         try (var loader = new URLClassLoader(new URL[] {
                 new File("testclasspath").toURI().toURL()
         })) {
-            var loadedClass = loader.loadClass(newClass.packageName + "." + newClass.name);
+            var loadedClass = loader.loadClass(newClass.getFullClassName());
             Assertions.assertEquals(newClass.packageName, loadedClass.getPackageName());
             Assertions.assertEquals(newClass.name, loadedClass.getSimpleName());
-            Assertions.assertEquals(newClass.packageName + "." + newClass.name, loadedClass.getName());
+            Assertions.assertEquals(newClass.getFullClassName(), loadedClass.getName()));
         }
     }
 
@@ -197,10 +197,10 @@ public class TestBasicClassGeneration {
         try (var loader = new URLClassLoader(new URL[] {
                 new File("testclasspath").toURI().toURL()
         })) {
-            var loadedClass = loader.loadClass(newClass.packageName + "." + newClass.name);
+            var loadedClass = loader.loadClass(newClass.getFullClassName());
             Assertions.assertEquals(newClass.packageName, loadedClass.getPackageName());
             Assertions.assertEquals(newClass.name, loadedClass.getSimpleName());
-            Assertions.assertEquals(newClass.packageName + "." + newClass.name, loadedClass.getName());
+            Assertions.assertEquals(newClass.getFullClassName(), loadedClass.getName());
         }
     }
 }

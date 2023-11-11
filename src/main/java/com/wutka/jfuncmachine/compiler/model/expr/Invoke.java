@@ -3,7 +3,6 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.classgen.LambdaIntInfo;
-import com.wutka.jfuncmachine.compiler.classgen.Naming;
 import com.wutka.jfuncmachine.compiler.model.types.FunctionType;
 import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
@@ -113,7 +112,7 @@ public class Invoke extends Expression {
 
         if (targetType instanceof FunctionType) {
             LambdaIntInfo intInfo = generator.allocateLambdaInt((FunctionType) targetType);
-            className = intInfo.packageName + intInfo.name;
+            className = intInfo.packageName + "." + intInfo.name;
         } else if (targetType instanceof ObjectType) {
             className = ((ObjectType) targetType).className;
         } else {
@@ -121,7 +120,7 @@ public class Invoke extends Expression {
         }
 
         generator.instGen.invokeinterface(
-                Naming.className(className),
-                intMethod, Naming.methodDescriptor(parameterTypes, returnType));
+                generator.className(className),
+                intMethod, generator.methodDescriptor(parameterTypes, returnType));
     }
 }

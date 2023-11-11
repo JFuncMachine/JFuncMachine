@@ -93,4 +93,8 @@ public class ClassDef extends SourceElement {
         this.methodDefs = methodDefs;
         this.fields = fields;
     }
+
+    public String getFullClassName() {
+        return packageName + "." + name;
+    }
 }

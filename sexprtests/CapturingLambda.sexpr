@@ -2,29 +2,37 @@
   (
     (MethodDef "createLambda" (Access PUBLIC STATIC)
         ((Field "num" (object java.lang.Integer)))
-        '(function (string (object java.lang.Integer)) (object java.lang.Integer))'
         (object java.util.function.BiFunction)
-        (Lambda (object java.util.function.BiFunction) ((Field thing string) (Field n (object java.lang.Integer))) (object java.lang.Integer) true
-            (Box (InlineCall IntAdd ((Unbox (GetValue n (object java.lang.Integer)))
-            (Unbox (GetValue num (object java.lang.Integer)))) )))
+        (Lambda {interface type} (object java.util.function.BiFunction)
+            {param types} ((Field thing string) (Field n (object java.lang.Integer)))
+            {return type} (object java.lang.Integer)
+            {allow object-only interface call} true
+            (Box (InlineCall
+                    IntAdd
+                    ((Unbox (GetValue n (object java.lang.Integer)))
+                     (Unbox (GetValue num (object java.lang.Integer)))))))
      )
     (MethodDef "main" (Access PUBLIC STATIC)
-      'param types:'
+      {param types}
         ((Field "args" (array string)))
-      'return type:' unit
-      'body:ii'
-        (Binding ((BindingPair "lam"
+      {return type} unit
+      {body}
+        (Binding
+            {Create a variable named lam to hold the generated lambda}
+            ((BindingPair "lam"
                     (CallJavaStaticMethod "com.wutka.test.CapturingLambda" "createLambda"
                         ((Box (IntConstant 5))) (object java.util.function.BiFunction))))
                  Visibility.Separate
+            {Call the println method ...}
             (CallJavaMethod "java.io.PrintStream" "println"
+                {...which is a static field in java.lang.System}
                 (GetJavaStaticField "java.lang.System" "out" (object java.io.PrintStream))
+                {Print the result of applying the lambda function}
                 ((Invoke "apply" (object java.util.function.BiFunction)
-                    '(string (object java.lang.Integer)) (object java.lang.Integer)'
                     (object object) object
                     (GetValue lam (object java.util.function.BiFunction))
                     ((StringConstant "foobar") (Box (IntConstant 42)))))
-                     unit))
+                unit))
     )
   )
   ())

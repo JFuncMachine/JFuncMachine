@@ -5,8 +5,6 @@ public record CharType() implements Type {
 
     public String getBoxType() { return BOX_TYPE; }
 
-    public String getTypeDescriptor() { return "C"; }
-
     public boolean isUnboxableFrom(String className) {
         return className.equals("java.lang.Character");
     }

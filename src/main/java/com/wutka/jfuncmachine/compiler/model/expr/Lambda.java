@@ -151,14 +151,14 @@ public class Lambda extends Expression {
         if (useObjectInterface) {
             ObjectType[] objectParams = new ObjectType[parameters.length];
             for (int i = 0; i < objectParams.length; i++) objectParams[i] = new ObjectType();
-            signatureType = org.objectweb.asm.Type.getType(Naming.methodDescriptor(objectParams, new ObjectType()));
+            signatureType = org.objectweb.asm.Type.getType(generator.methodDescriptor(objectParams, new ObjectType()));
         } else {
-            signatureType = org.objectweb.asm.Type.getType(Naming.methodDescriptor(parameterTypes, returnType));
+            signatureType = org.objectweb.asm.Type.getType(generator.methodDescriptor(parameterTypes, returnType));
         }
 
         // Call invokedynamic to generate a lambda method handle
         generator.instGen.invokedynamic(ClassGenerator.lambdaIntMethodName,
-                Naming.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
+                generator.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
                 // Boilerplate for Java's built-in lambda bootstrap
                 new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
                         "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
@@ -168,8 +168,8 @@ public class Lambda extends Expression {
                 // Create a handle for the generated lambda method
                 new Handle(Opcodes.H_INVOKESTATIC, lambdaInfo.packageName.replace('.', '/')+
                         "/"+ generator.currentClass.name, lambdaInfo.name,
-                        Naming.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false),
+                        generator.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false),
                 // Create an another ASM Type descriptor for this descriptor
-                org.objectweb.asm.Type.getType(Naming.methodDescriptor(parameterTypes, returnType)));
+                org.objectweb.asm.Type.getType(generator.methodDescriptor(parameterTypes, returnType)));
     }
 }

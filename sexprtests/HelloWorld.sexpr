@@ -1,10 +1,10 @@
 (ClassDef "com.wutka.test" "HelloWorld" (Access PUBLIC)
   (
     (MethodDef "main" (Access PUBLIC STATIC)
-      'param types:'
+      {param types}
         ((Field "args" (array string)))
-      'return type:' unit
-      'body:'
+      {return type} unit
+      {body}
         (CallJavaMethod "java.io.PrintStream" "println"
           (GetJavaStaticField "java.lang.System" "out" (object java.io.PrintStream))
             ((StringConstant "Hello World!")) unit)

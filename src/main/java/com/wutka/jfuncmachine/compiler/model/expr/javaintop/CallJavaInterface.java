@@ -2,7 +2,6 @@ package com.wutka.jfuncmachine.compiler.model.expr.javaintop;
 
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.Naming;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -78,8 +77,8 @@ public class CallJavaInterface extends Expression {
             expr.generate(generator, env);
         }
         generator.instGen.invokeinterface(
-                Naming.className(interfaceName),
-                methodName, Naming.methodDescriptor(parameterTypes, returnType));
+                generator.className(interfaceName),
+                methodName, generator.methodDescriptor(parameterTypes, returnType));
     }
 
 }

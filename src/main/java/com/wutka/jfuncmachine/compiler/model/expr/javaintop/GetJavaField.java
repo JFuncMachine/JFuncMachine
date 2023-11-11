@@ -2,7 +2,6 @@ package com.wutka.jfuncmachine.compiler.model.expr.javaintop;
 
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.Naming;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -40,7 +39,7 @@ public class GetJavaField extends Expression {
     public void generate(ClassGenerator generator, Environment env) {
         target.generate(generator, env);
 
-        generator.instGen.getfield(Naming.className(className),
-                fieldName, fieldType.getTypeDescriptor());
+        generator.instGen.getfield(generator.className(className),
+                fieldName, generator.getTypeDescriptor(fieldType));
     }
 }

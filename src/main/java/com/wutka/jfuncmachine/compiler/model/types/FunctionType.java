@@ -1,7 +1,5 @@
 package com.wutka.jfuncmachine.compiler.model.types;
 
-import com.wutka.jfuncmachine.compiler.classgen.Naming;
-
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -12,10 +10,6 @@ public final class FunctionType implements Type {
     public FunctionType(Type[] parameterTypes, Type returnType) {
         this.parameterTypes = parameterTypes;
         this.returnType = returnType;
-    }
-
-    public String getTypeDescriptor() {
-        return Naming.methodDescriptor(parameterTypes, returnType);
     }
 
     @Override

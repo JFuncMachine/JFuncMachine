@@ -5,8 +5,6 @@ public record IntType() implements Type {
 
     public String getBoxType() { return BOX_TYPE; }
 
-    public String getTypeDescriptor() { return "I"; }
-
     public boolean isUnboxableFrom(String className) {
         return className.equals("java.lang.Integer") ||
                 className.equals("java.lang.Long") ||

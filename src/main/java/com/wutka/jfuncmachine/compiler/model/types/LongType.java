@@ -5,8 +5,6 @@ public record LongType() implements Type {
 
     public String getBoxType() { return BOX_TYPE; }
 
-    public String getTypeDescriptor() { return "J"; }
-
     public boolean isUnboxableFrom(String className) {
         return className.equals("java.lang.Long") ||
                 className.equals("java.lang.Integer") ||

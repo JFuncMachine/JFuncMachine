@@ -13,7 +13,8 @@ public class Parser {
         ReadingSymbol,
         ReadingString,
         AwaitingSeparator,
-        SkippingComment
+        SkippingLineComment,
+        SkippingBlockComment
     }
     public static SexprItem parseFile(String filename)
         throws IOException {
@@ -33,15 +34,21 @@ public class Parser {
         arrayStack.push(new ArrayList<>());
         listStartStack.push(lineNumber);
 
+        int colStart = 0;
         for (int pos=0; pos <= str.length(); pos++) {
             if (ch == '\n') {
                 lineNumber++;
+                colStart=pos+1;
+                if (state == State.SkippingLineComment) {
+                    state = State.AwaitingItem;
+                }
             }
             if (pos < str.length()) {
                 ch = str.charAt(pos);
             } else {
                 ch = 0xffff;
             }
+            int column = 1+pos-colStart;
 
             switch (state) {
                 case State.AwaitingItem -> {
@@ -65,12 +72,14 @@ public class Parser {
                     } else if (ch == '"') {
                         state = State.ReadingString;
                         builder = new StringBuilder();
-                    } else if (ch == '\'') {
-                        state = State.SkippingComment;
+                    } else if (ch == ';') {
+                        state = State.SkippingLineComment;
+                    } else if (ch == '{') {
+                        state = State.SkippingBlockComment;
                     } else {
                         throw new IOException (
-                                String.format("Unexpected char %c (%02x) at position %d on line %d in %s",
-                                        ch, (int) ch, pos, lineNumber, filename));
+                                String.format("Unexpected char %c (%02x) at column %d on line %d in %s",
+                                        ch, (int) ch, column, lineNumber, filename));
                     }
                 }
                 case State.ReadingNumber -> {
@@ -79,8 +88,8 @@ public class Parser {
                     } else if (ch == '.') {
                         if (gotDecimal) {
                             throw new IOException (
-                                String.format("Extra decimal point at position %d on line %d in %s",
-                                    pos, lineNumber, filename));
+                                String.format("Extra decimal point at column %d on line %d in %s",
+                                    column, lineNumber, filename));
 
                         }
                         builder.append(ch);
@@ -92,6 +101,9 @@ public class Parser {
                             arrayStack.peek().add(new SexprInt(Integer.parseInt(builder.toString()), filename, lineNumber));
                         }
                         pos--;
+                        if (ch == '\n') {
+                            lineNumber--;
+                        }
                         state = State.AwaitingSeparator;
                     }
                 }
@@ -103,17 +115,20 @@ public class Parser {
                         builder.append(ch);
                     }
                 }
-                case State.SkippingComment -> {
-                    if (ch == '\'') {
-                        state = State.AwaitingSeparator;
-                    }
-                }
                 case State.ReadingSymbol -> {
                     if (Character.isJavaIdentifierPart(ch) || ch == '.') {
                         builder.append(ch);
                     } else {
                         arrayStack.peek().add(new SexprSymbol(builder.toString(), filename, lineNumber));
                         pos--;
+                        if (ch == '\n') {
+                            lineNumber--;
+                        }
+                        state = State.AwaitingSeparator;
+                    }
+                }
+                case State.SkippingBlockComment -> {
+                    if (ch == '}') {
                         state = State.AwaitingSeparator;
                     }
                 }
@@ -121,13 +136,17 @@ public class Parser {
                     if (ch == ')') {
                         pos--;
                         state = State.AwaitingItem;
+                    } else if (ch == ';') {
+                        state = State.SkippingLineComment;
+                    } else if (ch == '}') {
+                        state = State.SkippingBlockComment;
                     } else if (Character.isWhitespace(ch)) {
                         state = State.AwaitingItem;
                     } else if (ch == 0xffff) {
                     } else {
                         throw new IOException (
-                                String.format("Unexpected char %c (%02x) at position %d on line %d in %s",
-                                        ch, (int) ch, pos, lineNumber, filename));
+                                String.format("Unexpected char %c (%02x) at column %d on line %d in %s",
+                                        ch, (int) ch, column, lineNumber, filename));
 
                     }
                 }

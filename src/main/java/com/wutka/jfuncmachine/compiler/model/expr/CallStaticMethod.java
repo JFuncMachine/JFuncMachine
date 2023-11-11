@@ -2,7 +2,6 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.Naming;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class CallStaticMethod extends Expression {
@@ -33,6 +32,27 @@ public class CallStaticMethod extends Expression {
         this.returnType = returnType;
     }
 
+    public CallStaticMethod(String func, Type[] parameterTypes, Type returnType,
+                            Expression[] arguments) {
+        super(null, 0);
+        this.className = null;
+        this.func = func;
+        this.arguments = arguments;
+        this.parameterTypes = parameterTypes;
+        this.returnType = returnType;
+    }
+
+    public CallStaticMethod(String func, Type[] parameterTypes, Type returnType,
+                            Expression[] arguments,
+                            String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.className = null;
+        this.func = func;
+        this.arguments = arguments;
+        this.parameterTypes = parameterTypes;
+        this.returnType = returnType;
+    }
+
     public Type getType() {
         return returnType;
     }
@@ -45,11 +65,15 @@ public class CallStaticMethod extends Expression {
 
     @Override
     public void generate(ClassGenerator generator, Environment env) {
+        String invokeClassName = className;
+        if (invokeClassName == null) {
+            invokeClassName = generator.currentClass.getFullClassName();
+        }
         for (Expression expr: arguments) {
             expr.generate(generator, env);
         }
         generator.instGen.invokestatic(
-                Naming.className(className),
-                func, Naming.methodDescriptor(parameterTypes, returnType));
+                generator.className(invokeClassName),
+                func, generator.methodDescriptor(parameterTypes, returnType));
     }
 }
