@@ -12,4 +12,18 @@ public class Not extends BooleanExpr {
         super(filename, lineNumber);
         this.expr = expr;
     }
+
+    public BooleanExpr invert() {
+        return expr;
+    }
+
+    public BooleanExpr removeNot() {
+        this.expr = expr.invert();
+        return expr.removeNot();
+    }
+
+    @Override
+    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext) {
+        return this;
+    }
 }

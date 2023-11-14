@@ -15,4 +15,19 @@ public class Or extends BooleanExpr {
         this.left = left;
         this.right = right;
     }
+
+    public BooleanExpr invert() {
+        return new And(left.invert(), right.invert());
+    }
+
+    public BooleanExpr removeNot() {
+        this.left = this.left.removeNot();
+        this.right = this.right.removeNot();
+        return this;
+    }
+
+    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext) {
+        BooleanExpr rightPath = right.computeSequence(trueNext, falseNext);
+        return left.computeSequence(trueNext, rightPath);
+    }
 }
