@@ -10,21 +10,24 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Stack;
 
-public class UnaryComparison extends BooleanExpr {
+public class InstanceofComparison extends BooleanExpr {
     public Test test;
     public Expression expr;
+    public String className;
     public BooleanExpr truePath;
     public BooleanExpr falsePath;
 
-    public UnaryComparison(Test test, Expression expr) {
+    public InstanceofComparison(Test test, Expression expr, String className) {
         super(null, 0);
         this.test = test;
+        this.className = className;
         this.expr = expr;
     }
 
-    public UnaryComparison(Test test, Expression expr, String filename, int lineNumber) {
+    public InstanceofComparison(Test test, Expression expr, String className, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.test = test;
+        this.className = className;
         this.expr = expr;
     }
 
@@ -55,26 +58,12 @@ public class UnaryComparison extends BooleanExpr {
             generator.instGen.label(label);
         }
         expr.generate(generator, env);
+        generator.instGen.instance_of(className);
 
-        if (test instanceof Tests.EQTest || test instanceof Tests.NETest ||
-            test instanceof Tests.LTTest || test instanceof Tests.LETest ||
-            test instanceof Tests.GTTest || test instanceof Tests.GETest) {
-            if (!expr.getType().hasIntRepresentation()) {
-                throw generateException("Unary test for EQ,NE,LT,LE,GT,GE requires an int expression");
-            }
-        }
         int opcode = switch (test) {
-            case Tests.IsNullTest t -> Opcodes.IFNULL;
-            case Tests.IsNotNullTest t -> Opcodes.IFNONNULL;
-            case Tests.IsTrueTest t -> Opcodes.IFNE;
-            case Tests.IsFalseTest t -> Opcodes.IFEQ;
             case Tests.EQTest t -> Opcodes.IFEQ;
             case Tests.NETest t -> Opcodes.IFNE;
-            case Tests.LTTest t -> Opcodes.IFLT;
-            case Tests.LETest t -> Opcodes.IFLE;
-            case Tests.GTTest t -> Opcodes.IFGT;
-            case Tests.GETest t -> Opcodes.IFGE;
-            default -> throw generateException("Invalid test for unary comparison");
+            default -> throw generateException("Invalid test for instanceof comparison");
         };
 
         generator.instGen.rawJumpOpcode(opcode, truePath.label);

@@ -86,7 +86,7 @@ public class InstructionGenerator {
         instructionList.add(new FieldInsnNode(Opcodes.GETSTATIC, owner, name, descriptor));
         return this;
     }
-    public InstructionGenerator gotolabel(Label label) { instructionList.add(new JumpInsnNode(Opcodes.GOTO, new LabelNode(label.label))); return this; }
+    public InstructionGenerator gotolabel(Label label) { System.out.println("goto label "+label); instructionList.add(new JumpInsnNode(Opcodes.GOTO, new LabelNode(label.label))); return this; }
     public InstructionGenerator i2b() { instructionList.add(new InsnNode(Opcodes.I2B)); return this; }
     public InstructionGenerator i2c() { instructionList.add(new InsnNode(Opcodes.I2C)); return this; }
     public InstructionGenerator i2d() { instructionList.add(new InsnNode(Opcodes.I2D)); return this; }
@@ -164,7 +164,7 @@ public class InstructionGenerator {
     public InstructionGenerator l2d() { instructionList.add(new InsnNode(Opcodes.L2D)); return this; }
     public InstructionGenerator l2f() { instructionList.add(new InsnNode(Opcodes.L2F)); return this; }
     public InstructionGenerator l2i() { instructionList.add(new InsnNode(Opcodes.L2I)); return this; }
-    public InstructionGenerator label(Label label) { instructionList.add(new LabelNode(label.label)); return this; }
+    public InstructionGenerator label(Label label) { System.out.println("Define label "+label); instructionList.add(new LabelNode(label.label)); return this; }
     public InstructionGenerator ladd() { instructionList.add(new InsnNode(Opcodes.LADD)); return this; }
     public InstructionGenerator laload() { instructionList.add(new InsnNode(Opcodes.LALOAD)); return this; }
     public InstructionGenerator land() { instructionList.add(new InsnNode(Opcodes.LAND)); return this; }
@@ -327,6 +327,7 @@ public class InstructionGenerator {
         return this;
     }
     public InstructionGenerator rawJumpOpcode(int opcode, Label label) {
+        System.out.println("Jump to label "+label);
         instructionList.add(new JumpInsnNode(opcode, new LabelNode(label.label)));
         return this;
     }

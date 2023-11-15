@@ -5,10 +5,11 @@ import com.wutka.jfuncmachine.compiler.model.SourceElement;
 import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import com.wutka.jfuncmachine.compiler.model.expr.constants.IntConstant;
 
+import java.util.List;
 import java.util.Stack;
 
 public abstract class BooleanExpr extends SourceElement {
-    public Label label;
+    public Label label = new Label();
 
     public BooleanExpr(String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -18,7 +19,9 @@ public abstract class BooleanExpr extends SourceElement {
 
     public abstract BooleanExpr removeNot();
 
-    public abstract BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, Stack<BooleanExpr> tests);
+    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests) {
+        return this;
+    }
 
     public static void main(String[] args) {
         BooleanExpr expr =

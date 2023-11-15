@@ -9,6 +9,7 @@ import com.wutka.jfuncmachine.compiler.model.expr.bool.Result;
 import com.wutka.jfuncmachine.compiler.model.expr.bool.UnaryComparison;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
+import java.util.List;
 import java.util.Stack;
 
 public class If extends Expression {
@@ -16,7 +17,9 @@ public class If extends Expression {
     public final Expression trueExpr;
     public final Expression falseExpr;
     public final boolean hasFalse;
-    public Stack<BooleanExpr> testSequence;
+    public List<BooleanExpr> testSequence;
+    public Result trueResult;
+    public Result falseResult;
 
     public If(BooleanExpr test, Expression trueExpr, Expression falseExpr) {
         super(null, 0);
@@ -65,10 +68,11 @@ public class If extends Expression {
     }
 
     public void computeTestSequence() {
-        Result truePath = new Result(trueExpr);
-        Result falsePath = new Result(falseExpr);
+        trueResult = new Result(trueExpr);
+        falseResult = new Result(falseExpr);
 
-        test.computeSequence(truePath, falsePath, new Stack<>());
+        testSequence = new Stack<>();
+        test.computeSequence(trueResult, falseResult, testSequence);
     }
 
     public Type getType() {
@@ -93,12 +97,23 @@ public class If extends Expression {
     @Override
     public void generate(ClassGenerator generator, Environment env) {
         Label endLabel = new Label();
-        for (BooleanExpr booleanExpr: testSequence) {
+        for (int i=testSequence.size()-1; i >= 0; i--) {
+            BooleanExpr booleanExpr = testSequence.get(i);
             if (booleanExpr instanceof UnaryComparison unary) {
                 unary.generate(generator, env, endLabel);
             } else if (booleanExpr instanceof BinaryComparison binary) {
                 binary.generate(generator, env, endLabel);
             }
+        }
+        if (hasFalse) {
+            generator.instGen.label(falseResult.label);
+            falseExpr.generate(generator, env);
+            generator.instGen.gotolabel(endLabel);
+        }
+        generator.instGen.label(trueResult.label);
+        trueExpr.generate(generator, env);
+        if (!hasFalse) {
+            generator.instGen.label(falseResult.label);
         }
         generator.instGen.label(endLabel);
     }

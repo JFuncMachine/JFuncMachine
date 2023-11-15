@@ -1,5 +1,6 @@
 package com.wutka.jfuncmachine.compiler.model.expr.bool;
 
+import java.util.List;
 import java.util.Stack;
 
 public class Not extends BooleanExpr {
@@ -22,10 +23,5 @@ public class Not extends BooleanExpr {
     public BooleanExpr removeNot() {
         this.expr = expr.invert();
         return expr.removeNot();
-    }
-
-    @Override
-    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, Stack<BooleanExpr> tests) {
-        return this;
     }
 }

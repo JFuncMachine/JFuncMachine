@@ -5,6 +5,14 @@ import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.ClassField;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.*;
+import com.wutka.jfuncmachine.compiler.model.expr.bool.And;
+import com.wutka.jfuncmachine.compiler.model.expr.bool.BinaryComparison;
+import com.wutka.jfuncmachine.compiler.model.expr.bool.InstanceofComparison;
+import com.wutka.jfuncmachine.compiler.model.expr.bool.Not;
+import com.wutka.jfuncmachine.compiler.model.expr.bool.Or;
+import com.wutka.jfuncmachine.compiler.model.expr.bool.UnaryComparison;
+import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Test;
+import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Box;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Unbox;
 import com.wutka.jfuncmachine.compiler.model.expr.constants.*;
@@ -26,6 +34,12 @@ import java.util.stream.Stream;
 
 public class SexprToModel {
     public static Map<String, String> modelSymbolToClassMap = Stream.of(new String[][] {
+            { "And", And.class.getName() },
+            { "BinaryComparison", BinaryComparison.class.getName() },
+            { "InstanceofComparison", InstanceofComparison.class.getName() },
+            { "Not", Not.class.getName() },
+            { "Or", Or.class.getName() },
+            { "UnaryComparison", UnaryComparison.class.getName() },
             { "Box", Box.class.getName() },
             { "Unbox", Unbox.class.getName() },
             { "ByteConstant", ByteConstant.class.getName() },
@@ -61,12 +75,6 @@ public class SexprToModel {
             { "CallMethod", CallMethod.class.getName() },
             { "CallStaticMethod", CallStaticMethod.class.getName() },
             { "Catch", Catch.class.getName() },
-            { "CompareDoubleG", CompareDoubleG.class.getName() },
-            { "CompareDoubleL", CompareDoubleL.class.getName() },
-            { "CompareFloatG", CompareFloatG.class.getName() },
-            { "CompareFloatL", CompareFloatL.class.getName() },
-            { "CompareInt", CompareInt.class.getName() },
-            { "CompareLong", CompareLong.class.getName() },
             { "GetValue", GetValue.class.getName() },
             { "If", If.class.getName() },
             { "InlineCall", InlineCall.class.getName() },
@@ -102,12 +110,29 @@ public class SexprToModel {
     }).collect(Collectors.toMap(data-> (String)data[0], data->(Binding.Visibility) data[1]));
 
     public static Set<String> comparisonSet = Stream.of(new String[] {
-        "objectEQ", "objectNE", "intEQ", "intNE", "intLT", "intLE", "intGT", "intGE", "floatEQ",
-        "floatNE", "floatLTL", "floatLTG", "floatLEL", "floatLEG", "floatGTL", "floatGTG", "floatGEL",
-        "floatGEG", "doubleEQ", "doubleNE", "doubleLTL", "doubleLTG", "doubleLEL", "doubleLEG",
-        "doubleGTL", "doubleGTG", "doubleGEL", "doubleGEG", "longEQ", "longNE", "longLT", "longLE",
-        "longGT", "longGE", "isNull", "isNotNull", "EQ", "isFalse", "NE", "isTrue", "LT", "LE", "GT", "GE"
+        "isNull", "isNotNull", "isTrue", "isFalse",
+            "EQ", "NE", "LT", "LE", "GT", "GE",
+            "EQ_IgnoreCase", "NE_IgnoreCase", "LT_IgnoreCase", "LE_IgnoreCase", "GT_IgnoreCase", "GE_IgnoreCase",
     }).collect(Collectors.toSet());
+
+    public static Map<String, Test> testTypes = Stream.of(new Object[][] {
+            { "isNull", Tests.IsNull },
+            { "isNotNull", Tests.IsNotNull },
+            { "isTrue", Tests.IsTrue },
+            { "isFalse", Tests.IsFalse },
+            { "EQ", Tests.EQ },
+            { "NE", Tests.NE },
+            { "LT", Tests.LT },
+            { "LE", Tests.LE },
+            { "GT", Tests.GT },
+            { "GE", Tests.GE },
+            { "EQ_IgnoreCase", Tests.EQ_IgnoreCase },
+            { "NE_IgnoreCase", Tests.NE_IgnoreCase },
+            { "LT_IgnoreCase", Tests.LT_IgnoreCase },
+            { "LE_IgnoreCase", Tests.LE_IgnoreCase },
+            { "GT_IgnoreCase", Tests.GT_IgnoreCase },
+            { "GE_IgnoreCase", Tests.GE_IgnoreCase }
+    }).collect(Collectors.toMap(data -> (String) data[0], data->(Test) data[1]));
 
     public static Map<String, Type> simpleTypes = Stream.of(new Object[][] {
             { "boolean", SimpleTypes.BOOLEAN },
@@ -143,6 +168,8 @@ public class SexprToModel {
                 return simpleTypes.get(sym.value);
             } else if (visibilityMap.containsKey(sym.value)) {
                 return visibilityMap.get(sym.value);
+            } else if (testTypes.containsKey(sym.value)) {
+                return testTypes.get(sym.value);
             } else if (sym.value.equals("true")) {
                 return Boolean.TRUE;
             } else if (sym.value.equals("false")) {
@@ -166,14 +193,14 @@ public class SexprToModel {
             throw new RuntimeException(
                     String.format("Expected first list item to be a symbol, not %s", item.getClass().getSimpleName()));
         }
-        if (comparisonSet.contains(sym.value)) {
-            return translateComparison(sym, list.value.toArray(new SexprItem[0]));
-        } else if (modelSymbolToClassMap.containsKey(sym.value)) {
+        if (modelSymbolToClassMap.containsKey(sym.value)) {
             return translateModelSymbol(sym, list.value);
         } else if (typeSet.contains(sym.value)) {
             return translateComplexType(sym, list.value);
         } else if (visibilityMap.containsKey(sym.value)) {
             return visibilityMap.get(sym.value);
+        } else if (testTypes.containsKey(sym.value)) {
+            return testTypes.get(sym.value);
         }
         throw new RuntimeException(
                 String.format("Unexpected symbol %s in %s at line %s", sym.value, sym.filename, sym.lineNumber));
@@ -452,36 +479,6 @@ public class SexprToModel {
             }
             default -> { return null; }
         }
-    }
-
-    public static Object translateComparison(SexprSymbol sym, SexprItem[] params) {
-        for (Method method: Comparison.class.getMethods()) {
-            if (method.getName().equals(sym.value)) {
-                Class<?>[] parameterList = method.getParameterTypes();
-                if (parameterList.length != params.length) {
-                    throw new RuntimeException(
-                            String.format("Invalid number of parameters (%d) for comparison func %s in %s line %d",
-                                    params.length, sym.value, sym.filename, sym.lineNumber));
-                }
-                Object[] parameters = matchParameterList(sym, parameterList, params);
-                if (parameters != null) {
-                    try {
-                        return method.invoke(null, parameters);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    } catch (InvocationTargetException e) {
-                        throw new RuntimeException(e);
-                    }
-                } else {
-                    throw new RuntimeException(
-                            String.format("Can't match parameters for comparison func %s in %s line %d",
-                                    sym.value, sym.filename, sym.lineNumber));
-                }
-            }
-        }
-        throw new RuntimeException(
-                String.format("Internal error, %s should be a comparison function but there is no matching method in Inlines",
-                        sym.value, sym.filename, sym.lineNumber));
     }
 
     public static Object translateInline(SexprSymbol sym) {

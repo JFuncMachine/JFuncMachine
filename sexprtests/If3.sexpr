@@ -1,0 +1,25 @@
+(ClassDef "com.wutka.test" "If3" (Access PUBLIC)
+  (
+    (MethodDef "foo" (Access PUBLIC STATIC)
+      {param types}
+        ((Field "a" int)
+         (Field "b" int)
+         (Field "c" int)
+         (Field "d" int)
+         (Field "e" int)
+         (Field "f" int))
+      {return type} int
+      {body}
+        (If (Or (And (Or (BinaryComparison LT (GetValue "a" int) (GetValue "b" int))
+                         (BinaryComparison LT (GetValue "c" int) (GetValue "b" int)))
+                     (Or (BinaryComparison LT (GetValue "a" int) (GetValue "d" int))
+                         (BinaryComparison LT (GetValue "b" int) (GetValue "e" int))))
+                (And (Or (BinaryComparison LT (GetValue "e" int) (GetValue "f" int))
+                         (BinaryComparison LT (GetValue "b" int) (GetValue "c" int)))
+                     (Or (BinaryComparison LT (GetValue "f" int) (GetValue "a" int))
+                         (BinaryComparison LT (GetValue "d" int) (GetValue "b" int)))))
+                         (IntConstant 5)
+                         (IntConstant 7))
+    )
+  )
+  ())
