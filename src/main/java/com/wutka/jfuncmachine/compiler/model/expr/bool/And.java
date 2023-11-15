@@ -5,6 +5,8 @@ import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.classgen.Label;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 
+import java.util.Stack;
+
 public class And extends BooleanExpr {
     public BooleanExpr left;
     public BooleanExpr right;
@@ -31,8 +33,8 @@ public class And extends BooleanExpr {
         return this;
     }
 
-    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext) {
-        BooleanExpr rightPath = right.computeSequence(trueNext, falseNext);
-        return left.computeSequence(rightPath, falseNext);
+    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, Stack<BooleanExpr> tests) {
+        BooleanExpr rightPath = right.computeSequence(trueNext, falseNext, tests);
+        return left.computeSequence(rightPath, falseNext, tests);
     }
 }

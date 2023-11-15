@@ -1,5 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.expr.bool;
 
+import java.util.Stack;
+
 public class Or extends BooleanExpr {
     public BooleanExpr left;
     public BooleanExpr right;
@@ -26,8 +28,8 @@ public class Or extends BooleanExpr {
         return this;
     }
 
-    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext) {
-        BooleanExpr rightPath = right.computeSequence(trueNext, falseNext);
-        return left.computeSequence(trueNext, rightPath);
+    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, Stack<BooleanExpr> tests) {
+        BooleanExpr rightPath = right.computeSequence(trueNext, falseNext, tests);
+        return left.computeSequence(trueNext, rightPath, tests);
     }
 }

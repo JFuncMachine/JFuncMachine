@@ -9,6 +9,8 @@ public record BooleanType() implements Type {
         return className.equals("java.lang.Boolean");
     }
 
+    public boolean hasIntRepresentation() { return true; }
+
     public boolean equals(Object other) {
         return other instanceof BooleanType;
     }

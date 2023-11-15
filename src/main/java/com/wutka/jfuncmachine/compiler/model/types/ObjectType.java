@@ -23,6 +23,15 @@ public final class ObjectType implements Type {
         };
     }
 
+    public boolean isBoxType() {
+        return switch (className) {
+            case BooleanType.BOX_TYPE, ByteType.BOX_TYPE, CharType.BOX_TYPE,
+                    DoubleType.BOX_TYPE, FloatType.BOX_TYPE, IntType.BOX_TYPE,
+                    LongType.BOX_TYPE, ShortType.BOX_TYPE -> true;
+            default -> false;
+        };
+    }
+
     public ObjectType(String className) {
 
         this.className = className;

@@ -23,6 +23,5 @@ public class ClassGeneratorOptions {
         this.fullTailCalls = fullTailCalls;
         this.autobox = autobox;
         this.shortCircuitBooleans = shortCircuitBooleans;
-
     }
 }

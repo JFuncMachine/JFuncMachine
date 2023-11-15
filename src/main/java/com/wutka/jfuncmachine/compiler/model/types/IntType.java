@@ -14,6 +14,8 @@ public record IntType() implements Type {
                 className.equals("java.lang.Double");
     }
 
+    public boolean hasIntRepresentation() { return true; }
+
     public boolean equals(Object other) {
         return other instanceof IntType;
     }

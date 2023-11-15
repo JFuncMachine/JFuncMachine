@@ -9,6 +9,8 @@ public record CharType() implements Type {
         return className.equals("java.lang.Character");
     }
 
+    public boolean hasIntRepresentation() { return true; }
+
     public boolean equals(Object other) {
         return other instanceof CharType;
     }
