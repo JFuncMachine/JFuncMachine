@@ -23,6 +23,24 @@ public final class ObjectType implements Type {
         };
     }
 
+    public boolean isUnboxableTo(Type desiredType) {
+        return switch (className) {
+            case BooleanType.BOX_TYPE -> desiredType.hasIntRepresentation();
+            case ByteType.BOX_TYPE -> desiredType.hasIntRepresentation();
+            case CharType.BOX_TYPE -> desiredType.hasIntRepresentation();
+            case DoubleType.BOX_TYPE -> desiredType instanceof DoubleType;
+            case FloatType.BOX_TYPE -> desiredType instanceof FloatType;
+            case IntType.BOX_TYPE -> desiredType.hasIntRepresentation();
+            case LongType.BOX_TYPE -> desiredType instanceof LongType;
+            case ShortType.BOX_TYPE -> desiredType.hasIntRepresentation();
+            default -> false;
+        };
+    }
+
+    public boolean isBoxableFrom(Type desiredType) {
+        return isUnboxableTo(desiredType);
+    }
+
     public boolean isBoxType() {
         return switch (className) {
             case BooleanType.BOX_TYPE, ByteType.BOX_TYPE, CharType.BOX_TYPE,

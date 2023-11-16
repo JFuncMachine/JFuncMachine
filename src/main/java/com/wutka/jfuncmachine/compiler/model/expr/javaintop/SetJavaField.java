@@ -3,6 +3,7 @@ package com.wutka.jfuncmachine.compiler.model.expr.javaintop;
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
+import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -43,7 +44,12 @@ public class SetJavaField extends Expression {
 
     public void generate(ClassGenerator generator, Environment env) {
         target.generate(generator, env);
-        expr.generate(generator, env);
+
+        if (generator.options.autobox) {
+            Autobox.autobox(expr, fieldType).generate(generator, env);
+        } else {
+            expr.generate(generator, env);
+        }
 
         generator.instGen.putfield(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));

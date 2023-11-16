@@ -5,6 +5,7 @@ import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.ClassField;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
+import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.ArrayType;
 import com.wutka.jfuncmachine.compiler.model.types.BooleanType;
 import com.wutka.jfuncmachine.compiler.model.types.ByteType;
@@ -173,7 +174,11 @@ public class ClassGenerator {
                 env.allocate(f.name, f.type);
             }
             instGen.label(methodDef.startLabel);
-            methodDef.body.generate(this, env);
+            if (options.autobox) {
+                Autobox.autobox(methodDef.body, methodDef.returnType).generate(this, env);
+            } else {
+                methodDef.body.generate(this, env);
+            }
             instGen.return_by_type(methodDef.returnType);
         }
 

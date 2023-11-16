@@ -2,6 +2,7 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
+import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
@@ -49,8 +50,15 @@ public class ArraySet extends Expression {
             Type containedType = at.containedType();
 
             array.generate(generator, env);
-            index.generate(generator, env);
-            value.generate(generator, env);
+
+            if (generator.options.autobox) {
+                Autobox.autobox(index, SimpleTypes.INT).generate(generator, env);
+                Autobox.autobox(value, containedType).generate(generator, env);
+
+            } else {
+                index.generate(generator, env);
+                value.generate(generator, env);
+            }
 
             int opcode = switch (containedType) {
                 case BooleanType b -> Opcodes.BASTORE;

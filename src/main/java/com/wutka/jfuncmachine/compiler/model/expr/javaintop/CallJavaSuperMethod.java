@@ -6,19 +6,17 @@ import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
-public class CallJavaMethod extends Expression {
+public class CallJavaSuperMethod extends Expression {
     public final String className;
-    public final String methodName;
     public Type[] parameterTypes;
     public final Expression target;
     public final Expression[] arguments;
     public final Type returnType;
 
-    public CallJavaMethod(String className, String methodName, Expression target, Expression[] arguments,
-                          Type returnType) {
+    public CallJavaSuperMethod(String className, Expression target, Expression[] arguments,
+                               Type returnType) {
         super(null, 0);
         this.className = className;
-        this.methodName = methodName;
         this.parameterTypes = new Type[arguments.length];
         for (int i=0; i < parameterTypes.length; i++) parameterTypes[i] = arguments[i].getType();
         this.target = target;
@@ -26,12 +24,11 @@ public class CallJavaMethod extends Expression {
         this.returnType = returnType;
     }
 
-    public CallJavaMethod(String className, String methodName, Expression target, Expression[] arguments,
-                          Type returnType,
-                          String filename, int lineNumber) {
+    public CallJavaSuperMethod(String className, Expression target, Expression[] arguments,
+                               Type returnType,
+                               String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;
-        this.methodName = methodName;
         this.parameterTypes = new Type[arguments.length];
         for (int i=0; i < parameterTypes.length; i++) parameterTypes[i] = arguments[i].getType();
         this.target = target;
@@ -39,25 +36,23 @@ public class CallJavaMethod extends Expression {
         this.returnType = returnType;
     }
 
-    public CallJavaMethod(String className, String methodName, Type[] parameterTypes,
-                          Expression target, Expression[] arguments,
-                          Type returnType) {
+    public CallJavaSuperMethod(String className, Type[] parameterTypes,
+                               Expression target, Expression[] arguments,
+                               Type returnType) {
         super(null, 0);
         this.className = className;
-        this.methodName = methodName;
         this.parameterTypes = parameterTypes;
         this.target = target;
         this.arguments = arguments;
         this.returnType = returnType;
     }
 
-    public CallJavaMethod(String className, String methodName, Type[] parameterTypes,
-                          Expression target, Expression[] arguments,
-                          Type returnType,
-                          String filename, int lineNumber) {
+    public CallJavaSuperMethod(String className, Type[] parameterTypes,
+                               Expression target, Expression[] arguments,
+                               Type returnType,
+                               String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;
-        this.methodName = methodName;
         this.parameterTypes = parameterTypes;
         this.target = target;
         this.arguments = arguments;
@@ -85,8 +80,8 @@ public class CallJavaMethod extends Expression {
             }
             expr.generate(generator, env);
         }
-        generator.instGen.invokevirtual(
+        generator.instGen.invokespecial(
                 generator.className(className),
-                methodName, generator.methodDescriptor(parameterTypes, returnType));
+                "super", generator.methodDescriptor(parameterTypes, returnType));
     }
 }

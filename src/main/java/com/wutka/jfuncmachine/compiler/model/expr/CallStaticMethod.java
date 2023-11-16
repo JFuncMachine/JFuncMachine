@@ -2,6 +2,7 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
+import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 public class CallStaticMethod extends Expression {
@@ -69,7 +70,11 @@ public class CallStaticMethod extends Expression {
         if (invokeClassName == null) {
             invokeClassName = generator.currentClass.getFullClassName();
         }
-        for (Expression expr: arguments) {
+        for (int i=0; i < arguments.length; i++) {
+            Expression expr = arguments[i];
+            if (generator.options.autobox) {
+                expr = Autobox.autobox(expr, parameterTypes[i]);
+            }
             expr.generate(generator, env);
         }
         generator.instGen.invokestatic(

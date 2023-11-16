@@ -10,17 +10,34 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 public class Box extends Expression {
     public final Expression expr;
     public final Type boxType;
+    public final Type desiredBoxType;
 
     public Box(Expression expr) {
         super(null, 0);
         this.expr = expr;
         this.boxType = expr.getType();
+        this.desiredBoxType = null;
     }
 
     public Box(Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;
         this.boxType = expr.getType();
+        this.desiredBoxType = null;
+    }
+
+    public Box(Expression expr, Type desiredBoxType) {
+        super(null, 0);
+        this.expr = expr;
+        this.boxType = expr.getType();
+        this.desiredBoxType = desiredBoxType;
+    }
+
+    public Box(Expression expr, Type desiredBoxType, String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.expr = expr;
+        this.boxType = expr.getType();
+        this.desiredBoxType = desiredBoxType;
     }
 
     public Type getType() {
@@ -41,7 +58,13 @@ public class Box extends Expression {
 
     @Override
     public void generate(ClassGenerator generator, Environment env) {
-        String boxName = boxType.getBoxType();
+        String boxName;
+
+        if (desiredBoxType == null) {
+            boxName = boxType.getBoxType();
+        } else {
+            boxName = ((ObjectType) desiredBoxType).className;
+        }
 
         if (boxName == null) return;
 

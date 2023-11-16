@@ -3,6 +3,7 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.classgen.LambdaIntInfo;
+import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 
@@ -48,7 +49,11 @@ public class NewArrayWithValues extends Expression {
         for (int i=0; i < arrayValues.length; i++) {
             generator.instGen.dup();
             new IntConstant(i, filename, lineNumber).generate(generator, env);
-            arrayValues[i].generate(generator, env);
+            if (generator.options.autobox) {
+                Autobox.autobox(arrayValues[i], arrayType).generate(generator, env);
+            } else {
+                arrayValues[i].generate(generator, env);
+            }
             switch (arrayType) {
                 case BooleanType b -> generator.instGen.bastore();
                 case ByteType b -> generator.instGen.bastore();

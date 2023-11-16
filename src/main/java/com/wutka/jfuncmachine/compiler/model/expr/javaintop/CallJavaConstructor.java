@@ -3,6 +3,7 @@ package com.wutka.jfuncmachine.compiler.model.expr.javaintop;
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
+import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
@@ -64,7 +65,11 @@ public class CallJavaConstructor extends Expression {
     public void generate(ClassGenerator generator, Environment env) {
         generator.instGen.new_object(generator.className(className));
         generator.instGen.dup();
-        for (Expression expr: arguments) {
+        for (int i=0; i < arguments.length; i++) {
+            Expression expr = arguments[i];
+            if (generator.options.autobox) {
+                expr = Autobox.autobox(expr, parameterTypes[i]);
+            }
             expr.generate(generator, env);
         }
         generator.instGen.invokespecial(generator.className(className),
