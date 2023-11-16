@@ -64,12 +64,20 @@ public class BinaryComparison extends BooleanExpr {
         right.findCaptured(env);
     }
 
-    public void generate(ClassGenerator generator, Environment env, Label endLabel) {
+    public void generate(ClassGenerator generator, Environment env, BooleanExpr next) {
         if (label != null) {
             generator.instGen.label(label);
         }
-        left.generate(generator, env);
-        right.generate(generator, env);
+
+        Test generateTest = test;
+        BooleanExpr generateTruePath = truePath;
+        BooleanExpr generateFalsePath = falsePath;
+
+        if (truePath == next) {
+            generateTest = test.invert();
+            generateTruePath = falsePath;
+            generateFalsePath = truePath;
+        }
 
         int opcode;
 
@@ -92,13 +100,13 @@ public class BinaryComparison extends BooleanExpr {
                 right.generate(generator, env);
             }
 
-            if (test instanceof Tests.LETest || test instanceof Tests.LTTest) {
+            if (generateTest instanceof Tests.LETest || generateTest instanceof Tests.LTTest) {
                 generator.instGen.dcmpl();
             } else {
                 generator.instGen.dcmpg();
             }
 
-            opcode = switch (test) {
+            opcode = switch (generateTest) {
                 case Tests.EQTest t -> Opcodes.IFEQ;
                 case Tests.NETest t -> Opcodes.IFNE;
                 case Tests.LTTest t -> Opcodes.IFLT;
@@ -126,13 +134,13 @@ public class BinaryComparison extends BooleanExpr {
                     right.generate(generator, env);
                 }
 
-                if (test instanceof Tests.LETest || test instanceof Tests.LTTest) {
+                if (generateTest instanceof Tests.LETest || generateTest instanceof Tests.LTTest) {
                     generator.instGen.fcmpl();
                 } else {
                     generator.instGen.fcmpg();
                 }
 
-                opcode = switch (test) {
+                opcode = switch (generateTest) {
                     case Tests.EQTest t -> Opcodes.IFEQ;
                     case Tests.NETest t -> Opcodes.IFNE;
                     case Tests.LTTest t -> Opcodes.IFLT;
@@ -162,7 +170,7 @@ public class BinaryComparison extends BooleanExpr {
 
             generator.instGen.lcmp();
 
-            opcode = switch (test) {
+            opcode = switch (generateTest) {
                 case Tests.EQTest t -> Opcodes.IFEQ;
                 case Tests.NETest t -> Opcodes.IFNE;
                 case Tests.LTTest t -> Opcodes.IFLT;
@@ -190,7 +198,7 @@ public class BinaryComparison extends BooleanExpr {
                 right.generate(generator, env);
             }
 
-            opcode = switch (test) {
+            opcode = switch (generateTest) {
                 case Tests.EQTest t -> Opcodes.IF_ICMPEQ;
                 case Tests.NETest t -> Opcodes.IF_ICMPNE;
                 case Tests.LTTest t -> Opcodes.IF_ICMPLT;
@@ -204,7 +212,7 @@ public class BinaryComparison extends BooleanExpr {
                 throw generateException("Left side of comparison is an object type, but right side is not");
             }
 
-            opcode = switch (test) {
+            opcode = switch (generateTest) {
                 case Tests.EQTest t -> Opcodes.IF_ACMPEQ;
                 case Tests.NETest t -> Opcodes.IF_ACMPNE;
                 default -> throw generateException("Invalid comparison for object type");
@@ -214,37 +222,37 @@ public class BinaryComparison extends BooleanExpr {
                 throw generateException("Right side of comparison is a string type, but right side is not");
             }
 
-            if (test instanceof Tests.EQTest) {
+            if (generateTest instanceof Tests.EQTest) {
                 opcode = Opcodes.IF_ACMPEQ;
-            } else if (test instanceof Tests.NETest) {
+            } else if (generateTest instanceof Tests.NETest) {
                 opcode = Opcodes.IF_ACMPNE;
             } else {
-                if (test instanceof Tests.LETest || test instanceof Tests.LTTest ||
-                    test instanceof Tests.GETest || test instanceof Tests.GTTest) {
+                if (generateTest instanceof Tests.LETest || generateTest instanceof Tests.LTTest ||
+                    generateTest instanceof Tests.GETest || generateTest instanceof Tests.GTTest) {
                     generator.instGen.invokevirtual(
                             generator.className("java.lang.String"),
                             "compareTo", generator.methodDescriptor(
                                     new Type[] { SimpleTypes.STRING }, SimpleTypes.STRING));
-                    opcode = switch (test) {
+                    opcode = switch (generateTest) {
                         case Tests.LETest t -> Opcodes.IFLE;
                         case Tests.LTTest t -> Opcodes.IFLT;
                         case Tests.GETest t -> Opcodes.IFGE;
                         case Tests.GTTest t -> Opcodes.IFGT;
                         default -> throw generateException("Internal error, String comparison generation failed");
                     };
-                } else if (test instanceof Tests.EQIgnoreCaseTest ||
-                        test instanceof Tests.NEIgnoreCaseTest ||
-                        test instanceof Tests.LEIgnoreCaseTest ||
-                        test instanceof Tests.LTIgnoreCaseTest ||
-                        test instanceof Tests.GEIgnoreCaseTest ||
-                        test instanceof Tests.GTIgnoreCaseTest) {
+                } else if (generateTest instanceof Tests.EQIgnoreCaseTest ||
+                        generateTest instanceof Tests.NEIgnoreCaseTest ||
+                        generateTest instanceof Tests.LEIgnoreCaseTest ||
+                        generateTest instanceof Tests.LTIgnoreCaseTest ||
+                        generateTest instanceof Tests.GEIgnoreCaseTest ||
+                        generateTest instanceof Tests.GTIgnoreCaseTest) {
 
                     generator.instGen.invokevirtual(
                             generator.className("java.lang.String"),
                             "compareTo", generator.methodDescriptor(
                                     new Type[] { SimpleTypes.STRING }, SimpleTypes.STRING));
 
-                    opcode = switch (test) {
+                    opcode = switch (generateTest) {
                         case Tests.EQIgnoreCaseTest t -> Opcodes.IFEQ;
                         case Tests.NEIgnoreCaseTest t -> Opcodes.IFNE;
                         case Tests.LTIgnoreCaseTest t -> Opcodes.IFLT;
@@ -261,6 +269,9 @@ public class BinaryComparison extends BooleanExpr {
             throw generateException(String.format("Unable to compare %s with %s", left.getType(), right.getType()));
         }
 
-        generator.instGen.rawJumpOpcode(opcode, truePath.label);
+        if (generateTruePath.label == null) {
+            generateTruePath.label = new Label();
+        }
+        generator.instGen.rawJumpOpcode(opcode, generateTruePath.label);
     }
 }

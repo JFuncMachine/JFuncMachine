@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Stack;
 
 public abstract class BooleanExpr extends SourceElement {
-    public Label label = new Label();
+    public Label label;
 
     public BooleanExpr(String filename, int lineNumber) {
         super(filename, lineNumber);

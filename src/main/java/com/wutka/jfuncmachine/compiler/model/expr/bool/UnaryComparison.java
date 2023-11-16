@@ -50,20 +50,29 @@ public class UnaryComparison extends BooleanExpr {
         expr.findCaptured(env);
     }
 
-    public void generate(ClassGenerator generator, Environment env, Label endLabel) {
+    public void generate(ClassGenerator generator, Environment env, BooleanExpr next) {
         if (label != null) {
             generator.instGen.label(label);
         }
         expr.generate(generator, env);
 
-        if (test instanceof Tests.EQTest || test instanceof Tests.NETest ||
-            test instanceof Tests.LTTest || test instanceof Tests.LETest ||
-            test instanceof Tests.GTTest || test instanceof Tests.GETest) {
+        Test generateTest = test;
+        BooleanExpr generateTruePath = truePath;
+        BooleanExpr generateFalsePath = falsePath;
+
+        if (truePath == next) {
+            generateTest = test.invert();
+            generateTruePath = falsePath;
+            generateFalsePath = truePath;
+        }
+        if (generateTest instanceof Tests.EQTest || generateTest instanceof Tests.NETest ||
+            generateTest instanceof Tests.LTTest || generateTest instanceof Tests.LETest ||
+            generateTest instanceof Tests.GTTest || generateTest instanceof Tests.GETest) {
             if (!expr.getType().hasIntRepresentation()) {
                 throw generateException("Unary test for EQ,NE,LT,LE,GT,GE requires an int expression");
             }
         }
-        int opcode = switch (test) {
+        int opcode = switch (generateTest) {
             case Tests.IsNullTest t -> Opcodes.IFNULL;
             case Tests.IsNotNullTest t -> Opcodes.IFNONNULL;
             case Tests.IsTrueTest t -> Opcodes.IFNE;
@@ -77,6 +86,9 @@ public class UnaryComparison extends BooleanExpr {
             default -> throw generateException("Invalid test for unary comparison");
         };
 
-        generator.instGen.rawJumpOpcode(opcode, truePath.label);
+        if (generateTruePath.label == null) {
+            generateTruePath.label = new Label();
+        }
+        generator.instGen.rawJumpOpcode(opcode, generateTruePath.label);
     }
 }

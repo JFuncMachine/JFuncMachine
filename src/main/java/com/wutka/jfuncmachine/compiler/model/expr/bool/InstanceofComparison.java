@@ -53,19 +53,32 @@ public class InstanceofComparison extends BooleanExpr {
         expr.findCaptured(env);
     }
 
-    public void generate(ClassGenerator generator, Environment env, Label endLabel) {
+    public void generate(ClassGenerator generator, Environment env, BooleanExpr next) {
         if (label != null) {
             generator.instGen.label(label);
         }
         expr.generate(generator, env);
         generator.instGen.instance_of(className);
 
-        int opcode = switch (test) {
+        Test generateTest = test;
+        BooleanExpr generateTruePath = truePath;
+        BooleanExpr generateFalsePath = falsePath;
+
+        if (truePath == next) {
+            generateTest = test.invert();
+            generateTruePath = falsePath;
+            generateFalsePath = truePath;
+        }
+
+        int opcode = switch (generateTest) {
             case Tests.EQTest t -> Opcodes.IFEQ;
             case Tests.NETest t -> Opcodes.IFNE;
             default -> throw generateException("Invalid test for instanceof comparison");
         };
 
-        generator.instGen.rawJumpOpcode(opcode, truePath.label);
+        if (generateTruePath.label == null) {
+            generateTruePath.label = new Label();
+        }
+        generator.instGen.rawJumpOpcode(opcode, generateTruePath.label);
     }
 }

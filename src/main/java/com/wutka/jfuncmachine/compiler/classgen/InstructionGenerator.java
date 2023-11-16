@@ -164,7 +164,8 @@ public class InstructionGenerator {
     public InstructionGenerator l2d() { instructionList.add(new InsnNode(Opcodes.L2D)); return this; }
     public InstructionGenerator l2f() { instructionList.add(new InsnNode(Opcodes.L2F)); return this; }
     public InstructionGenerator l2i() { instructionList.add(new InsnNode(Opcodes.L2I)); return this; }
-    public InstructionGenerator label(Label label) { System.out.println("Define label "+label); instructionList.add(new LabelNode(label.label)); return this; }
+    public InstructionGenerator label(Label label) {
+        System.out.println("Define label "+label); instructionList.add(new LabelNode(label.label)); return this; }
     public InstructionGenerator ladd() { instructionList.add(new InsnNode(Opcodes.LADD)); return this; }
     public InstructionGenerator laload() { instructionList.add(new InsnNode(Opcodes.LALOAD)); return this; }
     public InstructionGenerator land() { instructionList.add(new InsnNode(Opcodes.LAND)); return this; }
