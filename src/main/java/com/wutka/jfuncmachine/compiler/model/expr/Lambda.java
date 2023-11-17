@@ -16,6 +16,52 @@ public class Lambda extends Expression {
     public Type[] parameterTypes;
     public final boolean useObjectInterface;
 
+    public Lambda(Field[] parameters, Type returnType, Expression body) {
+        super(null, 0);
+        this.parameters = parameters;
+        this.returnType = returnType;
+        this.useObjectInterface = false;
+        this.body = body;
+        parameterTypes = new Type[parameters.length];
+        for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
+        this.interfaceType = null;
+    }
+
+    public Lambda(Field[] parameters, Type returnType, Expression body,
+                  String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.parameters = parameters;
+        this.returnType = returnType;
+        this.useObjectInterface = false;
+        this.body = body;
+        parameterTypes = new Type[parameters.length];
+        for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
+        this.interfaceType = null;
+    }
+
+    public Lambda(Type interfaceType, Field[] parameters, Type returnType, Expression body) {
+        super(null, 0);
+        this.parameters = parameters;
+        this.returnType = returnType;
+        this.useObjectInterface = false;
+        this.body = body;
+        parameterTypes = new Type[parameters.length];
+        for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
+        this.interfaceType = interfaceType;
+    }
+
+    public Lambda(Type interfaceType, Field[] parameters, Type returnType, Expression body,
+                  String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.parameters = parameters;
+        this.returnType = returnType;
+        this.useObjectInterface = false;
+        this.body = body;
+        parameterTypes = new Type[parameters.length];
+        for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
+        this.interfaceType = interfaceType;
+    }
+
     public Lambda(Field[] parameters, Type returnType, boolean useObjectInterface, Expression body) {
         super(null, 0);
         this.parameters = parameters;
@@ -148,7 +194,7 @@ public class Lambda extends Expression {
         }
 
         org.objectweb.asm.Type signatureType;
-        if (useObjectInterface) {
+        if (useObjectInterface || generator.options.genericLambdas) {
             ObjectType[] objectParams = new ObjectType[parameters.length];
             for (int i = 0; i < objectParams.length; i++) objectParams[i] = new ObjectType();
             signatureType = org.objectweb.asm.Type.getType(generator.methodDescriptor(objectParams, new ObjectType()));
@@ -157,7 +203,7 @@ public class Lambda extends Expression {
         }
 
         // Call invokedynamic to generate a lambda method handle
-        generator.instGen.invokedynamic(ClassGenerator.lambdaIntMethodName,
+        generator.instGen.invokedynamic(generator.options.lambdaMethodName,
                 generator.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
                 // Boilerplate for Java's built-in lambda bootstrap
                 new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",

@@ -88,6 +88,7 @@ public class Binding extends Expression {
 
             if (visibility == Visibility.Recursive) {
                 envVar = newEnv.allocate(pair.name, pair.value.getType());
+                env.putBinding(envVar.name, this);
             }
 
             if (visibility == Visibility.Separate) {
@@ -98,6 +99,7 @@ public class Binding extends Expression {
 
             if (visibility != Visibility.Recursive) {
                 envVar = newEnv.allocate(pair.name, pair.value.getType());
+                env.putBinding(envVar.name, this);
             }
 
             Label bindingVarStart = new Label();
