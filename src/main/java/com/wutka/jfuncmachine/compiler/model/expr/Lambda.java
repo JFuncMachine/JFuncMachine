@@ -206,13 +206,13 @@ public class Lambda extends Expression {
         generator.instGen.invokedynamic(generator.options.lambdaMethodName,
                 generator.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
                 // Boilerplate for Java's built-in lambda bootstrap
-                new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
+                new Handle(Handle.INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
                         "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
                         false),
                 // Create an ASM Type descriptor for this descriptor
                 signatureType,
                 // Create a handle for the generated lambda method
-                new Handle(Opcodes.H_INVOKESTATIC, lambdaInfo.packageName.replace('.', '/')+
+                new Handle(Handle.INVOKESTATIC, lambdaInfo.packageName.replace('.', '/')+
                         "/"+ generator.currentClass.name, lambdaInfo.name,
                         generator.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false),
                 // Create an another ASM Type descriptor for this descriptor

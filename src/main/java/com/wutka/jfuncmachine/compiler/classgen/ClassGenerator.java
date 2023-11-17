@@ -72,7 +72,9 @@ public class ClassGenerator {
     public InstructionGenerator instGen;
 
     /** A class loader that can be used to immediately load defined classes. */
-    public GeneratedClassLoader classLoader = new GeneratedClassLoader();
+    public GeneratedClassLoader classLoader = new GeneratedClassLoader(ClassGenerator.class.getClassLoader());
+
+    protected Map<String,Class> loadedClasses = new HashMap<>();
 
     /** Creates a new class generator using the default options. */
     public ClassGenerator() {
@@ -134,11 +136,9 @@ public class ClassGenerator {
      *
      * @param classDefs The class definitions of the classDefs to be generated.
      * @return An array of GeneratedClass objects containing the class bytes for each class
-     * @throws IOException
      * @see GeneratedClass
      */
-    public synchronized GeneratedClass[] generateClassBytes(ClassDef[] classDefs)
-            throws IOException {
+    public synchronized GeneratedClass[] generateClassBytes(ClassDef[] classDefs) {
         List<GeneratedClass> allGenerated = new ArrayList<>();
         for (ClassDef classDef: classDefs) {
             GeneratedClass[] generatedClasses = generateClassBytes(classDef);
@@ -156,11 +156,9 @@ public class ClassGenerator {
      *
      * @param classDef The class definition to be generated.
      * @return An array of GeneratedClass objects containing the class bytes for each class
-     * @throws IOException
      * @see GeneratedClass
      */
-    public synchronized GeneratedClass[] generateClassBytes(ClassDef classDef)
-            throws IOException {
+    public synchronized GeneratedClass[] generateClassBytes(ClassDef classDef) {
         this.currentClass = classDef;
 
         List<GeneratedClass> generatedClasses = new ArrayList<>();
@@ -188,16 +186,15 @@ public class ClassGenerator {
      * than one class definition being generated, since lambdas require an interface definition.
      *
      * @param classDefs The class definitions of the classes to be generated.
-     * @throws IOException
      */
-    public synchronized void generateAndLoad(ClassDef[] classDefs)
-        throws IOException {
+    public synchronized void generateAndLoad(ClassDef[] classDefs) {
         List<GeneratedClass> generated = new ArrayList<>();
 
         for (ClassDef classDef: classDefs) {
             GeneratedClass[] generatedClasses = generateClassBytes(classDef);
             for (GeneratedClass genClass: generatedClasses) {
                 genClass.loadedClass = classLoader.defineClass(genClass.className, genClass.classBytes);
+                loadedClasses.put(genClass.className, genClass.loadedClass);
             }
             generated.addAll(Arrays.asList(generatedClasses));
         }
@@ -215,14 +212,13 @@ public class ClassGenerator {
      * than one class definition being generated, since lambdas require an interface definition.
      *
      * @param classDef The class definitions of the classes to be generated.
-     * @throws IOException
      */
-    public synchronized void generateAndLoad(ClassDef classDef)
-        throws IOException {
+    public synchronized void generateAndLoad(ClassDef classDef) {
         GeneratedClass[] classes = generateClassBytes(classDef);
 
         for (GeneratedClass genClass: classes) {
             genClass.loadedClass = classLoader.defineClass(genClass.className, genClass.classBytes);
+            loadedClasses.put(genClass.className, genClass.loadedClass);
         }
 
         for (GeneratedClass genClass: classes) {
@@ -451,7 +447,6 @@ public class ClassGenerator {
      *
      * @param info A descriptor for the lambda interface and its single method
      * @return A GeneratedClass containing the bytecode and the class name
-     * @throws IOException
      */
     public synchronized GeneratedClass generateLambdaInterface(LambdaIntInfo info) {
         String className = info.name;
@@ -758,5 +753,14 @@ public class ClassGenerator {
             case StringType s -> "Ljava/lang/String;";
             case UnitType v -> "V";
         };
+    }
+
+    /** Returns a class previously loaded by the internal classloader.
+     *
+     * @param className The fully-qualified name of the class to return
+     * @return The class if it was loaded, or null if there is no class with that name
+     */
+    public Class getLoadedClass(String className) {
+        return loadedClasses.get(className);
     }
 }

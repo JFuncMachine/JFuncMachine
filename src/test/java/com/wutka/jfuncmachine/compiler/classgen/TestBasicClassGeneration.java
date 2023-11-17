@@ -56,27 +56,27 @@ public class TestBasicClassGeneration {
         MethodDef main = new MethodDef("main", Access.PUBLIC + Access.STATIC,
                 // That takes one argument called "args" that is an array of String
                 new Field[] { new Field("args", new ArrayType(SimpleTypes.STRING)) },
-                // The only thing the function should do is call System.out.println
+                // The main method returns type Unit (aka void)
+                SimpleTypes.UNIT,
+                // The only thing the function should do is call System.out.println, which means
+                // call the println method on the static PrintStream field named out in the System class
                 // So create an expression that calls the println method
-                SimpleTypes.UNIT, new CallJavaMethod("java.io.PrintStream", "println",
+                new CallJavaMethod("java.io.PrintStream", "println",
                         // Get the PrintStream object from System.out, that is the object
                         // that we will be calling println on
                         new GetJavaStaticField("java.lang.System", "out",
-                                new ObjectType("java.io.PrintStream"), "helloworld.test", 0),
+                                new ObjectType("java.io.PrintStream")),
                         // Load up the arguments to println, which is just one, that is a string constant
-                        new Expression[] { new StringConstant("Hello World!", "helloworld.test", 0) },
+                        new Expression[] { new StringConstant("Hello World!") },
                         // the function returns void (which in functional languages is called Unit)
-                        SimpleTypes.UNIT, "helloworld.test", 0),
-                // The main method returns void (Unit)
-                "helloworld.test", 0);
+                    SimpleTypes.UNIT));
 
         // Create a com.wutka.test.HelloWorld class
         ClassDef newClass = new ClassDef("com.wutka.test", "HelloWorld",
                 // Make it a public class
                 Access.PUBLIC,
                 // Containing one method, the main method, and no fields
-                new MethodDef[] { main }, new ClassField[0],
-                "helloworld.test", 1);
+                new MethodDef[] { main }, new ClassField[0]);
 
 
         ClassGenerator gen = new ClassGenerator();
