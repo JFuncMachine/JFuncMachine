@@ -23,7 +23,7 @@ public class Invoke extends Expression {
         this.targetType = targetType;
         this.parameterTypes = targetType.parameterTypes;
         this.returnType = targetType.returnType;
-        this.intMethod = ClassGenerator.lambdaIntMethodName;
+        this.intMethod = null;
     }
 
     public Invoke(FunctionType targetType, Expression target, Expression[] arguments,
@@ -34,7 +34,7 @@ public class Invoke extends Expression {
         this.targetType = targetType;
         this.parameterTypes = targetType.parameterTypes;
         this.returnType = targetType.returnType;
-        this.intMethod = ClassGenerator.lambdaIntMethodName;
+        this.intMethod = null;
     }
 
     public Invoke(Expression target, Expression[] arguments) {
@@ -49,7 +49,7 @@ public class Invoke extends Expression {
         this.targetType = target.getType();
         this.parameterTypes = ((FunctionType) targetType).parameterTypes;
         this.returnType = ((FunctionType) targetType).returnType;
-        this.intMethod = ClassGenerator.lambdaIntMethodName;
+        this.intMethod = null;
     }
 
     public Invoke(Expression target, Expression[] arguments,
@@ -65,7 +65,7 @@ public class Invoke extends Expression {
         this.targetType = target.getType();
         this.parameterTypes = ((FunctionType) targetType).parameterTypes;
         this.returnType = ((FunctionType) targetType).returnType;
-        this.intMethod = ClassGenerator.lambdaIntMethodName;
+        this.intMethod = null;
     }
 
     public Invoke(String intMethod, Type targetType, Type[] parameterTypes, Type returnType,
@@ -104,6 +104,12 @@ public class Invoke extends Expression {
 
     @Override
     public void generate(ClassGenerator generator, Environment env) {
+        String intMethodName = intMethod;
+
+        if (intMethod == null) {
+            intMethodName = generator.options.lambdaMethodName;
+        }
+
         target.generate(generator, env);
         for (int i=0; i < arguments.length; i++) {
             Expression expr = arguments[i];
@@ -126,6 +132,6 @@ public class Invoke extends Expression {
 
         generator.instGen.invokeinterface(
                 generator.className(className),
-                intMethod, generator.methodDescriptor(parameterTypes, returnType));
+                intMethodName, generator.methodDescriptor(parameterTypes, returnType));
     }
 }
