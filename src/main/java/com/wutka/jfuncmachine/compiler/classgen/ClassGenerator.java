@@ -568,8 +568,7 @@ public class ClassGenerator {
      */
     public LambdaInfo allocateLambda(FunctionType type) {
 
-        LambdaInfo info = new LambdaInfo(currentClass.packageName,
-                generateLambdaName(), type);
+        LambdaInfo info = new LambdaInfo(generateLambdaName(), type);
 
         return info;
     }

@@ -132,7 +132,7 @@ public class Environment {
     public void free(int loc) {
         boolean found = false;
         for (String key: vars.keySet()) {
-            if (vars.get(key).value == loc) {
+            if (vars.get(key).index == loc) {
                 EnvVar removeVar = vars.remove(key);
 
                 // If the loc being freed is adjacent to nextVar, move nextVar back
@@ -168,15 +168,15 @@ public class Environment {
             EnvVar removeVar = vars.remove(envVar.name);
 
             // If the var is adjacent to nextVar, move nextVar back
-            if (envVar.value == nextVar - removeVar.type.getStackSize()) {
+            if (envVar.index == nextVar - removeVar.type.getStackSize()) {
                 nextVar -= removeVar.type.getStackSize();
             } else {
                 // Otherwise just add it to the holes
-                holes.add(envVar.value);
+                holes.add(envVar.index);
 
                 // If the type requires two slots, add the next index to the holes as well
                 if (removeVar.type.getStackSize() == 2) {
-                    holes.add(envVar.value+1);
+                    holes.add(envVar.index +1);
                 }
             }
         }

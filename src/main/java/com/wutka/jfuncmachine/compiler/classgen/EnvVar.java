@@ -13,17 +13,31 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Objects;
 
+/** Associates a name and type with the index of a local variable.
+ * In Java instructions, local variables are referred to by a simple
+ * index number. The parameters to the method have the lowest index numbers.
+ */
 public class EnvVar {
+    /** The name of the variable */
     public final String name;
+    /** The type of the variable */
     public final Type type;
-    public final int value;
+    /** The index of the variable */
+    public final int index;
 
-    public EnvVar(String name, Type type, int value) {
+    /** Creates a new EnvVar with a name, type, and index value
+     *
+     * @param name The name of the variable
+     * @param type The type of the variable
+     * @param index The index of the variable
+     */
+    public EnvVar(String name, Type type, int index) {
         this.name = name;
         this.type = type;
-        this.value = value;
+        this.index = index;
     }
 
+    /** Returns the opcode used to store a variable of this type */
     public void generateSet(ClassGenerator generator) {
         int opcode = switch (type) {
             case BooleanType b -> Opcodes.ISTORE;
@@ -37,10 +51,10 @@ public class EnvVar {
             default -> Opcodes.ASTORE;
         };
 
-        generator.instGen.rawIntOpcode(opcode, value);
-
+        generator.instGen.rawIntOpcode(opcode, index);
     }
 
+    /** Returns the opcode used to load a variable of this type */
     public void generateGet(ClassGenerator generator) {
         int opcode = switch (type) {
             case BooleanType b -> Opcodes.ILOAD;
@@ -54,8 +68,7 @@ public class EnvVar {
             default -> Opcodes.ALOAD;
         };
 
-        generator.instGen.rawIntOpcode(opcode, value);
-
+        generator.instGen.rawIntOpcode(opcode, index);
     }
 
     @Override
@@ -63,11 +76,11 @@ public class EnvVar {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EnvVar envVar = (EnvVar) o;
-        return value == envVar.value && Objects.equals(name, envVar.name) && Objects.equals(type, envVar.type);
+        return index == envVar.index && Objects.equals(name, envVar.name) && Objects.equals(type, envVar.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, value);
+        return Objects.hash(name, type, index);
     }
 }

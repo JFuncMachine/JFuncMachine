@@ -182,7 +182,7 @@ public class Lambda extends Expression {
                 default -> Opcodes.ALOAD;
             };
 
-            generator.instGen.rawIntOpcode(opcode, envVar.value);
+            generator.instGen.rawIntOpcode(opcode, envVar.index);
         }
 
         String indyClass;
@@ -212,7 +212,7 @@ public class Lambda extends Expression {
                 // Create an ASM Type descriptor for this descriptor
                 signatureType,
                 // Create a handle for the generated lambda method
-                new Handle(Handle.INVOKESTATIC, lambdaInfo.packageName.replace('.', '/')+
+                new Handle(Handle.INVOKESTATIC, generator.currentClass.packageName.replace('.', '/')+
                         "/"+ generator.currentClass.name, lambdaInfo.name,
                         generator.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false),
                 // Create an another ASM Type descriptor for this descriptor

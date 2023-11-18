@@ -626,12 +626,37 @@ public class InstructionGenerator {
         instructionList.add(new FieldInsnNode(Opcodes.PUTSTATIC, owner, name, descriptor));
         return this;
     }
+
+    /** Returns from a subroutine using the return address stored in a local variable
+     * @param index The index of the local variable containing the return address
+     */
     public InstructionGenerator ret(int index) { instructionList.add(new VarInsnNode(Opcodes.RET, index)); return this; }
+    /** Returns from the current method without returning a value */
     public InstructionGenerator return_void() { instructionList.add(new InsnNode(Opcodes.RETURN)); return this; }
+    /** Emit an instruction to load a value from an array of shorts */
     public InstructionGenerator saload() { instructionList.add(new InsnNode(Opcodes.SALOAD)); return this; }
+    /** Emit an instruction to store a value in an array of shorts */
     public InstructionGenerator sastore() { instructionList.add(new InsnNode(Opcodes.SASTORE)); return this; }
+
+    /** Emit an instruction to push an immediate short value onto the stack.
+     * This instruction lets you push short constants without having to store the value in
+     * the constant pool and use ldc. The two bytes of the value are encoded in instructions.
+     * @param value The value to push
+     */
     public InstructionGenerator sipush(int value) { instructionList.add(new IntInsnNode(Opcodes.SIPUSH, value)); return this; }
+    /** Emit an instruction to swap the top 2 1-slot values on the stack.
+     * There is no 2-slot equivalent for this.
+     */
     public InstructionGenerator swap() { instructionList.add(new InsnNode(Opcodes.SWAP)); return this; }
+
+    /** Emit the labels and class name for a try-catch block.
+     * For a chain of catches after a try, just generate multiple of these with the same start and end
+     * but different handlers and catch classes for each different catch.
+     * @param start The label indicating the start of the try block
+     * @param end The label indicating the end of the try block
+     * @param handler The label indicating the location of the exception handler
+     * @param catchClass The class of exception that the handler catches
+     */
     public InstructionGenerator trycatch(Label start, Label end, Label handler, String catchClass) {
         if (catchClass != null) {
             catchClass = catchClass.replace('.', '/');
@@ -640,6 +665,16 @@ public class InstructionGenerator {
                 new LabelNode(handler.label), catchClass));
         return this;
     }
+
+    /** Emit an instruction to perform a switch using a table lookup.
+     * The table of labels should be of the size max-min+1. If the argument to the switch is a value between min and
+     * max inclusive, the switch subtracts min from it, and uses it as an index into labels, and jumps to whatever
+     * label is at that location. If the value is not between min and max, it jumps to the default label.
+     * @param min The minimum value that can match
+     * @param max The maximum value that can match
+     * @param default_label The label to jump to if the value is &lt; min or &gt; max
+     * @param labels The array of labels indicating where to jump for a matching value
+     */
     public InstructionGenerator tableswitch(int min, int max, Label default_label, Label[] labels) {
         LabelNode[] labelNodes = new LabelNode[labels.length];
         for (int i=0; i < labels.length; i++) {
@@ -650,6 +685,9 @@ public class InstructionGenerator {
         return this;
     }
 
+    /** Returns the type of return instruction needed for a value of a specific type
+     * @param type The type to get a return instruction for
+     */
     public InstructionGenerator return_by_type(Type type) {
         int opcode = switch(type) {
             case ArrayType a -> Opcodes.ARETURN;
@@ -670,21 +708,47 @@ public class InstructionGenerator {
         return this;
     }
 
+    /** Inserts a raw opcode into the instruction stream
+     * @param opcode The opcode to insert
+     */
     public InstructionGenerator rawOpcode(int opcode) { instructionList.add(new InsnNode(opcode)); return this; }
+
+    /** Inserts a raw opcode that takes an int argument into the instruction stream
+     * @param opcode The opcode to insert
+     * @param index The int argument to insert
+     */
     public InstructionGenerator rawIntOpcode(int opcode, int index) {
         instructionList.add(new IntInsnNode(opcode, index));
         return this;
     }
+
+    /** Inserts a raw opcode for jumping to a label into the instruction stream.
+     * This is typically used for if instructions where the opcode is computed based on
+     * the kind of test being done.
+     * @param opcode The opcode to insert
+     * @param label The label the opcode should jump to under some condition
+     */
     public InstructionGenerator rawJumpOpcode(int opcode, Label label) {
         instructionList.add(new JumpInsnNode(opcode, new LabelNode(label.label)));
         return this;
     }
 
+    /** Schedules the generation of a lambda method
+     * @param lambda The method to generate
+     */
     public InstructionGenerator generateLambda(MethodDef lambda) {
         classGen.addMethodToGenerate(lambda);
         return this;
     }
 
+    /** Creates a new local variable with a specific name and type, and a particular range
+     * of instructions that it is valid over.
+     * @param name The name of the variable
+     * @param type The type of the variable
+     * @param startLoc The label of the first instruction where the variable is valid
+     * @param endLoc The label just past the last instruction where the variable is valid
+     * @param index The index number of the local variable
+     */
     public InstructionGenerator generateLocalVariable(String name, Type type,
                                                       Label startLoc, Label endLoc,
                                                       int index) {

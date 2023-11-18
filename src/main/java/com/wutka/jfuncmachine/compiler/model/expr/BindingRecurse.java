@@ -67,7 +67,7 @@ public class BindingRecurse extends Expression {
                 case ShortType s -> Opcodes.ISTORE;
                 default -> Opcodes.ASTORE;
             };
-            generator.instGen.rawIntOpcode(opcode, envVar.value);
+            generator.instGen.rawIntOpcode(opcode, envVar.index);
         }
         generator.instGen.gotolabel(binding.label);
     }

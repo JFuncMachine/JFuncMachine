@@ -81,7 +81,7 @@ public class TryCatchFinally extends Expression {
                 generator.instGen.label(finallyStart);
                 saveVar = env.allocate(tryBody.getType());
                 generator.instGen.generateLocalVariable(saveVar.name, saveVar.type,
-                        finallyStart, finallyEnd, saveVar.value);
+                        finallyStart, finallyEnd, saveVar.index);
                 saveVar.generateSet(generator);
             }
 
@@ -114,7 +114,7 @@ public class TryCatchFinally extends Expression {
             generator.instGen.label(catchStart);
 
             generator.instGen.generateLocalVariable(excVar.name, excVar.type,
-                    catchStart, catchEnd, excVar.value);
+                    catchStart, catchEnd, excVar.index);
 
             excVar.generateSet(generator);
 
@@ -129,7 +129,7 @@ public class TryCatchFinally extends Expression {
                     generator.instGen.label(finallyStart);
                     saveVar = env.allocate(catchExpr.body.getType());
                     generator.instGen.generateLocalVariable(saveVar.name, saveVar.type,
-                            finallyStart, finallyEnd, saveVar.value);
+                            finallyStart, finallyEnd, saveVar.index);
                     saveVar.generateSet(generator);
                 }
 

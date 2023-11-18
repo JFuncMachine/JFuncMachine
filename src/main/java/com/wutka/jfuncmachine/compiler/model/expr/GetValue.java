@@ -47,6 +47,6 @@ public class GetValue extends Expression {
             default -> Opcodes.ALOAD;
         };
 
-        generator.instGen.rawIntOpcode(opcode, envVar.value);
+        generator.instGen.rawIntOpcode(opcode, envVar.index);
     }
 }

@@ -48,6 +48,6 @@ public class SetValue extends Expression {
             default -> Opcodes.ASTORE;
         };
 
-        generator.instGen.rawIntOpcode(opcode, envVar.value);
+        generator.instGen.rawIntOpcode(opcode, envVar.index);
     }
 }

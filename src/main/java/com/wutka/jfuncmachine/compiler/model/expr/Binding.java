@@ -105,7 +105,7 @@ public class Binding extends Expression {
             Label bindingVarStart = new Label();
 
             generator.instGen.generateLocalVariable(pair.name, pair.value.getType(),
-                    bindingVarStart, bindingEnd, envVar.value);
+                    bindingVarStart, bindingEnd, envVar.index);
             generator.instGen.label(bindingVarStart);
 
             int opcode = switch (pair.value.getType()) {
@@ -119,7 +119,7 @@ public class Binding extends Expression {
                 case ShortType s -> Opcodes.ISTORE;
                 default -> Opcodes.ASTORE;
             };
-            generator.instGen.rawIntOpcode(opcode, envVar.value);
+            generator.instGen.rawIntOpcode(opcode, envVar.index);
         }
         if (name != null) {
             generator.instGen.label(label);
