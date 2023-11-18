@@ -1,21 +1,38 @@
 package com.wutka.jfuncmachine.compiler.model.expr.bool.tests;
 
+/** A container for the various kinds of tests that can be done for an if instruction. */
 public class Tests {
+    /** The test for equality */
     public static Test EQ = new EQTest();
+    /** The test for non-equality */
     public static Test NE = new NETest();
+    /** The test for less-than */
     public static Test LT = new LTTest();
+    /** The test for less-or-equal */
     public static Test LE = new LETest();
+    /** The test for greater-than */
     public static Test GT = new GTTest();
+    /** The test for greater-or-equal */
     public static Test GE = new GETest();
+    /** The test for null */
     public static Test IsNull = new IsNullTest();
+    /** The test for not-null */
     public static Test IsNotNull = new IsNotNullTest();
+    /** The test for true */
     public static Test IsTrue = new IsTrueTest();
+    /** The test for false */
     public static Test IsFalse = new IsFalseTest();
+    /** The test for equality ignoring case (specifically for strings) */
     public static Test EQ_IgnoreCase = new EQIgnoreCaseTest();
+    /** The test for non-equality ignoring case (specifically for strings) */
     public static Test NE_IgnoreCase = new NEIgnoreCaseTest();
+    /** The test for less-than ignoring case (specifically for strings) */
     public static Test LT_IgnoreCase = new LTIgnoreCaseTest();
+    /** The test for less-or-equal ignoring case (specifically for strings) */
     public static Test LE_IgnoreCase = new LEIgnoreCaseTest();
+    /** The test for greater-than ignoring case (specifically for strings) */
     public static Test GT_IgnoreCase = new GTIgnoreCaseTest();
+    /** The test for greater-or-equal ignoring case (specifically for strings) */
     public static Test GE_IgnoreCase = new GEIgnoreCaseTest();
 
     public static class EQTest extends Test {

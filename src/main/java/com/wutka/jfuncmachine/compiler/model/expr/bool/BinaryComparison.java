@@ -7,7 +7,6 @@ import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Test;
 import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Unbox;
-import com.wutka.jfuncmachine.compiler.model.expr.javaintop.CallJavaMethod;
 import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
 import com.wutka.jfuncmachine.compiler.model.types.FloatType;
 import com.wutka.jfuncmachine.compiler.model.types.LongType;
@@ -18,15 +17,33 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 import org.objectweb.asm.Opcodes;
 
 import java.util.List;
-import java.util.Stack;
 
+/** Represents a comparison of two expressions.
+ * This class takes care of figuring out how to do the requested comparisons based on
+ * the available instructions in the Java Virtual Machine. For example, to compare double values,
+ * it has to use the dcmpl and dcmpg instructions in combination with ifeq, ifne, etc.
+ * For integers, it can use if_icmpeq, if_icmpne, etc. It does any autoboxing necessary (if enabled), so
+ * it can compare java.lang.Float values, for example. It has support for string comparisons, including
+ * those that ignore case. It calls the appropriate compareTo or compareToIgnoreCase and then uses
+ * ifeq, ifne, etc. to evaluate the comparison.
+ */
 public class BinaryComparison extends BooleanExpr {
+    /** The type of comparison to be done. */
     public Test test;
+    /** The expression on the left side of the comparison */
     public Expression left;
+    /** The expression on the right side of the comparison */
     public Expression right;
+    /** The expression to evaluate if the comparison is true */
     public BooleanExpr truePath;
+    /** The expression to evaluate if the comparison is false */
     public BooleanExpr falsePath;
 
+    /** Create a new BinaryComparison with the given test, and left and right expressions
+     * @param test The test to perform
+     * @param left The left-hand side of the comparison
+     * @param right The right-hand side of the comparison
+     */
     public BinaryComparison(Test test, Expression left, Expression right) {
         super(null, 0);
         this.test = test;
@@ -34,6 +51,13 @@ public class BinaryComparison extends BooleanExpr {
         this.right = right;
     }
 
+    /** Create a new BinaryComparison with the given test, and left and right expressions
+     * @param test The test to perform
+     * @param left The left-hand side of the comparison
+     * @param right The right-hand side of the comparison
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public BinaryComparison(Test test, Expression left, Expression right, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.test = test;
@@ -59,24 +83,30 @@ public class BinaryComparison extends BooleanExpr {
         return this;
     }
 
+    /** Identify any variables captured by the left and right hand expressions */
     public void findCaptured(Environment env) {
         left.findCaptured(env);
         right.findCaptured(env);
     }
 
+    /** Generate Java bytecode for this comparison */
     public void generate(ClassGenerator generator, Environment env, BooleanExpr next) {
+        // If this test has a non-null label, generate the label
         if (label != null) {
             generator.instGen.label(label);
         }
 
         Test generateTest = test;
         BooleanExpr generateTruePath = truePath;
-        BooleanExpr generateFalsePath = falsePath;
 
+        /* Java if instructions always jump if the test is true, and otherwise just execute the next
+           instruction if the test is false. If the next test after this is supposed to occur if the
+           comparison is true, invert the test so that the next test is executed when the test is false
+           instead of true.
+         */
         if (truePath == next) {
             generateTest = test.invert();
             generateTruePath = falsePath;
-            generateFalsePath = truePath;
         }
 
         int opcode;
@@ -249,7 +279,7 @@ public class BinaryComparison extends BooleanExpr {
 
                     generator.instGen.invokevirtual(
                             generator.className("java.lang.String"),
-                            "compareTo", generator.methodDescriptor(
+                            "compareToIgnoreCase", generator.methodDescriptor(
                                     new Type[] { SimpleTypes.STRING }, SimpleTypes.STRING));
 
                     opcode = switch (generateTest) {

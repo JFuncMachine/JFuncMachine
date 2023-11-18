@@ -8,15 +8,27 @@ import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Test;
 import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.objectweb.asm.Opcodes;
 
+import java.util.List;
 import java.util.Stack;
 
+/** Represents an instanceof comparison (or not instanceof) */
 public class InstanceofComparison extends BooleanExpr {
+    /** The test to use */
     public Test test;
+    /** The expression to test */
     public Expression expr;
+    /** The class name to test against */
     public String className;
+    /** The test to execute if this one is true */
     public BooleanExpr truePath;
+    /** The test to execute if this one is false */
     public BooleanExpr falsePath;
 
+    /** Create an InstanceofComparison for a given test, expression and class name
+     * @param test The test to perform
+     * @param expr The expression to test
+     * @param className The class name to test against
+     */
     public InstanceofComparison(Test test, Expression expr, String className) {
         super(null, 0);
         this.test = test;
@@ -24,6 +36,13 @@ public class InstanceofComparison extends BooleanExpr {
         this.expr = expr;
     }
 
+    /** Create an InstanceofComparison for a given test, expression and class name
+     * @param test The test to perform
+     * @param expr The expression to test
+     * @param className The class name to test against
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public InstanceofComparison(Test test, Expression expr, String className, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.test = test;
@@ -40,11 +59,11 @@ public class InstanceofComparison extends BooleanExpr {
         return this;
     }
 
-    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, Stack<BooleanExpr> tests) {
+    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests) {
         this.falsePath = falseNext;
         this.truePath = trueNext;
 
-        tests.push(this);
+        tests.add(this);
 
         return this;
     }
@@ -62,12 +81,15 @@ public class InstanceofComparison extends BooleanExpr {
 
         Test generateTest = test;
         BooleanExpr generateTruePath = truePath;
-        BooleanExpr generateFalsePath = falsePath;
 
+        /* Java if instructions always jump if the test is true, and otherwise just execute the next
+           instruction if the test is false. If the next test after this is supposed to occur if the
+           comparison is true, invert the test so that the next test is executed when the test is false
+           instead of true.
+         */
         if (truePath == next) {
             generateTest = test.invert();
             generateTruePath = falsePath;
-            generateFalsePath = truePath;
         }
 
         int opcode = switch (generateTest) {

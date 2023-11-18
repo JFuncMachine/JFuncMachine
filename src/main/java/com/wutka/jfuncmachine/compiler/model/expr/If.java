@@ -83,6 +83,8 @@ public class If extends Expression {
             } else if (booleanExpr instanceof BinaryComparison binary) {
                 binary.left.findCaptured(env);
                 binary.right.findCaptured(env);
+            } else if (booleanExpr instanceof InstanceofComparison inst) {
+                inst.expr.findCaptured(env);
             }
         }
         trueExpr.findCaptured(env);

@@ -8,20 +8,38 @@ import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Test;
 import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.objectweb.asm.Opcodes;
 
+import java.util.List;
 import java.util.Stack;
 
+/** Represents a comparison for a single expression, usually either a binary expression (represented by 0 or 1),
+ * or the result of a compare function or instruction.
+ */
 public class UnaryComparison extends BooleanExpr {
+    /** The test to perform */
     public Test test;
+    /** The expression to test */
     public Expression expr;
+    /** The expression that should be executed if the test is true */
     public BooleanExpr truePath;
+    /** The expression that should be executed if the test is false */
     public BooleanExpr falsePath;
 
+    /** Create a new UnaryExpression for a test and expression
+     * @param test The test to perform
+     * @param expr The expression to be tested
+     */
     public UnaryComparison(Test test, Expression expr) {
         super(null, 0);
         this.test = test;
         this.expr = expr;
     }
 
+    /** Create a new UnaryExpression for a test and expression
+     * @param test The test to perform
+     * @param expr The expression to be tested
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public UnaryComparison(Test test, Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.test = test;
@@ -37,11 +55,11 @@ public class UnaryComparison extends BooleanExpr {
         return this;
     }
 
-    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, Stack<BooleanExpr> tests) {
+    public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests) {
         this.falsePath = falseNext;
         this.truePath = trueNext;
 
-        tests.push(this);
+        tests.add(this);
 
         return this;
     }
@@ -58,13 +76,17 @@ public class UnaryComparison extends BooleanExpr {
 
         Test generateTest = test;
         BooleanExpr generateTruePath = truePath;
-        BooleanExpr generateFalsePath = falsePath;
 
+        /* Java if instructions always jump if the test is true, and otherwise just execute the next
+           instruction if the test is false. If the next test after this is supposed to occur if the
+           comparison is true, invert the test so that the next test is executed when the test is false
+           instead of true.
+         */
         if (truePath == next) {
             generateTest = test.invert();
             generateTruePath = falsePath;
-            generateFalsePath = truePath;
         }
+
         if (generateTest instanceof Tests.EQTest || generateTest instanceof Tests.NETest ||
             generateTest instanceof Tests.LTTest || generateTest instanceof Tests.LETest ||
             generateTest instanceof Tests.GTTest || generateTest instanceof Tests.GETest) {
