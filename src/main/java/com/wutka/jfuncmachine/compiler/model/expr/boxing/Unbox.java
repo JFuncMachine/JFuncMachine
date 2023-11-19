@@ -6,27 +6,53 @@ import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.expr.javaintop.CallJavaMethod;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 
+/** Unboxes an expression - converts a box type to a native type (e.g. java.lang.Short to short) */
 public class Unbox extends Expression {
+    /** The expression to unbox */
     public final Expression expr;
+    /** The type that the expression should be unboxed to */
     public final Type unboxedType;
 
+    /** Create an Unbox for an expression
+     *
+     * @param expr The expression to unbox, the unboxed type is derived from the expression type
+     */
     public Unbox(Expression expr) {
         super(null, 0);
         this.expr = expr;
         this.unboxedType = expr.getType().getUnboxedType();
     }
 
+    /** Create an Unbox for an expression
+     *
+     * @param expr The expression to unbox, the unboxed type is derived from the expression type
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Unbox(Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;
         this.unboxedType = expr.getType().getUnboxedType();
     }
 
+    /** Create an Unbox for an expression
+     *
+     * @param expr The expression to unbox, the unboxed type is derived from the expression type
+     * @param unboxedType The type that the expression should be unboxed to
+     */
     public Unbox(Expression expr, Type unboxedType) {
         super(null, 0);
         this.expr = expr;
         this.unboxedType = unboxedType;
     }
+
+    /** Create an Unbox for an expression
+     *
+     * @param expr The expression to unbox, the unboxed type is derived from the expression type
+     * @param unboxedType The type that the expression should be unboxed to
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Unbox(Expression expr, Type unboxedType, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;
