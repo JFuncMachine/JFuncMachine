@@ -3,19 +3,28 @@ package com.wutka.jfuncmachine.compiler.model.expr.conv;
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
-import com.wutka.jfuncmachine.compiler.model.types.IntType;
-import com.wutka.jfuncmachine.compiler.model.types.ShortType;
-import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.compiler.model.types.*;
 
+/** Converts an expression to a short */
 public class ToShort extends Expression {
+    /** The expression to convert to a short */
     protected Expression expr;
 
+    /** Create a short conversion expression
+     *
+     * @param expr The expression to convert to a short
+     */
     public ToShort(Expression expr) {
         super(null, 0);
         this.expr = expr;
     }
 
+    /** Create a short conversion expression
+     *
+     * @param expr The expression to convert to a short
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public ToShort(Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;
@@ -34,7 +43,13 @@ public class ToShort extends Expression {
         expr.generate(generator, env);
 
         switch (exprType) {
+            case BooleanType b -> generator.instGen.i2s();
+            case ByteType b -> generator.instGen.i2s();
+            case CharType c -> generator.instGen.i2s();
+            case DoubleType d -> generator.instGen.d2i().i2s();
+            case FloatType f -> generator.instGen.f2i().i2s();
             case IntType i -> generator.instGen.i2s();
+            case LongType l -> generator.instGen.l2i().i2s();
             case ShortType s -> {}
             default -> throw generateException(
                     String.format("Can't convert %s into short", exprType));

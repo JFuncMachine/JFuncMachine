@@ -6,16 +6,31 @@ import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
+/** An expression to call a Java method */
 public class CallJavaMethod extends Expression {
+    /** The name of the class that the method belongs to */
     public final String className;
+    /** The name of the method */
     public final String methodName;
+    /** The types of the method arguments */
     public Type[] parameterTypes;
+    /** The object to invoke the method on */
     public final Expression target;
+    /** The method arguments */
     public final Expression[] arguments;
+    /** The return type of the method */
     public final Type returnType;
 
-    public CallJavaMethod(String className, String methodName, Expression target, Expression[] arguments,
-                          Type returnType) {
+    /**
+     * Create a Java method call
+     *
+     * @param className  The name of the class containing the method
+     * @param methodName The name of the method
+     * @param returnType The return type of the method
+     * @param target     The object to invoke the method on
+     * @param arguments  The method arguments
+     */
+    public CallJavaMethod(String className, String methodName, Type returnType, Expression target, Expression[] arguments) {
         super(null, 0);
         this.className = className;
         this.methodName = methodName;
@@ -26,8 +41,18 @@ public class CallJavaMethod extends Expression {
         this.returnType = returnType;
     }
 
-    public CallJavaMethod(String className, String methodName, Expression target, Expression[] arguments,
-                          Type returnType,
+    /**
+     * Create a Java method call
+     *
+     * @param className  The name of the class containing the method
+     * @param methodName The name of the method
+     * @param returnType The return type of the method
+     * @param target     The object to invoke the method on
+     * @param arguments  The method arguments
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
+    public CallJavaMethod(String className, String methodName, Type returnType, Expression target, Expression[] arguments,
                           String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;
@@ -39,9 +64,18 @@ public class CallJavaMethod extends Expression {
         this.returnType = returnType;
     }
 
+    /**
+     * Create a Java method call
+     *
+     * @param className      The name of the class containing the method
+     * @param methodName     The name of the method
+     * @param parameterTypes The types of the method arguments
+     * @param returnType     The return type of the method
+     * @param target         The object to invoke the method on
+     * @param arguments      The method arguments
+     */
     public CallJavaMethod(String className, String methodName, Type[] parameterTypes,
-                          Expression target, Expression[] arguments,
-                          Type returnType) {
+                          Type returnType, Expression target, Expression[] arguments) {
         super(null, 0);
         this.className = className;
         this.methodName = methodName;
@@ -51,9 +85,20 @@ public class CallJavaMethod extends Expression {
         this.returnType = returnType;
     }
 
+    /**
+     * Create a Java method call
+     *
+     * @param className      The name of the class containing the method
+     * @param methodName     The name of the method
+     * @param parameterTypes The types of the method arguments
+     * @param returnType     The return type of the method
+     * @param target         The object to invoke the method on
+     * @param arguments      The method arguments
+     * @param filename       The source filename this expression is associated with
+     * @param lineNumber     The source line number this expression is associated with
+     */
     public CallJavaMethod(String className, String methodName, Type[] parameterTypes,
-                          Expression target, Expression[] arguments,
-                          Type returnType,
+                          Type returnType, Expression target, Expression[] arguments,
                           String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;

@@ -7,14 +7,29 @@ import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
+/** An expression to set a Java field value */
 public class SetJavaField extends Expression {
+    /** The name of the class containing the field */
     public final String className;
+    /** The name of the field */
     public final String fieldName;
+    /** The object containing the field */
     public final Expression target;
+    /** The value to store in the field */
     public final Expression expr;
+    /** The type of the field */
     public final Type fieldType;
 
-    public SetJavaField(String className, String fieldName, Expression target, Type fieldType, Expression expr) {
+    /**
+     * Create a Java field set expression
+     *
+     * @param className The name of the class containing the field
+     * @param fieldName The name of the field
+     * @param fieldType The type of the field
+     * @param target    The object containing the field
+     * @param expr      The value to store in the field
+     */
+    public SetJavaField(String className, String fieldName, Type fieldType, Expression target, Expression expr) {
         super(null, 0);
         this.className = className;
         this.fieldName = fieldName;
@@ -23,7 +38,18 @@ public class SetJavaField extends Expression {
         this.expr = expr;
     }
 
-    public SetJavaField(String className, String fieldName, Expression target, Type fieldType, Expression expr,
+    /**
+     * Create a Java field set expression
+     *
+     * @param className  The name of the class containing the field
+     * @param fieldName  The name of the field
+     * @param fieldType  The type of the field
+     * @param target     The object containing the field
+     * @param expr       The value to store in the field
+     * @param filename   The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
+    public SetJavaField(String className, String fieldName, Type fieldType, Expression target, Expression expr,
                         String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;

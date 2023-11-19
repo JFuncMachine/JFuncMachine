@@ -6,16 +6,31 @@ import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
+/** An expression to call a Java interface method */
 public class CallJavaInterface extends Expression {
+    /** The name of the interface containing the method to invoke */
     public final String interfaceName;
+    /** The name of the method to invoke */
     public final String methodName;
+    /** The object to invoke the method on */
     public final Expression target;
+    /** The arguments for the method */
     public final Expression[] arguments;
+    /** The argument types for the method */
     public final Type[] parameterTypes;
+    /** The return type of the method */
     public final Type returnType;
 
-    public CallJavaInterface(String interfaceName, String methodName, Expression target, Expression[] arguments,
-                             Type returnType) {
+    /** Create a Java interface method call
+     *
+     * @param interfaceName The name of the interface containing the method
+     * @param methodName The name of the method
+     * @param returnType The return type of the method
+     * @param target The object to invoke the method on
+     * @param arguments The arguments for the method
+     */
+    public CallJavaInterface(String interfaceName, String methodName, Type returnType, Expression target,
+                             Expression[] arguments) {
         super(null, 0);
         this.interfaceName = interfaceName;
         this.methodName = methodName;
@@ -26,8 +41,17 @@ public class CallJavaInterface extends Expression {
         this.arguments = arguments;
     }
 
-    public CallJavaInterface(String interfaceName, String methodName, Expression target, Type[] parameterTypes,
-                             Expression[] arguments, Type returnType) {
+    /** Create a Java interface method call
+     *
+     * @param interfaceName The name of the interface containing the method
+     * @param methodName The name of the method
+     * @param parameterTypes The arguments types of the method
+     * @param returnType The return type of the method
+     * @param target The object to invoke the method on
+     * @param arguments The arguments for the method
+     */
+    public CallJavaInterface(String interfaceName, String methodName, Type[] parameterTypes, Type returnType,
+                             Expression target, Expression[] arguments) {
         super(null, 0);
         this.interfaceName = interfaceName;
         this.methodName = methodName;
@@ -37,8 +61,18 @@ public class CallJavaInterface extends Expression {
         this.arguments = arguments;
     }
 
-    public CallJavaInterface(String interfaceName, String methodName, Expression target, Expression[] arguments,
-                             Type returnType, String filename, int lineNumber) {
+    /** Create a Java interface method call
+     *
+     * @param interfaceName The name of the interface containing the method
+     * @param methodName The name of the method
+     * @param returnType The return type of the method
+     * @param target The object to invoke the method on
+     * @param arguments The arguments for the method
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
+    public CallJavaInterface(String interfaceName, String methodName, Type returnType, Expression target,
+                             Expression[] arguments, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.interfaceName = interfaceName;
         this.methodName = methodName;
@@ -49,8 +83,19 @@ public class CallJavaInterface extends Expression {
         this.arguments = arguments;
     }
 
-    public CallJavaInterface(String interfaceName, String methodName, Expression target, Type[] parameterTypes,
-                             Expression[] arguments, Type returnType, String filename, int lineNumber) {
+    /** Create a Java interface method call
+     *
+     * @param interfaceName The name of the interface containing the method
+     * @param methodName The name of the method
+     * @param parameterTypes The arguments types of the method
+     * @param returnType The return type of the method
+     * @param target The object to invoke the method on
+     * @param arguments The arguments for the method
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
+    public CallJavaInterface(String interfaceName, String methodName, Type[] parameterTypes, Type returnType,
+                             Expression target, Expression[] arguments, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.interfaceName = interfaceName;
         this.methodName = methodName;

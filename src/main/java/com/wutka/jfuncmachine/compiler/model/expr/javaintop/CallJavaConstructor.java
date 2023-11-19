@@ -8,11 +8,24 @@ import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
+/** An expression to call a Java constructor.
+ * In the Java Virtual Machine, object creation is a two-step process that requires the creation
+ * of an object via the new_object instruction, and then executing the constructor method to initialize
+ * the newly-created object. This class takes care of both of those operations.
+ */
 public class CallJavaConstructor extends Expression {
+    /** The name of the class to create */
     public final String className;
+    /** The parameter types of the constructor */
     public final Type[] parameterTypes;
+    /** The arguments to pass to the constructor */
     public final Expression[] arguments;
 
+    /** Create a Java constructor expression
+     *
+     * @param className The name of the class to create
+     * @param arguments The arguments to pass to the constructor
+     */
     public CallJavaConstructor(String className, Expression[] arguments) {
         super(null, 0);
         this.className = className;
@@ -21,6 +34,13 @@ public class CallJavaConstructor extends Expression {
         this.arguments = arguments;
     }
 
+    /** Create a Java constructor expression
+     *
+     * @param className The name of the class to create
+     * @param arguments The arguments to pass to the constructor
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public CallJavaConstructor(String className, Expression[] arguments, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;
@@ -29,6 +49,13 @@ public class CallJavaConstructor extends Expression {
         this.arguments = arguments;
     }
 
+    /** Create a Java constructor expression
+     *
+     * @param className The name of the class to create
+     * @param parameterTypes The parameter types of the constructor, in case they differ from the
+     *                       types of the argument expressions
+     * @param arguments The arguments to pass to the constructor
+     */
     public CallJavaConstructor(String className, Type[] parameterTypes, Expression[] arguments) {
         super(null, 0);
         this.className = className;
@@ -40,6 +67,15 @@ public class CallJavaConstructor extends Expression {
         this.arguments = arguments;
     }
 
+    /** Create a Java constructor expression
+     *
+     * @param className The name of the class to create
+     * @param parameterTypes The parameter types of the constructor, in case they differ from the
+     *                       types of the argument expressions
+     * @param arguments The arguments to pass to the constructor
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public CallJavaConstructor(String className, Type[] parameterTypes, Expression[] arguments, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;

@@ -83,21 +83,21 @@ public class Unbox extends Expression {
 
         CallJavaMethod method = switch (unboxedType) {
             case BooleanType b -> new CallJavaMethod(className, "booleanValue",
-                    new Type[0], expr, new Expression[0], SimpleTypes.BOOLEAN, filename, lineNumber);
+                    new Type[0], SimpleTypes.BOOLEAN, expr, new Expression[0], filename, lineNumber);
             case ByteType b -> new CallJavaMethod(className, "byteValue",
-                    new Type[0], expr, new Expression[0], SimpleTypes.BYTE, filename, lineNumber);
+                    new Type[0], SimpleTypes.BYTE, expr, new Expression[0], filename, lineNumber);
             case CharType c -> new CallJavaMethod(className, "charValue",
-                    new Type[0], expr, new Expression[0], SimpleTypes.CHAR, filename, lineNumber);
+                    new Type[0], SimpleTypes.CHAR, expr, new Expression[0], filename, lineNumber);
             case DoubleType d -> new CallJavaMethod(className, "doubleValue",
-                    new Type[0], expr, new Expression[0], SimpleTypes.DOUBLE, filename, lineNumber);
+                    new Type[0], SimpleTypes.DOUBLE, expr, new Expression[0], filename, lineNumber);
             case FloatType f -> new CallJavaMethod(className, "floatValue",
-                    new Type[0], expr, new Expression[0], SimpleTypes.FLOAT, filename, lineNumber);
+                    new Type[0], SimpleTypes.FLOAT, expr, new Expression[0], filename, lineNumber);
             case IntType i -> new CallJavaMethod(className, "intValue",
-                    new Type[0], expr, new Expression[0], SimpleTypes.INT, filename, lineNumber);
+                    new Type[0], SimpleTypes.INT, expr, new Expression[0], filename, lineNumber);
             case LongType l -> new CallJavaMethod(className, "longValue",
-                    new Type[0], expr, new Expression[0], SimpleTypes.LONG, filename, lineNumber);
+                    new Type[0], SimpleTypes.LONG, expr, new Expression[0], filename, lineNumber);
             case ShortType s -> new CallJavaMethod(className, "shortValue",
-                    new Type[0], expr, new Expression[0], SimpleTypes.SHORT, filename, lineNumber);
+                    new Type[0], SimpleTypes.SHORT, expr, new Expression[0], filename, lineNumber);
             default -> null;
         };
 

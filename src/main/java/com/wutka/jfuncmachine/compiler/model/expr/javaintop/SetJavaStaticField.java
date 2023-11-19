@@ -7,12 +7,24 @@ import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
+/** An expression to set a static Java field value */
 public class SetJavaStaticField extends Expression {
+    /** The name of the class containing the field */
     public final String className;
+    /** The name of the field */
     public final String fieldName;
+    /** The type of the field */
     public final Type fieldType;
+    /** The value to store in the field */
     public final Expression expr;
 
+    /** Create a static Java field set expression
+     *
+     * @param className The name of the class containing the field
+     * @param fieldName The name of the field
+     * @param fieldType The type of the field
+     * @param expr The value to store in the field
+     */
     public SetJavaStaticField(String className, String fieldName, Type fieldType, Expression expr) {
         super(null, 0);
         this.className = className;
@@ -21,6 +33,15 @@ public class SetJavaStaticField extends Expression {
         this.expr = expr;
     }
 
+    /** Create a static Java field set expression
+     *
+     * @param className The name of the class containing the field
+     * @param fieldName The name of the field
+     * @param fieldType The type of the field
+     * @param expr The value to store in the field
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public SetJavaStaticField(String className, String fieldName, Type fieldType, Expression expr,
                               String filename, int lineNumber) {
         super(filename, lineNumber);

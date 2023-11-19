@@ -31,12 +31,12 @@ public class HelloWorld {
                     new CallJavaMethod("java.io.PrintStream", "println",
                             // Get the PrintStream object from System.out, that is the object
                             // that we will be calling println on
-                            new GetJavaStaticField("java.lang.System", "out",
+                            SimpleTypes.UNIT, new GetJavaStaticField("java.lang.System", "out",
                                     new ObjectType("java.io.PrintStream")),
                             // Load up the arguments to println, which is just one, that is a string constant
-                            new Expression[] { new StringConstant("Hello World!") },
+                            new Expression[] { new StringConstant("Hello World!") }
                             // the function returns void (which in functional languages is called Unit)
-                            SimpleTypes.UNIT));
+                    ));
 
             // Create a com.wutka.test.HelloWorld class
             ClassDef newClass = new ClassDef("com.wutka.test", "HelloWorld",

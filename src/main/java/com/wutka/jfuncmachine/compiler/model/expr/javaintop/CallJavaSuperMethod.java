@@ -4,28 +4,44 @@ import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
+import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
+/** An expression to call a superclass constructor */
 public class CallJavaSuperMethod extends Expression {
+    /** The class containing the superclass constructor */
     public final String className;
+    /** The types of the constructor arguments */
     public Type[] parameterTypes;
+    /** The object to invoke the constructor on */
     public final Expression target;
+    /** The arguments for the constructor */
     public final Expression[] arguments;
-    public final Type returnType;
 
-    public CallJavaSuperMethod(String className, Expression target, Expression[] arguments,
-                               Type returnType) {
+    /** Create a superclass constructor invocation
+     *
+     * @param className The class containing the constructor
+     * @param target The object to invoke the constructor on
+     * @param arguments The arguments for the constructor
+     */
+    public CallJavaSuperMethod(String className, Expression target, Expression[] arguments) {
         super(null, 0);
         this.className = className;
         this.parameterTypes = new Type[arguments.length];
         for (int i=0; i < parameterTypes.length; i++) parameterTypes[i] = arguments[i].getType();
         this.target = target;
         this.arguments = arguments;
-        this.returnType = returnType;
     }
 
+    /** Create a superclass constructor invocation
+     *
+     * @param className The class containing the constructor
+     * @param target The object to invoke the constructor on
+     * @param arguments The arguments for the constructor
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public CallJavaSuperMethod(String className, Expression target, Expression[] arguments,
-                               Type returnType,
                                String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;
@@ -33,34 +49,45 @@ public class CallJavaSuperMethod extends Expression {
         for (int i=0; i < parameterTypes.length; i++) parameterTypes[i] = arguments[i].getType();
         this.target = target;
         this.arguments = arguments;
-        this.returnType = returnType;
     }
 
+    /** Create a superclass constructor invocation
+     *
+     * @param className The class containing the constructor
+     * @param parameterTypes The types of the constructor arguments
+     * @param target The object to invoke the constructor on
+     * @param arguments The arguments for the constructor
+     */
     public CallJavaSuperMethod(String className, Type[] parameterTypes,
-                               Expression target, Expression[] arguments,
-                               Type returnType) {
+                               Expression target, Expression[] arguments) {
         super(null, 0);
         this.className = className;
         this.parameterTypes = parameterTypes;
         this.target = target;
         this.arguments = arguments;
-        this.returnType = returnType;
     }
 
+    /** Create a superclass constructor invocation
+     *
+     * @param className The class containing the constructor
+     * @param parameterTypes The types of the constructor arguments
+     * @param target The object to invoke the constructor on
+     * @param arguments The arguments for the constructor
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public CallJavaSuperMethod(String className, Type[] parameterTypes,
                                Expression target, Expression[] arguments,
-                               Type returnType,
                                String filename, int lineNumber) {
         super(filename, lineNumber);
         this.className = className;
         this.parameterTypes = parameterTypes;
         this.target = target;
         this.arguments = arguments;
-        this.returnType = returnType;
     }
 
     public Type getType() {
-        return returnType;
+        return SimpleTypes.UNIT;
     }
 
     public void findCaptured(Environment env) {
@@ -73,6 +100,7 @@ public class CallJavaSuperMethod extends Expression {
     @Override
     public void generate(ClassGenerator generator, Environment env) {
         target.generate(generator, env);
+        generator.instGen.dup();
         for (int i=0; i < arguments.length; i++) {
             Expression expr = arguments[i];
             if (generator.options.autobox) {
@@ -82,6 +110,6 @@ public class CallJavaSuperMethod extends Expression {
         }
         generator.instGen.invokespecial(
                 generator.className(className),
-                "super", generator.methodDescriptor(parameterTypes, returnType));
+                "super", generator.methodDescriptor(parameterTypes, SimpleTypes.UNIT));
     }
 }
