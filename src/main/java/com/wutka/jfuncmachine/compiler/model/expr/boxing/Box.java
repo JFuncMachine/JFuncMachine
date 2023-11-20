@@ -3,7 +3,7 @@ package com.wutka.jfuncmachine.compiler.model.expr.boxing;
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
-import com.wutka.jfuncmachine.compiler.model.expr.javaintop.CallJavaStaticMethod;
+import com.wutka.jfuncmachine.compiler.model.expr.javainterop.CallJavaStaticMethod;
 import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 

@@ -8,14 +8,26 @@ import com.wutka.jfuncmachine.compiler.model.types.FunctionType;
 import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
+/** An expression to invoke a method reference */
 public class Invoke extends Expression {
+    /** The type of the method reference */
     public final Type targetType;
+    /** The name of the interface method representing this method */
     public final String intMethod;
+    /** The object to invoke the method on */
     public final Expression target;
+    /** The method argument values */
     public final Expression[] arguments;
+    /** The method parameter types */
     public final Type[] parameterTypes;
+    /** The method return type */
     public final Type returnType;
 
+    /** Create a method reference invocation
+     * @param targetType The type of the method reference
+     * @param target The interface method that represents this method
+     * @param arguments The method arguments
+     */
     public Invoke(FunctionType targetType, Expression target, Expression[] arguments) {
         super(null, 0);
         this.target = target;
@@ -26,6 +38,13 @@ public class Invoke extends Expression {
         this.intMethod = null;
     }
 
+    /** Create a method reference invocation
+     * @param targetType The type of the method reference
+     * @param target The interface method that represents this method
+     * @param arguments The method arguments
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Invoke(FunctionType targetType, Expression target, Expression[] arguments,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -37,6 +56,10 @@ public class Invoke extends Expression {
         this.intMethod = null;
     }
 
+    /** Create a method reference invocation
+     * @param target The interface method that represents this method
+     * @param arguments The method arguments
+     */
     public Invoke(Expression target, Expression[] arguments) {
         super(null, 0);
         this.target = target;
@@ -52,6 +75,12 @@ public class Invoke extends Expression {
         this.intMethod = null;
     }
 
+    /** Create a method reference invocation
+     * @param target The interface method that represents this method
+     * @param arguments The method arguments
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Invoke(Expression target, Expression[] arguments,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -68,6 +97,14 @@ public class Invoke extends Expression {
         this.intMethod = null;
     }
 
+    /** Create a method reference invocation
+     * @param intMethod The name of the interface method
+     * @param targetType The type of the method reference
+     * @param parameterTypes The method parameter types
+     * @param returnType The method return type
+     * @param target The interface method that represents this method
+     * @param arguments The method arguments
+     */
     public Invoke(String intMethod, Type targetType, Type[] parameterTypes, Type returnType,
                   Expression target, Expression[] arguments) {
         super(null, 0);
@@ -79,6 +116,16 @@ public class Invoke extends Expression {
         this.intMethod = intMethod;
     }
 
+    /** Create a method reference invocation
+     * @param intMethod The name of the interface method
+     * @param targetType The type of the method reference
+     * @param parameterTypes The method parameter types
+     * @param returnType The method return type
+     * @param target The interface method that represents this method
+     * @param arguments The method arguments
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Invoke(String intMethod, Type targetType, Type[] parameterTypes, Type returnType,
                   Expression target, Expression[] arguments,
                   String filename, int lineNumber) {

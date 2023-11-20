@@ -8,14 +8,27 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Set;
 
+/** A lambda (anonymous function) expression */
 public class Lambda extends Expression {
+    /** The lambda parameters */
     public final Field[] parameters;
+    /** The body of the lambda */
     public final Expression body;
+    /** The return type of the lambda */
     public final Type returnType;
+    /** The type of the interface representing the lambda */
     public final Type interfaceType;
+    /** The types of the lambda parameters */
     public Type[] parameterTypes;
+    /** If true, the interface describing this lambda should use objects instead of native types. This allows
+     * it to be compatible with the java.util.function package */
     public final boolean useObjectInterface;
 
+    /** Create a lambda expression
+     * @param parameters The lambda parameters and their types
+     * @param returnType The lambda return type
+     * @param body The body of the lambda
+     */
     public Lambda(Field[] parameters, Type returnType, Expression body) {
         super(null, 0);
         this.parameters = parameters;
@@ -27,6 +40,13 @@ public class Lambda extends Expression {
         this.interfaceType = null;
     }
 
+    /** Create a lambda expression
+     * @param parameters The lambda parameters and their types
+     * @param returnType The lambda return type
+     * @param body The body of the lambda
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Lambda(Field[] parameters, Type returnType, Expression body,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -39,6 +59,12 @@ public class Lambda extends Expression {
         this.interfaceType = null;
     }
 
+    /** Create a lambda expression
+     * @param interfaceType The type of the lambda interface
+     * @param parameters The lambda parameters and their types
+     * @param returnType The lambda return type
+     * @param body The body of the lambda
+     */
     public Lambda(Type interfaceType, Field[] parameters, Type returnType, Expression body) {
         super(null, 0);
         this.parameters = parameters;
@@ -50,6 +76,14 @@ public class Lambda extends Expression {
         this.interfaceType = interfaceType;
     }
 
+    /** Create a lambda expression
+     * @param interfaceType The type of the lambda interface
+     * @param parameters The lambda parameters and their types
+     * @param returnType The lambda return type
+     * @param body The body of the lambda
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Lambda(Type interfaceType, Field[] parameters, Type returnType, Expression body,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -62,6 +96,12 @@ public class Lambda extends Expression {
         this.interfaceType = interfaceType;
     }
 
+    /** Create a lambda expression
+     * @param parameters The lambda parameters and their types
+     * @param returnType The lambda return type
+     * @param useObjectInterface If true, the lambda interface should not use native types
+     * @param body The body of the lambda
+     */
     public Lambda(Field[] parameters, Type returnType, boolean useObjectInterface, Expression body) {
         super(null, 0);
         this.parameters = parameters;
@@ -73,6 +113,14 @@ public class Lambda extends Expression {
         this.interfaceType = null;
     }
 
+    /** Create a lambda expression
+     * @param parameters The lambda parameters and their types
+     * @param returnType The lambda return type
+     * @param useObjectInterface If true, the lambda interface should not use native types
+     * @param body The body of the lambda
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Lambda(Field[] parameters, Type returnType, boolean useObjectInterface, Expression body,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -85,6 +133,13 @@ public class Lambda extends Expression {
         this.interfaceType = null;
     }
 
+    /** Create a lambda expression
+     * @param interfaceType The type of the lambda interface
+     * @param parameters The lambda parameters and their types
+     * @param returnType The lambda return type
+     * @param useObjectInterface If true, the lambda interface should not use native types
+     * @param body The body of the lambda
+     */
     public Lambda(Type interfaceType, Field[] parameters, Type returnType, boolean useObjectInterface, Expression body) {
         super(null, 0);
         this.parameters = parameters;
@@ -96,6 +151,15 @@ public class Lambda extends Expression {
         this.interfaceType = interfaceType;
     }
 
+    /** Create a lambda expression
+     * @param interfaceType The type of the lambda interface
+     * @param parameters The lambda parameters and their types
+     * @param returnType The lambda return type
+     * @param useObjectInterface If true, the lambda interface should not use native types
+     * @param body The body of the lambda
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Lambda(Type interfaceType, Field[] parameters, Type returnType, boolean useObjectInterface, Expression body,
                   String filename, int lineNumber) {
         super(filename, lineNumber);

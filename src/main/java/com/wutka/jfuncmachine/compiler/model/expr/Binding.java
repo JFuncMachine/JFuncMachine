@@ -7,19 +7,58 @@ import com.wutka.jfuncmachine.compiler.classgen.Label;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
+/** Bind expressions to variable names, and then execute an expression with those variables available.
+ *  This is how you assign local variables, other than the ones that are parameters to a function.
+ *  For example, this expression assigns a value to a variable named foo with a value of 42,
+ *  and then adds 5 to that value.
+ *  new Binding(new BindingPair("foo", new IntConstant(42)), Visibility.Separate,
+ *      new InlineCall(Inlines.IntAdd, GetValue("foo", SimpleTypes.INT), IntConstant(5)))
+ * <p>
+ * A binding may contain an optional name that can be used with the BindingRecurse expression to loop
+ * back to the beginning of the binding, updating the bound variables. This is one way to simulate
+ * the functionality of recursive call.
+ * <p>
+ * The variables defined by a binding are local variables within the current Java method, but are only
+ * visibile within the binding. It is possible to update the value of a local variable using
+ * either the BindingRecurse expression, or the SetValue expression.
+ */
 public class Binding extends Expression {
+    /**
+     * The Visibility parameter controls whether or not binding variables are visible to other binding pair
+     * expressions within the same binding.
+     * <pre>Separate</pre> means that a binding expression does not see its own variable nor those of any of the
+     * other BindingPair objects in this binding (but if this binding occurs inside another binding, it can see
+     * all the variables in the outer binding).
+     * <p>
+     * <pre>Previous</pre> means that each binding pair can see the variables in the binding pairs that came before
+     * it in the current binding (as well as any variables defined in a parent binding).
+     * <p>
+     * <pre>Recursive</pre> means that each binding pair can reference its own value in the expression. This can be
+     * useful if the variable being bound is a lambda that calls itself.
+     */
     public enum Visibility {
         Separate,
-        Next,
+        Previous,
         Recursive
     }
 
+    /** The pairs of variables and expressions in this binding */
     public final BindingPair[] bindings;
+    /** The expression to be executed in the context of these bindings */
     public final Expression expr;
+    /** Controls whether binding pairs in this binding can see themselves or the bindings that came before them */
     public final Visibility visibility;
+    /** An optional name that can be used to loop back to the beginning of the binding */
     public final String name;
-    public final Label label;
+    /** A label used by the recurse expression to loop back to the top of the binding */
+    protected final Label label;
 
+    /** Create a new binding
+     *
+     * @param bindings The pairs of variable names and the expressions they are bound to
+     * @param visibility Specify how binding pairs are able to see one another
+     * @param expr An expression to execute in the context of this binding
+     */
     public Binding(BindingPair[] bindings, Visibility visibility, Expression expr) {
         super(null, 0);
         this.bindings = bindings;
@@ -29,6 +68,14 @@ public class Binding extends Expression {
         label = null;
     }
 
+    /** Create a new binding
+     *
+     * @param bindings The pairs of variable names and the expressions they are bound to
+     * @param visibility Specify how binding pairs are able to see one another
+     * @param expr An expression to execute in the context of this binding
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Binding(BindingPair[] bindings, Visibility visibility, Expression expr,
                     String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -39,6 +86,13 @@ public class Binding extends Expression {
         label = null;
     }
 
+    /** Create a new binding
+     *
+     * @param name A name for this binding that can be used to create a recursive loop
+     * @param bindings The pairs of variable names and the expressions they are bound to
+     * @param visibility Specify how binding pairs are able to see one another
+     * @param expr An expression to execute in the context of this binding
+     */
     public Binding(String name, BindingPair[] bindings, Visibility visibility, Expression expr) {
         super(null, 0);
         this.bindings = bindings;
@@ -48,6 +102,15 @@ public class Binding extends Expression {
         this.label = new Label();
     }
 
+    /** Create a new binding
+     *
+     * @param name A name for this binding that can be used to create a recursive loop
+     * @param bindings The pairs of variable names and the expressions they are bound to
+     * @param visibility Specify how binding pairs are able to see one another
+     * @param expr An expression to execute in the context of this binding
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Binding(String name, BindingPair[] bindings, Visibility visibility, Expression expr,
                    String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -65,7 +128,7 @@ public class Binding extends Expression {
     public void findCaptured(Environment env) {
         Environment newEnv = new Environment(env);
         for (BindingPair pair: bindings) {
-            if (visibility == Visibility.Recursive || visibility == Visibility.Next) {
+            if (visibility == Visibility.Recursive || visibility == Visibility.Previous) {
                 pair.value.findCaptured(newEnv);
             } else {
                 pair.value.findCaptured(env);
@@ -128,10 +191,18 @@ public class Binding extends Expression {
         generator.instGen.label(bindingEnd);
     }
 
+    /** An association of a variable name with an expression value */
     public static class BindingPair {
+        /** The name of the variable */
         public final String name;
+        /** The value the variable is bound to */
         public final Expression value;
 
+        /** Create a new binding pair
+         *
+         * @param name The name of the variable
+         * @param value The value the variable is bound to
+         */
         public BindingPair (String name, Expression value) {
             this.name = name;
             this.value = value;

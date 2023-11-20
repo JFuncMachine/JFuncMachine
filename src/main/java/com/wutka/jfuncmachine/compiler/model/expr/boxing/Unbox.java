@@ -3,7 +3,7 @@ package com.wutka.jfuncmachine.compiler.model.expr.boxing;
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
-import com.wutka.jfuncmachine.compiler.model.expr.javaintop.CallJavaMethod;
+import com.wutka.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 
 /** Unboxes an expression - converts a box type to a native type (e.g. java.lang.Short to short) */

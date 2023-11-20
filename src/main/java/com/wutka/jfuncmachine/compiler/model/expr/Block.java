@@ -5,14 +5,29 @@ import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
+/** A sequence of expressions. The return value of the block is the value of the last expression.
+ * If any of the expressions before the last one leave a value on the stack, that value is popped off
+ * the stack.
+ */
 public class Block extends Expression {
+    /** The expressions to execute */
     public final Expression[] expressions;
 
+    /** Create a new block of expressions
+     *
+     * @param expressions The expressions to execute
+     */
     public Block (Expression[] expressions) {
         super(null, 0);
         this.expressions = expressions;
     }
 
+    /** Create a new block of expressions
+     *
+     * @param expressions The expressions to execute
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public Block (Expression[] expressions, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expressions = expressions;

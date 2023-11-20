@@ -6,16 +6,29 @@ import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
+/** An expression to retrieve a local variable value */
 public class GetValue extends Expression {
+    /** The name of the local variable */
     public String name;
+    /** The type of the local variable */
     public Type type;
 
+    /** Create a get value expression
+     * @param name The name of the local variable to get
+     * @param type The type of the local variable
+     */
     public GetValue(String name, Type type) {
         super(null, 0);
         this.name = name;
         this.type = type;
     }
 
+    /** Create a get value expression
+     * @param name The name of the local variable to get
+     * @param type The type of the local variable
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public GetValue(String name, Type type, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.name = name;
@@ -34,19 +47,6 @@ public class GetValue extends Expression {
     public void generate(ClassGenerator generator, Environment env) {
 
         EnvVar envVar = env.getVar(name);
-
-        int opcode = switch (type) {
-            case BooleanType b -> Opcodes.ILOAD;
-            case ByteType b -> Opcodes.ILOAD;
-            case CharType c -> Opcodes.ILOAD;
-            case DoubleType d -> Opcodes.DLOAD;
-            case FloatType f -> Opcodes.FLOAD;
-            case IntType i -> Opcodes.ILOAD;
-            case LongType l -> Opcodes.LLOAD;
-            case ShortType s -> Opcodes.ILOAD;
-            default -> Opcodes.ALOAD;
-        };
-
-        generator.instGen.rawIntOpcode(opcode, envVar.index);
+        envVar.generateGet(generator);
     }
 }

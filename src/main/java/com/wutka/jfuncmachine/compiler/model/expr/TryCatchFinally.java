@@ -8,11 +8,20 @@ import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 import com.wutka.jfuncmachine.compiler.model.types.UnitType;
 
+/** A try-catch-finally expression */
 public class TryCatchFinally extends Expression {
+    /** The body of the try block */
     public final Expression tryBody;
+    /** The catch expressions, may be null or empty */
     public final Catch[] catchExprs;
+    /** The finally body, may be null */
     public final Expression finallyBody;
 
+    /** Create a try-catch-finally block
+     * @param tryBody The body of the try block
+     * @param catchExprs The catch exceptions
+     * @param finallyBody The finally body
+     */
     public TryCatchFinally(Expression tryBody, Catch[] catchExprs, Expression finallyBody) {
         super(null, 0);
         this.tryBody = tryBody;
@@ -25,6 +34,13 @@ public class TryCatchFinally extends Expression {
 
     }
 
+    /** Create a try-catch-finally block
+     * @param tryBody The body of the try block
+     * @param catchExprs The catch exceptions
+     * @param finallyBody The finally body
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public TryCatchFinally(Expression tryBody, Catch[] catchExprs, Expression finallyBody,
                            String filename, int lineNumber) {
         super(filename, lineNumber);

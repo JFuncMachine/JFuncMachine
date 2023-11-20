@@ -6,16 +6,29 @@ import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
+/** An expression to set the value of a local variable */
 public class SetValue extends Expression {
+    /** The name of the variable to set */
     public String name;
+    /** The value to store in the variable */
     public Expression expression;
 
+    /** Create a set value expression
+     * @param name The name of the variable to set
+     * @param expression The value to store in a variable
+     */
     public SetValue(String name, Expression expression) {
         super(null, 0);
         this.name = name;
         this.expression = expression;
     }
 
+    /** Create a set value expression
+     * @param name The name of the variable to set
+     * @param expression The value to store in a variable
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public SetValue(String name, Expression expression, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.name = name;

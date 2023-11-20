@@ -39,7 +39,12 @@ public class EnvVar {
 
     /** Returns the opcode used to store a variable of this type */
     public void generateSet(ClassGenerator generator) {
-        int opcode = switch (type) {
+        int opcode = setOpcode(type);
+        generator.instGen.rawIntOpcode(opcode, index);
+    }
+
+    public static int setOpcode(Type t) {
+        return switch (t) {
             case BooleanType b -> Opcodes.ISTORE;
             case ByteType b -> Opcodes.ISTORE;
             case CharType c -> Opcodes.ISTORE;
@@ -50,13 +55,16 @@ public class EnvVar {
             case ShortType s -> Opcodes.ISTORE;
             default -> Opcodes.ASTORE;
         };
-
-        generator.instGen.rawIntOpcode(opcode, index);
     }
 
     /** Returns the opcode used to load a variable of this type */
     public void generateGet(ClassGenerator generator) {
-        int opcode = switch (type) {
+        int opcode = getOpcode(type);
+        generator.instGen.rawIntOpcode(opcode, index);
+    }
+
+    public static int getOpcode(Type t) {
+        return switch (t) {
             case BooleanType b -> Opcodes.ILOAD;
             case ByteType b -> Opcodes.ILOAD;
             case CharType c -> Opcodes.ILOAD;
@@ -67,8 +75,6 @@ public class EnvVar {
             case ShortType s -> Opcodes.ILOAD;
             default -> Opcodes.ALOAD;
         };
-
-        generator.instGen.rawIntOpcode(opcode, index);
     }
 
     @Override

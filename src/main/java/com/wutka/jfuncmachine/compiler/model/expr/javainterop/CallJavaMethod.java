@@ -1,4 +1,4 @@
-package com.wutka.jfuncmachine.compiler.model.expr.javaintop;
+package com.wutka.jfuncmachine.compiler.model.expr.javainterop;
 
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;

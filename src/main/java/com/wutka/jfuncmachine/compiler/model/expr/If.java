@@ -9,15 +9,30 @@ import com.wutka.jfuncmachine.compiler.model.types.Type;
 import java.util.List;
 import java.util.Stack;
 
+/** A expression to perform a boolean test and return an expression depending on whether the
+ * test is true or false;
+ */
 public class If extends Expression {
+    /** The boolean test to perform */
     public final BooleanExpr test;
+    /** The expression to return if the test is true */
     public final Expression trueExpr;
+    /** The expression to return if the test is false. This may be null */
     public final Expression falseExpr;
+    /** True if this expression has a falseExpr */
     public final boolean hasFalse;
+    /** The sequence of comparisons executed by this test (this is computed when the Java byte code is generated */
     public List<BooleanExpr> testSequence;
+    /** A placeholder used for generation to mark when the true expression is executed */
     public Result trueResult;
+    /** A placeholder used for generation to mark when the false expression is executed */
     public Result falseResult;
 
+    /** Create an if expression
+     * @param test The test to perform
+     * @param trueExpr The expression to return if the test is true
+     * @param falseExpr The expression to return if the test is false
+     */
     public If(BooleanExpr test, Expression trueExpr, Expression falseExpr) {
         super(null, 0);
         if (trueExpr.getType() != falseExpr.getType()) {
@@ -31,6 +46,13 @@ public class If extends Expression {
         this.computeTestSequence();
     }
 
+    /** Create an if expression
+     * @param test The test to perform
+     * @param trueExpr The expression to return if the test is true
+     * @param falseExpr The expression to return if the test is false
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public If(BooleanExpr test, Expression trueExpr, Expression falseExpr,
               String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -45,6 +67,10 @@ public class If extends Expression {
         this.computeTestSequence();
     }
 
+    /** Create an if expression
+     * @param test The test to perform
+     * @param trueExpr The expression to return if the test is true
+     */
     public If(BooleanExpr test, Expression trueExpr) {
         super(null, 0);
         this.test = test;
@@ -54,6 +80,12 @@ public class If extends Expression {
         this.computeTestSequence();
     }
 
+    /** Create an if expression
+     * @param test The test to perform
+     * @param trueExpr The expression to return if the test is true
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public If(BooleanExpr test, Expression trueExpr,
               String filename, int lineNumber) {
         super(filename, lineNumber);

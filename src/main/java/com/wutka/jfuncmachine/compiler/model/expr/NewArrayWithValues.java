@@ -7,16 +7,29 @@ import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 
+/** Create a new array from initializer values */
 public class NewArrayWithValues extends Expression {
+    /** The type of the array elements */
     public final Type arrayType;
+    /** The values to initialize the array with */
     public final Expression[] arrayValues;
 
+    /** Create a new array with values expression
+     * @param arrayType The type of the array elements
+     * @param arrayValues The values to initialize the array with
+     */
     public NewArrayWithValues(Type arrayType, Expression[] arrayValues) {
         super(null, 0);
         this.arrayType = arrayType;
         this.arrayValues = arrayValues;
     }
 
+    /** Create a new array with values expression
+     * @param arrayType The type of the array elements
+     * @param arrayValues The values to initialize the array with
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public NewArrayWithValues(Type arrayType, Expression[] arrayValues, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.arrayType = arrayType;

@@ -17,7 +17,7 @@ import com.wutka.jfuncmachine.compiler.model.expr.boxing.Box;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Unbox;
 import com.wutka.jfuncmachine.compiler.model.expr.constants.*;
 import com.wutka.jfuncmachine.compiler.model.expr.conv.*;
-import com.wutka.jfuncmachine.compiler.model.expr.javaintop.*;
+import com.wutka.jfuncmachine.compiler.model.expr.javainterop.*;
 import com.wutka.jfuncmachine.compiler.model.inline.Inlines;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import com.wutka.jfuncmachine.sexprlang.parser.*;
@@ -25,7 +25,6 @@ import com.wutka.jfuncmachine.sexprlang.parser.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -82,7 +81,6 @@ public class SexprToModel {
             { "Lambda", Lambda.class.getName() },
             { "NewArray", NewArray.class.getName() },
             { "NewArrayWithValues", NewArrayWithValues.class.getName() },
-            { "Recurse", Recurse.class.getName() },
             { "SetValue", SetValue.class.getName() },
             { "Switch", Switch.class.getName() },
             { "SwitchCase", SwitchCase.class.getName() },
@@ -105,7 +103,7 @@ public class SexprToModel {
 
     public static Map<String, Binding.Visibility> visibilityMap = Stream.of(new Object[][] {
         { "Visibility.Separate", Binding.Visibility.Separate },
-        { "Visibility.Next", Binding.Visibility.Next },
+        { "Visibility.Next", Binding.Visibility.Previous},
         { "Visibility.Recursive", Binding.Visibility.Recursive }
     }).collect(Collectors.toMap(data-> (String)data[0], data->(Binding.Visibility) data[1]));
 

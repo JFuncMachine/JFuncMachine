@@ -6,10 +6,18 @@ import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
+/** An expression to retrieve a value from an array */
 public class ArrayGet extends Expression {
+    /** The array to fetch the value from */
     public final Expression array;
+    /** The index of the value in the array */
     public final Expression index;
 
+    /** Create an array get expression
+     *
+     * @param array The array to fetch the value from
+     * @param index The index of the value in the array
+     */
     public ArrayGet(Expression array, Expression index) {
         super(null, 0);
         this.array = array;
@@ -19,6 +27,13 @@ public class ArrayGet extends Expression {
         }
     }
 
+    /** Create an array get expression
+     *
+     * @param array The array to fetch the value from
+     * @param index The index of the value in the array
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public ArrayGet(Expression array, Expression index, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.array = array;

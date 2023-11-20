@@ -6,16 +6,29 @@ import com.wutka.jfuncmachine.compiler.classgen.LambdaIntInfo;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 
+/** An expression to create a new array */
 public class NewArray extends Expression {
+    /** The type of the array elements */
     public final Type arrayType;
+    /** The size of the array to create */
     public final Expression arraySize;
 
+    /** Create a new array expression
+     * @param arrayType The type of the array elements
+     * @param arraySize The size of the array to create
+     */
     public NewArray(Type arrayType, Expression arraySize) {
         super(null, 0);
         this.arrayType = arrayType;
         this.arraySize = arraySize;
     }
 
+    /** Create a new array expression
+     * @param arrayType The type of the array elements
+     * @param arraySize The size of the array to create
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
     public NewArray(Type arrayType, Expression arraySize, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.arrayType = arrayType;
