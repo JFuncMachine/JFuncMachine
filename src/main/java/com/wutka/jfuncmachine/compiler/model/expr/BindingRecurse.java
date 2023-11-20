@@ -18,7 +18,7 @@ import org.objectweb.asm.Opcodes;
  * </ul>
  */
 public class BindingRecurse extends Expression {
-    /** The name of the binding to recurse back to *//
+    /** The name of the binding to recurse back to */
     public final String name;
     /** The expressions for each binding variable in the binding being recursed to */
     public final Expression[] nextValues;
