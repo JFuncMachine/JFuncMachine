@@ -68,13 +68,13 @@ public class SetJavaField extends Expression {
         expr.findCaptured(env);
     }
 
-    public void generate(ClassGenerator generator, Environment env) {
-        target.generate(generator, env);
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
+        target.generate(generator, env, false);
 
         if (generator.options.autobox) {
-            Autobox.autobox(expr, fieldType).generate(generator, env);
+            Autobox.autobox(expr, fieldType).generate(generator, env, false);
         } else {
-            expr.generate(generator, env);
+            expr.generate(generator, env, false);
         }
 
         generator.instGen.putfield(generator.className(className),

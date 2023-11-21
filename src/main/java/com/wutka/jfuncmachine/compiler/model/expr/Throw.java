@@ -44,8 +44,8 @@ public class Throw extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
-        expr.generate(generator, env);
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
+        expr.generate(generator, env, false);
         generator.instGen.athrow();
     }
 }

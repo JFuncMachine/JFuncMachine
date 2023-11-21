@@ -98,7 +98,7 @@ public class CallJavaConstructor extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         generator.instGen.new_object(generator.className(className));
         generator.instGen.dup();
         for (int i=0; i < arguments.length; i++) {
@@ -106,7 +106,7 @@ public class CallJavaConstructor extends Expression {
             if (generator.options.autobox) {
                 expr = Autobox.autobox(expr, parameterTypes[i]);
             }
-            expr.generate(generator, env);
+            expr.generate(generator, env, false);
         }
         generator.instGen.invokespecial(generator.className(className),
                 "<init>", generator.methodDescriptor(parameterTypes, SimpleTypes.UNIT));

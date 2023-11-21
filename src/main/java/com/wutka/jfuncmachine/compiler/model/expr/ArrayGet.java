@@ -53,18 +53,18 @@ public class ArrayGet extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Type arrayType = array.getType();
 
         if (arrayType instanceof ArrayType at) {
             Type containedType = at.containedType();
 
-            array.generate(generator, env);
+            array.generate(generator, env, false);
 
             if (generator.options.autobox) {
-                Autobox.autobox(index, SimpleTypes.INT).generate(generator, env);
+                Autobox.autobox(index, SimpleTypes.INT).generate(generator, env, false);
             } else {
-                index.generate(generator, env);
+                index.generate(generator, env, false);
             }
 
             int opcode = switch (containedType) {

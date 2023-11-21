@@ -71,8 +71,7 @@ public class TryCatchFinally extends Expression {
         }
     }
 
-
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Label blockEnd = new Label();
 
         Label finallyBlock = new Label();
@@ -85,7 +84,7 @@ public class TryCatchFinally extends Expression {
 
         Environment newEnv = new Environment(env);
 
-        tryBody.generate(generator, newEnv);
+        tryBody.generate(generator, newEnv, inTailPosition && finallyBody == null);
 
         generator.instGen.trycatch(blockStart, bodyEnd, finallyBlock, null);
 
@@ -104,7 +103,7 @@ public class TryCatchFinally extends Expression {
             generator.instGen.label(bodyEnd);
 
 
-            finallyBody.generate(generator, env);
+            finallyBody.generate(generator, env, false);
 
             if (!(tryBody.getType() instanceof UnitType)) {
                 saveVar.generateGet(generator);
@@ -134,7 +133,7 @@ public class TryCatchFinally extends Expression {
 
             excVar.generateSet(generator);
 
-            catchExpr.body.generate(generator, catchEnv);
+            catchExpr.body.generate(generator, catchEnv, inTailPosition && finallyBody == null);
 
 
             if (finallyBody != null) {
@@ -151,7 +150,7 @@ public class TryCatchFinally extends Expression {
 
                 generator.instGen.trycatch(blockStart, bodyEnd, finallyBlock, null);
 
-                finallyBody.generate(generator, env);
+                finallyBody.generate(generator, env, false);
 
                 generator.instGen.label(catchEnd);
 
@@ -171,7 +170,7 @@ public class TryCatchFinally extends Expression {
             EnvVar var = env.allocate(new ObjectType("java.lang.Throwable"));
             var.generateSet(generator);
 
-            finallyBody.generate(generator, env);
+            finallyBody.generate(generator, env, false);
 
             var.generateGet(generator);
             generator.instGen.athrow();

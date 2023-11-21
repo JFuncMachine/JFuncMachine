@@ -47,8 +47,8 @@ public class NewArrayWithValues extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
-        new IntConstant(arrayValues.length, filename, lineNumber).generate(generator, env);
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
+        new IntConstant(arrayValues.length, filename, lineNumber).generate(generator, env, false);
         switch (arrayType) {
             case ObjectType o -> generator.instGen.anewarray(generator.className(o.className));
             case StringType s -> generator.instGen.anewarray("java/lang/String");
@@ -61,11 +61,11 @@ public class NewArrayWithValues extends Expression {
 
         for (int i=0; i < arrayValues.length; i++) {
             generator.instGen.dup();
-            new IntConstant(i, filename, lineNumber).generate(generator, env);
+            new IntConstant(i, filename, lineNumber).generate(generator, env, false);
             if (generator.options.autobox) {
-                Autobox.autobox(arrayValues[i], arrayType).generate(generator, env);
+                Autobox.autobox(arrayValues[i], arrayType).generate(generator, env, false);
             } else {
-                arrayValues[i].generate(generator, env);
+                arrayValues[i].generate(generator, env, false);
             }
             switch (arrayType) {
                 case BooleanType b -> generator.instGen.bastore();

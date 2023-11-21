@@ -38,7 +38,7 @@ public class FloatConstant extends Expression {
     public void findCaptured(Environment env) {}
 
     @Override
-    public void generate(ClassGenerator gen, Environment env) {
+    public void generate(ClassGenerator gen, Environment env, boolean inTailPosition) {
         gen.instGen.ldc(value);
     }
 }

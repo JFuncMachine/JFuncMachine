@@ -87,7 +87,7 @@ public class Box extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String boxName;
 
         if (desiredBoxType == null) {
@@ -101,6 +101,6 @@ public class Box extends Expression {
         CallJavaStaticMethod method = new CallJavaStaticMethod(boxName, "valueOf",
                 new Type[] { boxType }, new Expression[] { expr },
                 new ObjectType(boxName), filename, lineNumber);
-        method.generate(generator, env);
+        method.generate(generator, env, inTailPosition);
     }
 }

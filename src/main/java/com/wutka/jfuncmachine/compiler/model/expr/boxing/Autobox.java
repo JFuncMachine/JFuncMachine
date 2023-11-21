@@ -31,4 +31,24 @@ public class Autobox {
             return expr;
         }
     }
+
+    public static boolean autoboxNeeded(Expression expr, Type desiredType) {
+        if (expr.getType() instanceof ObjectType exprObj && !(desiredType instanceof ObjectType)) {
+            if (expr.getType().isBoxType() && exprObj.isUnboxableTo(desiredType)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (!(expr.getType() instanceof ObjectType) && (desiredType instanceof ObjectType desiredObj)
+                && desiredType.isBoxType()) {
+            if (desiredObj.isBoxableFrom(expr.getType())) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+    }
 }

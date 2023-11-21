@@ -67,7 +67,7 @@ public class Unbox extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Type exprType = expr.getType();
         String className = (exprType instanceof ObjectType ot) ? ot.className : null;
 
@@ -106,6 +106,6 @@ public class Unbox extends Expression {
             return;
         }
 
-        method.generate(generator, env);
+        method.generate(generator, env, inTailPosition);
     }
 }

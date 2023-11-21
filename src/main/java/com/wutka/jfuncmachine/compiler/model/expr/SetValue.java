@@ -44,10 +44,10 @@ public class SetValue extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         EnvVar envVar = env.getVar(name);
 
-        expression.generate(generator,env);
+        expression.generate(generator, env, false);
 
         int opcode = switch (expression.getType()) {
             case BooleanType b -> Opcodes.ISTORE;

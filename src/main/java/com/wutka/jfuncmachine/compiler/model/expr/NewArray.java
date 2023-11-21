@@ -44,11 +44,11 @@ public class NewArray extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         if (generator.options.autobox) {
-            Autobox.autobox(arraySize, SimpleTypes.INT).generate(generator, env);
+            Autobox.autobox(arraySize, SimpleTypes.INT).generate(generator, env, false);
         } else {
-            arraySize.generate(generator, env);
+            arraySize.generate(generator, env, false);
         }
         switch (arrayType) {
             case ObjectType o -> generator.instGen.anewarray(generator.className(o.className));

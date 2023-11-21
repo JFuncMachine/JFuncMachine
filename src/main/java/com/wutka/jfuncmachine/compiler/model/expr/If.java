@@ -126,7 +126,7 @@ public class If extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Label endLabel = new Label();
         for (int i=testSequence.size()-1; i >= 0; i--) {
             BooleanExpr booleanExpr = testSequence.get(i);
@@ -146,13 +146,13 @@ public class If extends Expression {
             if (falseResult.label != null) {
                 generator.instGen.label(falseResult.label);
             }
-            falseExpr.generate(generator, env);
+            falseExpr.generate(generator, env, inTailPosition);
             generator.instGen.gotolabel(endLabel);
         }
         if (trueResult.label != null) {
             generator.instGen.label(trueResult.label);
         }
-        trueExpr.generate(generator, env);
+        trueExpr.generate(generator, env, inTailPosition);
         if (!hasFalse && falseResult.label != null) {
             generator.instGen.label(falseResult.label);
         }

@@ -37,10 +37,10 @@ public class ToLong extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Type exprType = expr.getType();
 
-        expr.generate(generator, env);
+        expr.generate(generator, env, false);
 
         switch (exprType) {
             case BooleanType b -> generator.instGen.i2l();

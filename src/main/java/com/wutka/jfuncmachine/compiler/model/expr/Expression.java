@@ -33,7 +33,8 @@ public abstract class Expression extends SourceElement {
      * Generate the bytecode for this expression
      * @param generator The generator for generating instructions and additional declarations
      * @param env The environment containing the local variables currently visible to this expression
+     * @param inTailPosition True if this expression is being generated from the tail position of the method
      */
-    public abstract void generate(ClassGenerator generator, Environment env);
+    public abstract void generate(ClassGenerator generator, Environment env, boolean inTailPosition);
 
 }

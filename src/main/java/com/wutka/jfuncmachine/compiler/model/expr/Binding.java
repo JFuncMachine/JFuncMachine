@@ -138,7 +138,7 @@ public class Binding extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
 
         Environment newEnv = new Environment(env);
 
@@ -155,9 +155,9 @@ public class Binding extends Expression {
             }
 
             if (visibility == Visibility.Separate) {
-                pair.value.generate(generator, env);
+                pair.value.generate(generator, env, false);
             } else {
-                pair.value.generate(generator, newEnv);
+                pair.value.generate(generator, newEnv, false);
             }
 
             if (visibility != Visibility.Recursive) {
@@ -187,7 +187,7 @@ public class Binding extends Expression {
         if (name != null) {
             generator.instGen.label(label);
         }
-        expr.generate(generator, newEnv);
+        expr.generate(generator, newEnv, true);
         generator.instGen.label(bindingEnd);
     }
 

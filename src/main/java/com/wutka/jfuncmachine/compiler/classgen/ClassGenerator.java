@@ -429,10 +429,14 @@ public class ClassGenerator {
             // If autoboxing is enabled, make sure the result of the method is autoboxed to match
             // its declared return type
             if (options.autobox) {
-                Autobox.autobox(methodDef.body, methodDef.returnType).generate(this, env);
+                if (Autobox.autoboxNeeded(methodDef.body, methodDef.returnType)) {
+                    Autobox.autobox(methodDef.body, methodDef.returnType).generate(this, env, false);
+                } else {
+                    methodDef.body.generate(this, env, true);
+                }
             } else {
                 // If there is no autoboxing, just generate the method body as-is
-                methodDef.body.generate(this, env);
+                methodDef.body.generate(this, env, true);
             }
 
             // Generated a return instruction

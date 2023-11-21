@@ -38,7 +38,7 @@ public class ByteConstant extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator gen, Environment env) {
+    public void generate(ClassGenerator gen, Environment env, boolean inTailPosition) {
         gen.instGen.bipush(value);
     }
 }

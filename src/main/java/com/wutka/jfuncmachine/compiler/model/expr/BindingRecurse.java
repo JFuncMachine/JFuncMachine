@@ -97,7 +97,7 @@ public class BindingRecurse extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Binding binding = env.getBinding(name);
         if (nextValues != null) {
             if (nextValues.length != binding.bindings.length) {
@@ -114,7 +114,7 @@ public class BindingRecurse extends Expression {
                 }
             }
             for (int i = 0; i < nextValues.length; i++) {
-                nextValues[i].generate(generator, env);
+                nextValues[i].generate(generator, env, false);
             }
 
             for (int i = nextValues.length - 1; i >= 0; i--) {
@@ -135,7 +135,7 @@ public class BindingRecurse extends Expression {
                     throw generateException(String.format("Variable %s does not exist in binding %s",
                             pair.name, binding.name));
                 }
-                pair.value.generate(generator, env);
+                pair.value.generate(generator, env, false);
                 EnvVar envVar = env.getVar(pair.name);
                 envVar.generateSet(generator);
             }

@@ -44,7 +44,7 @@ public class GetValue extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
 
         EnvVar envVar = env.getVar(name);
         envVar.generateGet(generator);

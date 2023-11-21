@@ -59,11 +59,11 @@ public class SetJavaStaticField extends Expression {
         expr.findCaptured(env);
     }
 
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         if (generator.options.autobox) {
-            Autobox.autobox(expr, fieldType).generate(generator, env);
+            Autobox.autobox(expr, fieldType).generate(generator, env, false);
         } else {
-            expr.generate(generator, env);
+            expr.generate(generator, env, false);
         }
 
         generator.instGen.putstatic(generator.className(className),

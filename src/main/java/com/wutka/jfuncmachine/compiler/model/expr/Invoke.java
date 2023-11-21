@@ -150,20 +150,20 @@ public class Invoke extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String intMethodName = intMethod;
 
         if (intMethod == null) {
             intMethodName = generator.options.lambdaMethodName;
         }
 
-        target.generate(generator, env);
+        target.generate(generator, env, false);
         for (int i=0; i < arguments.length; i++) {
             Expression expr = arguments[i];
             if (generator.options.autobox) {
                 expr = Autobox.autobox(expr, parameterTypes[i]);
             }
-            expr.generate(generator, env);
+            expr.generate(generator, env, false);
         }
 
         String className;

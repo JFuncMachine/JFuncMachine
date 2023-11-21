@@ -1,6 +1,7 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
+import com.wutka.jfuncmachine.compiler.classgen.EnvVar;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.model.Access;
 import com.wutka.jfuncmachine.compiler.model.ClassDef;
@@ -122,24 +123,20 @@ public class CallMethod extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
-        // TODO: If the method to invoke is the current method and local tail recursion is enabled,
-        // generate this as a jump back to the beginning of the method.
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String invokeClassName = className;
         if (invokeClassName == null) {
             invokeClassName = generator.currentClass.getFullClassName();
         }
-        target.generate(generator, env);
+        target.generate(generator, env, false);
         for (int i=0; i < arguments.length; i++) {
             Expression expr = arguments[i];
             if (generator.options.autobox) {
                 expr = Autobox.autobox(expr, parameterTypes[i]);
             }
-            expr.generate(generator, env);
+            expr.generate(generator, env, false);
         }
-        /* TODO: This should only be done when in tail position, that hasn't been added yet */
-        /*
-        if (generator.options.localTailCallsToLoops &&
+        if (inTailPosition && generator.options.localTailCallsToLoops &&
                 isCurrentFunc(generator.currentClass, generator.currentMethod)) {
             for (int i=0; i < arguments.length; i++) {
                 generator.instGen.rawIntOpcode(EnvVar.setOpcode(arguments[i].getType()), i);
@@ -148,12 +145,8 @@ public class CallMethod extends Expression {
         } else{
             generator.instGen.invokevirtual(
                     generator.className(invokeClassName),
-                    func, generator.methodDescriptor(parameterTypes, returnType));
+                    name, generator.methodDescriptor(parameterTypes, returnType));
         }
-         */
-        generator.instGen.invokevirtual(
-                generator.className(invokeClassName),
-                name, generator.methodDescriptor(parameterTypes, returnType));
     }
 
     protected boolean isCurrentFunc(ClassDef currentClass, MethodDef currentMethod) {

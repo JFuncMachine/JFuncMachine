@@ -48,9 +48,9 @@ public class Block extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         for (int i=0; i < expressions.length; i++) {
-            expressions[i].generate(generator, env);
+            expressions[i].generate(generator, env, i == expressions.length-1);
             if (i < expressions.length-1) {
                 if (expressions[i].getType().getStackSize() == 2) {
                     generator.instGen.pop2();

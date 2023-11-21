@@ -183,7 +183,7 @@ public class Lambda extends Expression {
     public void findCaptured(Environment env) {}
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         // Start a capture analysis to see what variables this lambda captures
         env.startCaptureAnalysis();
         body.findCaptured(env);

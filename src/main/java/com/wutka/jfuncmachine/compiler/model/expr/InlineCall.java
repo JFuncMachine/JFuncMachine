@@ -49,13 +49,13 @@ public class InlineCall extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         for (int i=0; i < arguments.length; i++) {
             Expression expr = arguments[i];
             if (generator.options.autobox) {
                 expr = Autobox.autobox(expr, func.parameterTypes[i]);
             }
-            expr.generate(generator, env);
+            expr.generate(generator, env, false);
         }
         func.generate(generator, env);
     }

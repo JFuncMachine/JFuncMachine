@@ -59,8 +59,8 @@ public class GetJavaField extends Expression {
         target.findCaptured(env);
     }
 
-    public void generate(ClassGenerator generator, Environment env) {
-        target.generate(generator, env);
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
+        target.generate(generator, env, false);
 
         generator.instGen.getfield(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));

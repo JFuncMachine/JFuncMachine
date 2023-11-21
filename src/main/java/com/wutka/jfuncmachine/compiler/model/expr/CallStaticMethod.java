@@ -1,7 +1,11 @@
 package com.wutka.jfuncmachine.compiler.model.expr;
 
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
+import com.wutka.jfuncmachine.compiler.classgen.EnvVar;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
+import com.wutka.jfuncmachine.compiler.model.Access;
+import com.wutka.jfuncmachine.compiler.model.ClassDef;
+import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.types.Type;
 
@@ -108,7 +112,7 @@ public class CallStaticMethod extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String invokeClassName = className;
         if (invokeClassName == null) {
             invokeClassName = generator.currentClass.getFullClassName();
@@ -118,10 +122,29 @@ public class CallStaticMethod extends Expression {
             if (generator.options.autobox) {
                 expr = Autobox.autobox(expr, parameterTypes[i]);
             }
-            expr.generate(generator, env);
+            expr.generate(generator, env, false);
         }
-        generator.instGen.invokestatic(
-                generator.className(invokeClassName),
-                name, generator.methodDescriptor(parameterTypes, returnType));
+        if (inTailPosition && generator.options.localTailCallsToLoops &&
+                isCurrentFunc(generator.currentClass, generator.currentMethod)) {
+            for (int i=0; i < arguments.length; i++) {
+                generator.instGen.rawIntOpcode(EnvVar.setOpcode(arguments[i].getType()), i);
+            }
+            generator.instGen.gotolabel(generator.currentMethod.startLabel);
+        } else{
+            generator.instGen.invokestatic(
+                    generator.className(invokeClassName),
+                    name, generator.methodDescriptor(parameterTypes, returnType));
+        }
+    }
+
+    protected boolean isCurrentFunc(ClassDef currentClass, MethodDef currentMethod) {
+        if ((currentMethod.access & Access.STATIC) == 0) return false;
+        if (!className.equals(currentClass.getFullClassName())) return false;
+        if (!name.equals(currentMethod.name)) return false;
+        if (parameterTypes.length != currentMethod.parameters.length) return false;
+        for (int i=0; i < parameterTypes.length; i++) {
+            if (!parameterTypes[i].equals(currentMethod.parameters[i].type)) return false;
+        }
+        return true;
     }
 }

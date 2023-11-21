@@ -154,7 +154,7 @@ public class Switch extends Expression {
     }
 
     @Override
-    public void generate(ClassGenerator generator, Environment env) {
+    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
 
         Type exprType = expr.getType();
 
@@ -179,9 +179,9 @@ public class Switch extends Expression {
         }
 
         if (autobox) {
-            new Unbox(expr, SimpleTypes.INT).generate(generator, env);
+            new Unbox(expr, SimpleTypes.INT).generate(generator, env, false);
         } else {
-            expr.generate(generator, env);
+            expr.generate(generator, env, false);
         }
 
         Label switchEndLabel = new Label();
@@ -217,7 +217,7 @@ public class Switch extends Expression {
 
                 if (caseMap.containsKey(i)) {
                     SwitchCase switchCase = caseMap.get(i);
-                    switchCase.expr.generate(generator, env);
+                    switchCase.expr.generate(generator, env, inTailPosition);
                     generator.instGen.gotolabel(switchEndLabel);
                 } else {
                     generator.instGen.gotolabel(defaultLabel);
@@ -238,13 +238,13 @@ public class Switch extends Expression {
             pos = 0;
             for (SwitchCase switchCase : cases) {
                 generator.instGen.label(switchLabels.get(pos++));
-                switchCase.expr.generate(generator, env);
+                switchCase.expr.generate(generator, env, inTailPosition);
             }
         }
 
         if (defaultCase != null) {
             generator.instGen.label(defaultLabel);
-            defaultCase.generate(generator, env);
+            defaultCase.generate(generator, env, inTailPosition);
         }
 
         generator.instGen.label(switchEndLabel);
