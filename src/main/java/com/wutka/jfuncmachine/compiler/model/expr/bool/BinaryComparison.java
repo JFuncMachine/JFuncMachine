@@ -119,15 +119,15 @@ public class BinaryComparison extends BooleanExpr {
             }
 
             if (!(left.getType() instanceof DoubleType)) {
-                new Unbox(left).generate(generator, env);
+                new Unbox(left).generate(generator, env, false);
             } else {
-                left.generate(generator, env);
+                left.generate(generator, env, false);
             }
 
             if (!(right.getType() instanceof DoubleType)) {
-                new Unbox(right).generate(generator, env);
+                new Unbox(right).generate(generator, env, false);
             } else {
-                right.generate(generator, env);
+                right.generate(generator, env, false);
             }
 
             if (generateTest instanceof Tests.LETest || generateTest instanceof Tests.LTTest) {
@@ -153,15 +153,15 @@ public class BinaryComparison extends BooleanExpr {
                 }
 
                 if (!(left.getType() instanceof FloatType)) {
-                    new Unbox(left).generate(generator, env);
+                    new Unbox(left).generate(generator, env, false);
                 } else {
-                    left.generate(generator, env);
+                    left.generate(generator, env, false);
                 }
 
                 if (!(right.getType() instanceof FloatType)) {
-                    new Unbox(right).generate(generator, env);
+                    new Unbox(right).generate(generator, env, false);
                 } else {
-                    right.generate(generator, env);
+                    right.generate(generator, env, false);
                 }
 
                 if (generateTest instanceof Tests.LETest || generateTest instanceof Tests.LTTest) {
@@ -187,15 +187,15 @@ public class BinaryComparison extends BooleanExpr {
             }
 
             if (!(left.getType() instanceof LongType)) {
-                new Unbox(left).generate(generator, env);
+                new Unbox(left).generate(generator, env, false);
             } else {
-                left.generate(generator, env);
+                left.generate(generator, env, false);
             }
 
             if (!(right.getType() instanceof LongType)) {
-                new Unbox(right).generate(generator, env);
+                new Unbox(right).generate(generator, env, false);
             } else {
-                right.generate(generator, env);
+                right.generate(generator, env, false);
             }
 
             generator.instGen.lcmp();
@@ -217,15 +217,15 @@ public class BinaryComparison extends BooleanExpr {
             }
 
             if (left.getType().isBoxType()) {
-                new Unbox(left).generate(generator, env);
+                new Unbox(left).generate(generator, env, false);
             } else {
-                left.generate(generator, env);
+                left.generate(generator, env, false);
             }
 
             if (right.getType().isBoxType()) {
-                new Unbox(right).generate(generator, env);
+                new Unbox(right).generate(generator, env, false);
             } else {
-                right.generate(generator, env);
+                right.generate(generator, env, false);
             }
 
             opcode = switch (generateTest) {

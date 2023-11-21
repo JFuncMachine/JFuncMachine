@@ -72,7 +72,7 @@ public class UnaryComparison extends BooleanExpr {
         if (label != null) {
             generator.instGen.label(label);
         }
-        expr.generate(generator, env);
+        expr.generate(generator, env, false);
 
         Test generateTest = test;
         BooleanExpr generateTruePath = truePath;

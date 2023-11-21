@@ -76,7 +76,7 @@ public class InstanceofComparison extends BooleanExpr {
         if (label != null) {
             generator.instGen.label(label);
         }
-        expr.generate(generator, env);
+        expr.generate(generator, env, false);
         generator.instGen.instance_of(className);
 
         Test generateTest = test;
