@@ -74,6 +74,14 @@ public class ClassGenerator {
     /** A class loader that can be used to immediately load defined classes. */
     public GeneratedClassLoader classLoader = new GeneratedClassLoader(ClassGenerator.class.getClassLoader());
 
+    /** The classes currently being generated.
+     * Because the generator sometimes needs to look up classes to check for compatibility between
+     * objects or to see if a method has been compiled with tail-call optimization, it may be necessary
+     * to examine the definitions of classes that are currently being generated since the class files
+     * may not have been generated yet.
+     */
+    public ClassDef[] newClassDefinitions;
+
     protected Map<String,Class> loadedClasses = new HashMap<>();
 
     /** Creates a new class generator using the default options. */
@@ -104,6 +112,7 @@ public class ClassGenerator {
      */
     public synchronized void generate(ClassDef[] classes, String outputDirectory)
         throws IOException {
+        this.newClassDefinitions = classes;
         for (ClassDef classDef: classes) {
             generate(classDef, outputDirectory);
         }
@@ -122,6 +131,7 @@ public class ClassGenerator {
      */
     public synchronized void generate(ClassDef classDef, String outputDirectory)
             throws IOException {
+        this.newClassDefinitions = new ClassDef[] { classDef };
         GeneratedClass[] classes = generateClassBytes(classDef);
 
         writeClasses(classes, outputDirectory);
@@ -466,7 +476,7 @@ public class ClassGenerator {
 
         ClassDef classDef = new ClassDef(currentClass.packageName, className,
                 Access.INTERFACE + Access.PUBLIC + Access.ABSTRACT,
-                new MethodDef[] { interfaceMethod }, new ClassField[0]);
+                new MethodDef[] { interfaceMethod }, new ClassField[0], new String[0]);
 
         ClassNode newNode = createClassNode(classDef);
         currentClass = classDef;

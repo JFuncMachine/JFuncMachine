@@ -31,7 +31,7 @@ public class TestBasicClassGeneration {
         throws IOException, ClassNotFoundException {
         ClassDef newClass = new ClassDef("com.wutka.test", "EmptyClass",
                 Access.PUBLIC,
-                new MethodDef[0], new ClassField[0],
+                new MethodDef[0], new ClassField[0], new String[0],
                 "empty.test", 1);
 
 
@@ -76,7 +76,7 @@ public class TestBasicClassGeneration {
                 // Make it a public class
                 Access.PUBLIC,
                 // Containing one method, the main method, and no fields
-                new MethodDef[] { main }, new ClassField[0]);
+                new MethodDef[] { main }, new ClassField[0], new String[0]);
 
 
         ClassGenerator gen = new ClassGenerator();
@@ -131,7 +131,7 @@ public class TestBasicClassGeneration {
                 // Make it a public class
                 Access.PUBLIC,
                 // Containing one method, the main method, and no fields
-                new MethodDef[] { main }, new ClassField[0],
+                new MethodDef[] { main }, new ClassField[0], new String[0],
                 "helloworld.test", 1);
 
 
@@ -187,7 +187,7 @@ public class TestBasicClassGeneration {
                 // Make it a public class
                 Access.PUBLIC,
                 // Containing one method, the main method, and no fields
-                new MethodDef[] { main }, new ClassField[0],
+                new MethodDef[] { main }, new ClassField[0], new String[0],
                 "helloworld.test", 1);
 
 

@@ -3,11 +3,17 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.EnvVar;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
+import com.wutka.jfuncmachine.compiler.classgen.Label;
 import com.wutka.jfuncmachine.compiler.model.Access;
 import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.compiler.model.expr.boxing.Box;
+import com.wutka.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
+import com.wutka.jfuncmachine.compiler.model.expr.javainterop.CallJavaStaticMethod;
+import com.wutka.jfuncmachine.compiler.model.types.*;
+import com.wutka.jfuncmachine.runtime.TailCall;
+import org.objectweb.asm.Opcodes;
 
 /** An expression to invoke a static method.
  * This method differs from the methods in the javainterop package in that it can apply certain optimizations.
@@ -117,12 +123,15 @@ public class CallStaticMethod extends Expression {
         if (invokeClassName == null) {
             invokeClassName = generator.currentClass.getFullClassName();
         }
-        for (int i=0; i < arguments.length; i++) {
-            Expression expr = arguments[i];
-            if (generator.options.autobox) {
-                expr = Autobox.autobox(expr, parameterTypes[i]);
+        if (!inTailPosition || (generator.options.localTailCallsToLoops &&
+                isCurrentFunc(generator.currentClass, generator.currentMethod))) {
+            for (int i = 0; i < arguments.length; i++) {
+                Expression expr = arguments[i];
+                if (generator.options.autobox) {
+                    expr = Autobox.autobox(expr, parameterTypes[i]);
+                }
+                expr.generate(generator, env, false);
             }
-            expr.generate(generator, env, false);
         }
         if (inTailPosition && generator.options.localTailCallsToLoops &&
                 isCurrentFunc(generator.currentClass, generator.currentMethod)) {
@@ -130,10 +139,48 @@ public class CallStaticMethod extends Expression {
                 generator.instGen.rawIntOpcode(EnvVar.setOpcode(arguments[i].getType()), i);
             }
             generator.instGen.gotolabel(generator.currentMethod.startLabel);
+        } else if (inTailPosition && generator.options.fullTailCalls) {
+            new Lambda(new Field[0], new ObjectType(),
+                    new Box(new CallJavaStaticMethod(invokeClassName, name, parameterTypes, returnType,
+                            arguments))).generate(generator, env, false);
         } else{
             generator.instGen.invokestatic(
                     generator.className(invokeClassName),
                     name, generator.methodDescriptor(parameterTypes, returnType));
+
+            if (generator.options.fullTailCalls) {
+                Label loopStart = new Label();
+                Label loopEnd = new Label();
+                generator.instGen.label(loopStart);
+                generator.instGen.dup();
+                generator.instGen.instance_of(TailCall.class.getName());
+                generator.instGen.rawJumpOpcode(Opcodes.IFEQ, loopEnd);
+                generator.instGen.invokeinterface(TailCall.class.getName(), "invoke",
+                        generator.methodDescriptor(new Type[0], new ObjectType()));
+                generator.instGen.gotolabel(loopStart);
+                generator.instGen.label(loopEnd);
+                if (returnType.getBoxType() != null) {
+                    switch (returnType) {
+                        case BooleanType b -> generator.instGen.invokevirtual("java.lang.Boolean",
+                                "booleanValue", "()Z");
+                        case ByteType b -> generator.instGen.invokevirtual("java.lang.Byte",
+                                "byteValue", "()B");
+                        case CharType c -> generator.instGen.invokevirtual("java.lang.Character",
+                                "charValue", "()C");
+                        case DoubleType d -> generator.instGen.invokevirtual("java.lang.Double",
+                                "doubleValue", "()D");
+                        case FloatType f -> generator.instGen.invokevirtual("java.lang.Float",
+                                "floatValue", "()F");
+                        case IntType i -> generator.instGen.invokevirtual("java.lang.Integer",
+                                "intValue", "()I");
+                        case LongType l -> generator.instGen.invokevirtual("java.lang.Long",
+                                "longValue", "()J");
+                        case ShortType s -> generator.instGen.invokevirtual("java.lang.Short",
+                                "shortValue", "()S");
+                        default -> {}
+                    };
+                }
+            }
         }
     }
 

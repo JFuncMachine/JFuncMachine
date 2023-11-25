@@ -43,7 +43,7 @@ public class HelloWorld {
                     // Make it a public class
                     Access.PUBLIC,
                     // Containing one method, the main method, and no fields
-                    new MethodDef[] { main }, new ClassField[0]);
+                    new MethodDef[] { main }, new ClassField[0], new String[0]);
 
             // Create a class generator to generate the class
             ClassGenerator generator = new ClassGenerator();
