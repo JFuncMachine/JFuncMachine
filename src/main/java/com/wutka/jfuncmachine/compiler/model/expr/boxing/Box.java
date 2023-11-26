@@ -70,6 +70,36 @@ public class Box extends Expression {
         this.desiredBoxType = desiredBoxType;
     }
 
+    /** Create a box for an expression with a specific box type
+     *
+     * @param expr The expression to box, the box type is derived from the expression type
+     * @param unboxedType The type of the unboxed expression (if it is different from that of expr)
+     * @param desiredBoxType The type of the box to use, in case it is different than what would
+     *                       otherwise be derived from the expression type
+     */
+    public Box(Expression expr, Type unboxedType, Type desiredBoxType) {
+        super(null, 0);
+        this.expr = expr;
+        this.boxType = unboxedType;
+        this.desiredBoxType = desiredBoxType;
+    }
+
+    /** Create a box for an expression with a specific box type
+     *
+     * @param expr The expression to box, the box type is derived from the expression type
+     * @param unboxedType The type of the unboxed expression (if it is different from that of expr)
+     * @param desiredBoxType The type of the box to use, in case it is different than what would
+     *                       otherwise be derived from the expression type
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
+    public Box(Expression expr, Type unboxedType, Type desiredBoxType, String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.expr = expr;
+        this.boxType = unboxedType;
+        this.desiredBoxType = desiredBoxType;
+    }
+
     public Type getType() {
         Type exprType = boxType;
 
@@ -96,10 +126,12 @@ public class Box extends Expression {
             boxName = ((ObjectType) desiredBoxType).className;
         }
 
+        Type boxArgumentType = new ObjectType(boxName).getUnboxedType();
+
         if (boxName == null) return;
 
         CallJavaStaticMethod method = new CallJavaStaticMethod(boxName, "valueOf",
-                new Type[] { boxType }, new Expression[] { expr },
+                new Type[] { boxArgumentType }, new Expression[] { expr },
                 new ObjectType(boxName), filename, lineNumber);
         method.generate(generator, env, inTailPosition);
     }
