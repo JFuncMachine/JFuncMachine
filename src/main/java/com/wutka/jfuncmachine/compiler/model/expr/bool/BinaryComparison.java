@@ -106,9 +106,11 @@ public class BinaryComparison extends BooleanExpr {
         int opcode;
 
         if (left.getType() instanceof DoubleType ||
-                (generator.options.autobox && left.getType().getUnboxedType() instanceof DoubleType)) {
+                (generator.options.autobox && left.getType().getUnboxedType() != null &&
+                        left.getType().getUnboxedType() instanceof DoubleType)) {
             if (!(right.getType() instanceof DoubleType ||
-                    (generator.options.autobox && right.getType().getUnboxedType() instanceof DoubleType))) {
+                    (generator.options.autobox && right.getType().getUnboxedType() != null &&
+                            right.getType().getUnboxedType() instanceof DoubleType))) {
                 throw generateException("Left side of comparison is a double type, but right side is not");
             }
 
@@ -140,9 +142,11 @@ public class BinaryComparison extends BooleanExpr {
                 default -> throw generateException("Invalid comparison for double type");
             };
         } else if (left.getType() instanceof FloatType ||
-                    (generator.options.autobox && left.getType().getUnboxedType() instanceof FloatType)) {
+                    (generator.options.autobox && left.getType().getUnboxedType() != null &&
+                            left.getType().getUnboxedType() instanceof FloatType)) {
                 if (!(right.getType() instanceof FloatType ||
-                        (generator.options.autobox && right.getType().getUnboxedType() instanceof FloatType))) {
+                        (generator.options.autobox && right.getType().getUnboxedType() != null &&
+                                right.getType().getUnboxedType() instanceof FloatType))) {
                     throw generateException("Left side of comparison is a float type, but right side is not");
                 }
 
@@ -174,9 +178,11 @@ public class BinaryComparison extends BooleanExpr {
                     default -> throw generateException("Invalid comparison for float type");
                 };
         } else if (left.getType() instanceof LongType ||
-                (generator.options.autobox && left.getType().getUnboxedType() instanceof LongType)) {
+                (generator.options.autobox && left.getType().getUnboxedType() != null &&
+                        left.getType().getUnboxedType() instanceof LongType)) {
             if (!(right.getType() instanceof LongType ||
-                    (generator.options.autobox && right.getType().getUnboxedType() instanceof LongType))) {
+                    (generator.options.autobox && right.getType().getUnboxedType() != null &&
+                            right.getType().getUnboxedType() instanceof LongType))) {
                 throw generateException("Left side of comparison is a long type, but right side is not");
             }
 
@@ -204,9 +210,11 @@ public class BinaryComparison extends BooleanExpr {
                 default -> throw generateException("Invalid comparison for long type");
             };
         } else if (left.getType().hasIntRepresentation() ||
-                (generator.options.autobox && left.getType().getUnboxedType().hasIntRepresentation())) {
+                (generator.options.autobox && left.getType().getUnboxedType() != null &&
+                        left.getType().getUnboxedType().hasIntRepresentation())) {
             if (!(right.getType().hasIntRepresentation() ||
-                    (generator.options.autobox && right.getType().getUnboxedType().hasIntRepresentation()))) {
+                    (generator.options.autobox && right.getType().getUnboxedType() != null &&
+                            right.getType().getUnboxedType().hasIntRepresentation()))) {
                 throw generateException("Left side of comparison is a int type, but right side is not");
             }
 
@@ -236,6 +244,9 @@ public class BinaryComparison extends BooleanExpr {
                 throw generateException("Left side of comparison is an object type, but right side is not");
             }
 
+            left.generate(generator, env, false);
+            right.generate(generator, env, false);
+
             opcode = switch (generateTest) {
                 case Tests.EQTest t -> Opcodes.IF_ACMPEQ;
                 case Tests.NETest t -> Opcodes.IF_ACMPNE;
@@ -245,6 +256,9 @@ public class BinaryComparison extends BooleanExpr {
             if (!(right.getType() instanceof StringType)) {
                 throw generateException("Right side of comparison is a string type, but right side is not");
             }
+
+            left.generate(generator, env, false);
+            right.generate(generator, env, false);
 
             if (generateTest instanceof Tests.EQTest) {
                 opcode = Opcodes.IF_ACMPEQ;
@@ -256,7 +270,7 @@ public class BinaryComparison extends BooleanExpr {
                     generator.instGen.invokevirtual(
                             generator.className("java.lang.String"),
                             "compareTo", generator.methodDescriptor(
-                                    new Type[] { SimpleTypes.STRING }, SimpleTypes.STRING));
+                                    new Type[] { SimpleTypes.STRING }, SimpleTypes.INT));
                     opcode = switch (generateTest) {
                         case Tests.LETest t -> Opcodes.IFLE;
                         case Tests.LTTest t -> Opcodes.IFLT;
@@ -274,7 +288,7 @@ public class BinaryComparison extends BooleanExpr {
                     generator.instGen.invokevirtual(
                             generator.className("java.lang.String"),
                             "compareToIgnoreCase", generator.methodDescriptor(
-                                    new Type[] { SimpleTypes.STRING }, SimpleTypes.STRING));
+                                    new Type[] { SimpleTypes.STRING }, SimpleTypes.INT));
 
                     opcode = switch (generateTest) {
                         case Tests.EQIgnoreCaseTest t -> Opcodes.IFEQ;

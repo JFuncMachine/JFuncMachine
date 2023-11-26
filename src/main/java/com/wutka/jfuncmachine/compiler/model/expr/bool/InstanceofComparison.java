@@ -76,7 +76,7 @@ public class InstanceofComparison extends BooleanExpr {
             generator.instGen.label(label);
         }
         expr.generate(generator, env, false);
-        generator.instGen.instance_of(className);
+        generator.instGen.instance_of(generator.className(className));
 
         Test generateTest = test;
         BooleanExpr generateTruePath = truePath;
@@ -92,8 +92,8 @@ public class InstanceofComparison extends BooleanExpr {
         }
 
         int opcode = switch (generateTest) {
-            case Tests.EQTest t -> Opcodes.IFEQ;
-            case Tests.NETest t -> Opcodes.IFNE;
+            case Tests.IsTrueTest t -> Opcodes.IFNE;
+            case Tests.IsFalseTest t -> Opcodes.IFEQ;
             default -> throw generateException("Invalid test for instanceof comparison");
         };
 
