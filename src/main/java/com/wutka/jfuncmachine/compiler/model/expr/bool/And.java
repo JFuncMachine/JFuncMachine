@@ -1,12 +1,6 @@
 package com.wutka.jfuncmachine.compiler.model.expr.bool;
 
-import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
-import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.classgen.Label;
-import com.wutka.jfuncmachine.compiler.model.expr.Expression;
-
 import java.util.List;
-import java.util.Stack;
 
 /** Represents a short-circuiting and of boolean expressions. */
 public class And extends BooleanExpr {

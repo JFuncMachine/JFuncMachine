@@ -9,7 +9,6 @@ import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.objectweb.asm.Opcodes;
 
 import java.util.List;
-import java.util.Stack;
 
 /** Represents a comparison for a single expression, usually either a binary expression (represented by 0 or 1),
  * or the result of a compare function or instruction.

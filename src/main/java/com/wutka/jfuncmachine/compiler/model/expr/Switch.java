@@ -4,14 +4,7 @@ import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
 import com.wutka.jfuncmachine.compiler.classgen.Label;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Unbox;
-import com.wutka.jfuncmachine.compiler.model.types.BooleanType;
-import com.wutka.jfuncmachine.compiler.model.types.CharType;
-import com.wutka.jfuncmachine.compiler.model.types.IntType;
-import com.wutka.jfuncmachine.compiler.model.types.LongType;
-import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
-import com.wutka.jfuncmachine.compiler.model.types.ShortType;
-import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.compiler.model.types.*;
 
 import java.util.ArrayList;
 import java.util.List;

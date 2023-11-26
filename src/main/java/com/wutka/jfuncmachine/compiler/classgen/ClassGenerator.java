@@ -1,36 +1,20 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
-import com.wutka.jfuncmachine.compiler.model.Access;
-import com.wutka.jfuncmachine.compiler.model.ClassDef;
-import com.wutka.jfuncmachine.compiler.model.ClassField;
-import com.wutka.jfuncmachine.compiler.model.MethodDef;
+import com.wutka.jfuncmachine.compiler.exceptions.JFuncMachineException;
+import com.wutka.jfuncmachine.compiler.model.*;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
+import com.wutka.jfuncmachine.compiler.model.expr.GetValue;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
-import com.wutka.jfuncmachine.compiler.model.types.ArrayType;
-import com.wutka.jfuncmachine.compiler.model.types.BooleanType;
-import com.wutka.jfuncmachine.compiler.model.types.ByteType;
-import com.wutka.jfuncmachine.compiler.model.types.CharType;
-import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
-import com.wutka.jfuncmachine.compiler.model.types.Field;
-import com.wutka.jfuncmachine.compiler.model.types.FloatType;
-import com.wutka.jfuncmachine.compiler.model.types.FunctionType;
-import com.wutka.jfuncmachine.compiler.model.types.IntType;
-import com.wutka.jfuncmachine.compiler.model.types.LongType;
-import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
-import com.wutka.jfuncmachine.compiler.model.types.ShortType;
-import com.wutka.jfuncmachine.compiler.model.types.StringType;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
-import com.wutka.jfuncmachine.compiler.model.types.UnitType;
+import com.wutka.jfuncmachine.compiler.model.expr.javainterop.CallJavaSuperConstructor;
+import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InnerClassNode;
-import org.objectweb.asm.tree.LocalVariableNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TryCatchBlockNode;
+import org.objectweb.asm.tree.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -230,11 +214,51 @@ public class ClassGenerator {
             genClass.loadedClass = classLoader.defineClass(genClass.className, genClass.classBytes);
             loadedClasses.put(genClass.className, genClass.loadedClass);
         }
-
         for (GeneratedClass genClass: classes) {
             classLoader.resolve(genClass.loadedClass);
         }
 
+    }
+
+    public Object invokeMethod(MethodDef methodDef, Object... args) {
+        Random random = new Random();
+        String className = "TempClass_"+new BigInteger(128, new Random()).toString(16);
+        String packageName = "com.wutka.jfuncmachine.temp";
+        ClassDef classDef;
+
+        if ((methodDef.access & Access.STATIC) == 0) {
+            ConstructorDef constructor = new ConstructorDef(Access.PUBLIC, new Field[0],
+                    SimpleTypes.UNIT,
+                    new CallJavaSuperConstructor(
+                            SimpleTypes.UNIT,
+                            new GetValue("this", new ObjectType(packageName+"."+className)), new Expression[0]));
+            classDef = new ClassDef(packageName, className, Access.PUBLIC,
+                    new MethodDef[]{constructor, methodDef}, new ClassField[0], new String[0]);
+
+        } else {
+            classDef = new ClassDef(packageName, className, Access.PUBLIC,
+                    new MethodDef[]{methodDef}, new ClassField[0], new String[0]);
+        }
+
+        try {
+            generate(classDef, "test");
+            generateAndLoad(classDef);
+
+            Class classObj = getLoadedClass(packageName + "." + className);
+            for (Method method : classObj.getMethods()) {
+                if (method.getName().equals(methodDef.name)) {
+                    if ((methodDef.access & Access.STATIC) != 0) {
+                        return method.invoke(null, args);
+                    } else {
+                        Object obj = classObj.getDeclaredConstructor().newInstance();
+                        return method.invoke(obj, args);
+                    }
+                }
+            }
+            throw new JFuncMachineException("Error locating method "+methodDef.name);
+        } catch (Exception exc) {
+            throw new JFuncMachineException(exc);
+        }
     }
 
     /**
@@ -427,6 +451,9 @@ public class ClassGenerator {
             // Create an empty environment (for local variables)
             Environment env = new Environment(methodDef);
 
+            if ((methodDef.access & Access.STATIC) == 0) {
+                env.allocate("this", new ObjectType(classDef.getFullClassName()));
+            }
             // Populate the environment with the method parameter names and types
             for (Field f : methodDef.parameters) {
                 env.allocate(f.name, f.type);

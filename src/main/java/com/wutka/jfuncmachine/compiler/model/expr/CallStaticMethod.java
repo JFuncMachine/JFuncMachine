@@ -9,7 +9,6 @@ import com.wutka.jfuncmachine.compiler.model.ClassDef;
 import com.wutka.jfuncmachine.compiler.model.MethodDef;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Box;
-import com.wutka.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
 import com.wutka.jfuncmachine.compiler.model.expr.javainterop.CallJavaStaticMethod;
 import com.wutka.jfuncmachine.compiler.model.types.*;
 import com.wutka.jfuncmachine.runtime.TailCall;

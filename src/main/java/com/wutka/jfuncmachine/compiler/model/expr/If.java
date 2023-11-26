@@ -39,7 +39,7 @@ public class If extends Expression {
             generateException(
                     "True expression type is different from false expression type");
         }
-        this.test = test;
+        this.test = test.removeNot();
         this.trueExpr = trueExpr;
         this.falseExpr = falseExpr;
         this.hasFalse = true;
@@ -60,7 +60,7 @@ public class If extends Expression {
             generateException(
                     "True expression type is different from false expression type");
         }
-        this.test = test;
+        this.test = test.removeNot();
         this.trueExpr = trueExpr;
         this.falseExpr = falseExpr;
         this.hasFalse = true;
@@ -73,7 +73,7 @@ public class If extends Expression {
      */
     public If(BooleanExpr test, Expression trueExpr) {
         super(null, 0);
-        this.test = test;
+        this.test = test.removeNot();
         this.trueExpr = trueExpr;
         this.falseExpr = null;
         this.hasFalse = false;
@@ -89,7 +89,7 @@ public class If extends Expression {
     public If(BooleanExpr test, Expression trueExpr,
               String filename, int lineNumber) {
         super(filename, lineNumber);
-        this.test = test;
+        this.test = test.removeNot();
         this.trueExpr = trueExpr;
         this.falseExpr = null;
         this.hasFalse = false;

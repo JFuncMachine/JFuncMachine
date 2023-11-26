@@ -2,11 +2,8 @@ package com.wutka.jfuncmachine.compiler.model.expr.bool;
 
 import com.wutka.jfuncmachine.compiler.classgen.Label;
 import com.wutka.jfuncmachine.compiler.model.SourceElement;
-import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Tests;
-import com.wutka.jfuncmachine.compiler.model.expr.constants.IntConstant;
 
 import java.util.List;
-import java.util.Stack;
 
 /** An abstract class for different types of boolean expressions */
 public abstract class BooleanExpr extends SourceElement {

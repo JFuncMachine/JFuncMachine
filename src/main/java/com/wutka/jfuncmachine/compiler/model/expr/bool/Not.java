@@ -1,7 +1,6 @@
 package com.wutka.jfuncmachine.compiler.model.expr.bool;
 
 import java.util.List;
-import java.util.Stack;
 
 /** Represents the negation of a boolean expression */
 public class Not extends BooleanExpr {

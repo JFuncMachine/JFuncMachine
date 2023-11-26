@@ -3,8 +3,7 @@ package com.wutka.jfuncmachine.compiler.model.expr;
 import com.wutka.jfuncmachine.compiler.classgen.ClassGenerator;
 import com.wutka.jfuncmachine.compiler.classgen.EnvVar;
 import com.wutka.jfuncmachine.compiler.classgen.Environment;
-import com.wutka.jfuncmachine.compiler.model.types.*;
-import org.objectweb.asm.Opcodes;
+import com.wutka.jfuncmachine.compiler.model.types.Type;
 
 /** An expression to retrieve a local variable value */
 public class GetValue extends Expression {

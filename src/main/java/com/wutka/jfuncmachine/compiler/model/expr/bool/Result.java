@@ -1,10 +1,8 @@
 package com.wutka.jfuncmachine.compiler.model.expr.bool;
 
-import com.wutka.jfuncmachine.compiler.classgen.Label;
 import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 
 import java.util.List;
-import java.util.Stack;
 
 /** Represents the end point of a boolean expression, containing the expression to be
  * executed depending on whether the boolean test is true or false.

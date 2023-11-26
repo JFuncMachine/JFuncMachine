@@ -7,13 +7,7 @@ import com.wutka.jfuncmachine.compiler.model.expr.Expression;
 import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Test;
 import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import com.wutka.jfuncmachine.compiler.model.expr.boxing.Unbox;
-import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
-import com.wutka.jfuncmachine.compiler.model.types.FloatType;
-import com.wutka.jfuncmachine.compiler.model.types.LongType;
-import com.wutka.jfuncmachine.compiler.model.types.ObjectType;
-import com.wutka.jfuncmachine.compiler.model.types.SimpleTypes;
-import com.wutka.jfuncmachine.compiler.model.types.StringType;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
 import java.util.List;

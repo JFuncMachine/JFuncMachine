@@ -1,7 +1,6 @@
 package com.wutka.jfuncmachine.compiler.model.expr.bool;
 
 import java.util.List;
-import java.util.Stack;
 
 /** Represents a short-circuiting or of two boolean expressions. */
 public class Or extends BooleanExpr {

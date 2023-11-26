@@ -9,7 +9,6 @@ import com.wutka.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.objectweb.asm.Opcodes;
 
 import java.util.List;
-import java.util.Stack;
 
 /** Represents an instanceof comparison (or not instanceof) */
 public class InstanceofComparison extends BooleanExpr {

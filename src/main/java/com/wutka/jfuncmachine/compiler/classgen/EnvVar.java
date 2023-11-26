@@ -1,14 +1,6 @@
 package com.wutka.jfuncmachine.compiler.classgen;
 
-import com.wutka.jfuncmachine.compiler.model.types.BooleanType;
-import com.wutka.jfuncmachine.compiler.model.types.ByteType;
-import com.wutka.jfuncmachine.compiler.model.types.CharType;
-import com.wutka.jfuncmachine.compiler.model.types.DoubleType;
-import com.wutka.jfuncmachine.compiler.model.types.FloatType;
-import com.wutka.jfuncmachine.compiler.model.types.IntType;
-import com.wutka.jfuncmachine.compiler.model.types.LongType;
-import com.wutka.jfuncmachine.compiler.model.types.ShortType;
-import com.wutka.jfuncmachine.compiler.model.types.Type;
+import com.wutka.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
 import java.util.Objects;
