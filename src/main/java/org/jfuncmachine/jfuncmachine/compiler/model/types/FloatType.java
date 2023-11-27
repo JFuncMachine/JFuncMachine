@@ -3,7 +3,7 @@ package org.jfuncmachine.jfuncmachine.compiler.model.types;
 public record FloatType() implements Type {
     public static final String BOX_TYPE = "java.lang.Float";
 
-    public String getBoxType() { return BOX_TYPE; }
+    public String getBoxTypeName() { return BOX_TYPE; }
 
     public boolean isUnboxableFrom(String className) {
         return className.equals("java.lang.Float") ||

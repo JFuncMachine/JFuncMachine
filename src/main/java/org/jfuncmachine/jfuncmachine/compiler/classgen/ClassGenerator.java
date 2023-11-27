@@ -1,22 +1,51 @@
 package org.jfuncmachine.jfuncmachine.compiler.classgen;
 
 import org.jfuncmachine.jfuncmachine.compiler.exceptions.JFuncMachineException;
-import org.jfuncmachine.jfuncmachine.compiler.model.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.Access;
+import org.jfuncmachine.jfuncmachine.compiler.model.ClassDef;
+import org.jfuncmachine.jfuncmachine.compiler.model.ClassField;
+import org.jfuncmachine.jfuncmachine.compiler.model.ConstructorDef;
+import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.GetValue;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaSuperConstructor;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ArrayType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FunctionType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.StringType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.UnitType;
+import org.jfuncmachine.jfuncmachine.runtime.TailCall;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InnerClassNode;
+import org.objectweb.asm.tree.LocalVariableNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TryCatchBlockNode;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Generates classes from ClassDef structures.
@@ -248,10 +277,65 @@ public class ClassGenerator {
             for (Method method : classObj.getMethods()) {
                 if (method.getName().equals(methodDef.name)) {
                     if ((methodDef.access & Access.STATIC) != 0) {
-                        return method.invoke(null, args);
+                        Object result = method.invoke(null, args);
+                        while (result instanceof TailCall) {
+                            result = ((TailCall)result).invoke();
+                        }
+                        return result;
                     } else {
                         Object obj = classObj.getDeclaredConstructor().newInstance();
-                        return method.invoke(obj, args);
+                        Object result = method.invoke(obj, args);
+                        while (result instanceof TailCall) {
+                            result = ((TailCall)result).invoke();
+                        }
+                        return result;
+                    }
+                }
+            }
+            throw new JFuncMachineException("Error locating method "+methodDef.name);
+        } catch (Exception exc) {
+            throw new JFuncMachineException(exc);
+        }
+    }
+
+    public Object invokeMethod(String className, MethodDef methodDef, Object... args) {
+        String packageName = "org.jfuncmachine.jfuncmachine.temp";
+        ClassDef classDef;
+
+        if ((methodDef.access & Access.STATIC) == 0) {
+            ConstructorDef constructor = new ConstructorDef(Access.PUBLIC, new Field[0],
+                    SimpleTypes.UNIT,
+                    new CallJavaSuperConstructor(
+                            SimpleTypes.UNIT,
+                            new GetValue("this", new ObjectType(packageName+"."+className)), new Expression[0]));
+            classDef = new ClassDef(packageName, className, Access.PUBLIC,
+                    new MethodDef[]{constructor, methodDef}, new ClassField[0], new String[0]);
+
+        } else {
+            classDef = new ClassDef(packageName, className, Access.PUBLIC,
+                    new MethodDef[]{methodDef}, new ClassField[0], new String[0]);
+        }
+
+        try {
+            generate(classDef, "test");
+            generateAndLoad(classDef);
+
+            Class classObj = getLoadedClass(packageName + "." + className);
+            for (Method method : classObj.getMethods()) {
+                if (method.getName().equals(methodDef.name)) {
+                    if ((methodDef.access & Access.STATIC) != 0) {
+                        Object result = method.invoke(null, args);
+                        while (result instanceof TailCall) {
+                            result = ((TailCall)result).invoke();
+                        }
+                        return result;
+                    } else {
+                        Object obj = classObj.getDeclaredConstructor().newInstance();
+                        Object result = method.invoke(obj, args);
+                        while (result instanceof TailCall) {
+                            result = ((TailCall)result).invoke();
+                        }
+                        return result;
                     }
                 }
             }
@@ -463,11 +547,15 @@ public class ClassGenerator {
             // method calling itself can be replaced with a jump back to the beginning of the method
             instGen.label(methodDef.startLabel);
 
+            Type returnType = methodDef.returnType;
+            if (options.fullTailCalls && !methodDef.name.equals("<init>")) {
+                returnType = new ObjectType();
+            }
             // If autoboxing is enabled, make sure the result of the method is autoboxed to match
             // its declared return type
-            if (options.autobox) {
-                if (Autobox.autoboxNeeded(methodDef.body, methodDef.returnType)) {
-                    Autobox.autobox(methodDef.body, methodDef.returnType).generate(this, env, false);
+            if (options.autobox && !options.fullTailCalls) {
+                if (Autobox.autoboxNeeded(methodDef.body, returnType)) {
+                    Autobox.autobox(methodDef.body, returnType).generate(this, env, false);
                 } else {
                     methodDef.body.generate(this, env, true);
                 }
@@ -476,8 +564,12 @@ public class ClassGenerator {
                 methodDef.body.generate(this, env, true);
             }
 
-            // Generated a return instruction
-            instGen.return_by_type(methodDef.returnType);
+            if (options.fullTailCalls && !methodDef.name.equals("<init>")) {
+                instGen.areturn();
+            } else {
+                // Generated a return instruction
+                instGen.return_by_type(returnType);
+            }
         }
 
         return newMethod;
@@ -671,7 +763,11 @@ public class ClassGenerator {
             builder.append(getTypeDescriptor(f.type));
         }
         builder.append(")");
-        builder.append(getTypeDescriptor(methodDef.getReturnType()));
+        Type returnType = methodDef.returnType;
+        if (!methodDef.name.equals("<init>") && options.fullTailCalls) {
+            returnType = new ObjectType();
+        }
+        builder.append(getTypeDescriptor(returnType));
         return builder.toString();
     }
 

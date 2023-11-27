@@ -40,5 +40,8 @@ public class ShortConstant extends Expression {
     @Override
     public void generate(ClassGenerator gen, Environment env, boolean inTailPosition) {
         gen.instGen.ldc(value);
+        if (inTailPosition && gen.options.fullTailCalls) {
+            gen.instGen.generateBox(SimpleTypes.SHORT.getBoxType());
+        }
     }
 }

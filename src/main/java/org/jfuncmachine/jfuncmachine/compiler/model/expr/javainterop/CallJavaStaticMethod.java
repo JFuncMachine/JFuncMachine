@@ -120,5 +120,9 @@ public class CallJavaStaticMethod extends Expression {
         generator.instGen.invokestatic(
                 generator.className(className),
                 methodName, generator.methodDescriptor(parameterTypes, returnType));
+
+        if (inTailPosition && generator.options.fullTailCalls) {
+            generator.instGen.generateBox(returnType);
+        }
     }
 }

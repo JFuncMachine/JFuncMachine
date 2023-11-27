@@ -5,7 +5,12 @@ import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Binding;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.UUID;
 
 /**
  * A map of the local variables available within a method.

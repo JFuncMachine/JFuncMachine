@@ -4,7 +4,17 @@ import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 
 /** Unboxes an expression - converts a box type to a native type (e.g. java.lang.Short to short) */
 public class Unbox extends Expression {
@@ -79,6 +89,12 @@ public class Unbox extends Expression {
         if (!unboxedType.isUnboxableFrom(className)) {
             throw generateException(String.format("Value of type %s is not unboxable from type %s",
                     unboxedType, className));
+        }
+
+        // Don't unbox if this value is in the tail position and full-tail calls are enabled,
+        // because the value must remain an object
+        if (inTailPosition && generator.options.fullTailCalls) {
+            return;
         }
 
         CallJavaMethod method = switch (unboxedType) {

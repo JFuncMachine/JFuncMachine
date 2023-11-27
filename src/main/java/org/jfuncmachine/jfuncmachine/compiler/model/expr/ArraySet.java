@@ -3,7 +3,17 @@ package org.jfuncmachine.jfuncmachine.compiler.model.expr;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Autobox;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ArrayType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 import org.objectweb.asm.Opcodes;
 
 /** An expression to store a value in an array */
@@ -91,6 +101,10 @@ public class ArraySet extends Expression {
             };
 
             generator.instGen.rawOpcode(opcode);
+
+            if (inTailPosition && generator.options.fullTailCalls) {
+                generator.instGen.aconst_null();
+            }
         } else {
             throw generateException(
                     String.format("Tried to do ArrayGet on type %s", arrayType));

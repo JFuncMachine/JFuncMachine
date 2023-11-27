@@ -3,14 +3,26 @@ package org.jfuncmachine.jfuncmachine.compiler.model.expr;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.EnvVar;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
+import org.jfuncmachine.jfuncmachine.compiler.classgen.Handle;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Label;
+import org.jfuncmachine.jfuncmachine.compiler.classgen.LambdaInfo;
 import org.jfuncmachine.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.jfuncmachine.compiler.model.ClassDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Autobox;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Box;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FunctionType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 import org.jfuncmachine.jfuncmachine.runtime.TailCall;
 import org.objectweb.asm.Opcodes;
 
@@ -133,27 +145,35 @@ public class CallMethod extends Expression {
         if (invokeClassName == null) {
             invokeClassName = generator.currentClass.getFullClassName();
         }
-        if (!inTailPosition || (generator.options.localTailCallsToLoops &&
-                isCurrentFunc(generator.currentClass, generator.currentMethod))) {
-            target.generate(generator, env, false);
+        int[] argumentLocations = new int[arguments.length];
+        int argPos = 1;
+        if (!inTailPosition || !generator.options.localTailCallsToLoops ||
+                !isCurrentFunc(generator.currentClass, generator.currentMethod)) {
+            if (!generator.options.fullTailCalls) {
+                target.generate(generator, env, false);
+            }
+        }
+        if (!inTailPosition || !generator.options.fullTailCalls ||
+                (generator.options.localTailCallsToLoops &&
+                        isCurrentFunc(generator.currentClass, generator.currentMethod))) {
             for (int i = 0; i < arguments.length; i++) {
                 Expression expr = arguments[i];
                 if (generator.options.autobox) {
                     expr = Autobox.autobox(expr, parameterTypes[i]);
                 }
                 expr.generate(generator, env, false);
+                argumentLocations[i] = argPos;
+                argPos += parameterTypes[i].getStackSize();
             }
         }
         if (inTailPosition && generator.options.localTailCallsToLoops &&
                 isCurrentFunc(generator.currentClass, generator.currentMethod)) {
-            for (int i = 0; i < arguments.length; i++) {
-                generator.instGen.rawIntOpcode(EnvVar.setOpcode(arguments[i].getType()), i);
+            for (int i = arguments.length-1; i >= 0; i--) {
+                generator.instGen.rawIntOpcode(EnvVar.setOpcode(arguments[i].getType()), argumentLocations[i]);
             }
             generator.instGen.gotolabel(generator.currentMethod.startLabel);
         } else if (inTailPosition && generator.options.fullTailCalls) {
-            new Lambda(new Field[0], new ObjectType(),
-                    new Box(new CallJavaMethod(invokeClassName, name, parameterTypes, returnType,
-                            target, arguments))).generate(generator, env, false);
+            generateTailLambda(invokeClassName, name, parameterTypes, target, arguments, generator, env);
         } else{
             generator.instGen.invokevirtual(
                     generator.className(invokeClassName),
@@ -169,7 +189,7 @@ public class CallMethod extends Expression {
                         generator.methodDescriptor(new Type[0], new ObjectType()));
                 generator.instGen.gotolabel(loopStart);
                 generator.instGen.label(loopEnd);
-                if (returnType.getBoxType() != null) {
+                if (returnType.getBoxTypeName() != null) {
                     switch (returnType) {
                         case BooleanType b -> generator.instGen.invokevirtual("java.lang.Boolean",
                                 "booleanValue", "()Z");
@@ -188,7 +208,7 @@ public class CallMethod extends Expression {
                         case ShortType s -> generator.instGen.invokevirtual("java.lang.Short",
                                 "shortValue", "()S");
                         default -> {}
-                    };
+                    }
                 }
             }
         }
@@ -196,12 +216,70 @@ public class CallMethod extends Expression {
 
     protected boolean isCurrentFunc(ClassDef currentClass, MethodDef currentMethod) {
         if ((currentMethod.access & Access.STATIC) != 0) return false;
-        if (!className.equals(currentClass.getFullClassName())) return false;
+        if (className != null && !className.equals(currentClass.getFullClassName())) return false;
         if (!name.equals(currentMethod.name)) return false;
         if (parameterTypes.length != currentMethod.parameters.length) return false;
         for (int i=0; i < parameterTypes.length; i++) {
             if (!parameterTypes[i].equals(currentMethod.parameters[i].type)) return false;
         }
         return true;
+    }
+
+    public void generateTailLambda(String invokeClassName, String name, Type[] parameterTypes,
+                                   Expression target, Expression[] arguments,
+                                   ClassGenerator generator, Environment env) {
+        // Start a capture analysis to see what variables this lambda captures
+
+        LambdaInfo lambdaInfo = generator.allocateLambda(new FunctionType(parameterTypes, new ObjectType()));
+
+        Field[] lambdaFields = new Field[arguments.length];
+        for (int i=0; i < lambdaFields.length; i++) {
+            lambdaFields[i] = new Field("arg"+i, arguments[i].getType());
+        }
+        Expression[] lambdaArguments = new Expression[arguments.length];
+        for (int i=0; i < lambdaArguments.length; i++) {
+            lambdaArguments[i] = new GetValue("arg"+i, arguments[i].getType());
+        }
+        // Create a declaration for the lambda method
+        MethodDef lambdaMethod = new MethodDef(lambdaInfo.name,
+                    Access.PRIVATE + Access.SYNTHETIC,
+                    lambdaFields, new ObjectType(),
+                new CallJavaMethod(invokeClassName, name, parameterTypes, new ObjectType(),
+                        new GetValue("this", new ObjectType()),
+                        lambdaArguments));
+
+        // Schedule the generation of the lambda method
+        generator.addMethodToGenerate(lambdaMethod);
+
+        target.generate(generator, env, false);
+        for (Expression expr: arguments) {
+            expr.generate(generator, env, false);
+        }
+
+        String methodName = "invoke";
+
+        Handle handle = new Handle(Handle.INVOKEVIRTUAL, generator.currentClass.packageName.replace('.', '/')+
+                    "/"+ generator.currentClass.name, lambdaInfo.name,
+                    generator.lambdaMethodDescriptor(parameterTypes, new Type[0], new ObjectType()), false);
+
+        Type[] dyParameterTypes = new Type[parameterTypes.length+1];
+        for (int i=0; i < parameterTypes.length; i++) {
+            dyParameterTypes[i+1] = parameterTypes[i];
+        }
+        dyParameterTypes[0] = new ObjectType(generator.currentClass.getFullClassName());
+        // Call invokedynamic to generate a lambda method handle
+        generator.instGen.invokedynamic(methodName,
+                generator.lambdaInDyDescriptor(dyParameterTypes, TailCall.class.getName()),
+                // Boilerplate for Java's built-in lambda bootstrap
+                new Handle(Handle.INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
+                        "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
+                        false),
+                // Create an ASM Type descriptor for this descriptor
+                org.objectweb.asm.Type.getType(generator.methodDescriptor(new Type[0], new ObjectType())),
+                // Create a handle for the generated lambda method
+                handle,
+                // Create an another ASM Type descriptor for this descriptor
+                org.objectweb.asm.Type.getType(generator.methodDescriptor(new Type[0],  new ObjectType())));
+
     }
 }

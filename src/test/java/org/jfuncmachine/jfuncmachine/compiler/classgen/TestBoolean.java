@@ -4,7 +4,12 @@ import org.jfuncmachine.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.GetValue;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.If;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.And;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.BinaryComparison;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.InstanceofComparison;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.Not;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.Or;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.UnaryComparison;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
@@ -149,10 +154,10 @@ public class TestBoolean {
     public void testIntegerEq() {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
-                new Field("y", new ObjectType(SimpleTypes.INT.getBoxType()))},
+                new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ, new GetValue("x", SimpleTypes.INT),
-                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxType()))),
+                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
         ClassGenerator generator = new ClassGenerator();
@@ -171,10 +176,10 @@ public class TestBoolean {
     public void testIntegerNe() {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
-                new Field("y", new ObjectType(SimpleTypes.INT.getBoxType()))},
+                new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.NE, new GetValue("x", SimpleTypes.INT),
-                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxType()))),
+                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
         ClassGenerator generator = new ClassGenerator();
@@ -193,10 +198,10 @@ public class TestBoolean {
     public void testIntegerLt() {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
-                new Field("y", new ObjectType(SimpleTypes.INT.getBoxType()))},
+                new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LT, new GetValue("x", SimpleTypes.INT),
-                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxType()))),
+                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
         ClassGenerator generator = new ClassGenerator();
@@ -215,10 +220,10 @@ public class TestBoolean {
     public void testIntegerLe() {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
-                new Field("y", new ObjectType(SimpleTypes.INT.getBoxType()))},
+                new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LE, new GetValue("x", SimpleTypes.INT),
-                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxType()))),
+                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
         ClassGenerator generator = new ClassGenerator();
@@ -237,10 +242,10 @@ public class TestBoolean {
     public void testIntegerGt() {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
-                new Field("y", new ObjectType(SimpleTypes.INT.getBoxType()))},
+                new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GT, new GetValue("x", SimpleTypes.INT),
-                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxType()))),
+                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
         ClassGenerator generator = new ClassGenerator();
@@ -259,10 +264,10 @@ public class TestBoolean {
     public void testIntegerGe() {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
-                new Field("y", new ObjectType(SimpleTypes.INT.getBoxType()))},
+                new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GE, new GetValue("x", SimpleTypes.INT),
-                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxType()))),
+                        new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
         ClassGenerator generator = new ClassGenerator();
@@ -412,10 +417,10 @@ public class TestBoolean {
     @Test
     public void testLangDoubleEq() {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.DOUBLE.getBoxType())),
+                new Field("x", new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName())),
                 new Field("y", SimpleTypes.DOUBLE)},
                 SimpleTypes.BOOLEAN,
-                new If(new BinaryComparison(Tests.EQ, new GetValue("x", new ObjectType(SimpleTypes.DOUBLE.getBoxType())),
+                new If(new BinaryComparison(Tests.EQ, new GetValue("x", new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName())),
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
@@ -456,10 +461,10 @@ public class TestBoolean {
     @Test
     public void testLangFloatEq() {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.FLOAT.getBoxType())),
+                new Field("x", new ObjectType(SimpleTypes.FLOAT.getBoxTypeName())),
                 new Field("y", SimpleTypes.FLOAT)},
                 SimpleTypes.BOOLEAN,
-                new If(new BinaryComparison(Tests.EQ, new GetValue("x", new ObjectType(SimpleTypes.FLOAT.getBoxType())),
+                new If(new BinaryComparison(Tests.EQ, new GetValue("x", new ObjectType(SimpleTypes.FLOAT.getBoxTypeName())),
                         new GetValue("y", SimpleTypes.FLOAT)),
                         new IntConstant(1), new IntConstant(0)));
 
@@ -500,10 +505,10 @@ public class TestBoolean {
     @Test
     public void testLangLongEq() {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.LONG.getBoxType())),
+                new Field("x", new ObjectType(SimpleTypes.LONG.getBoxTypeName())),
                 new Field("y", SimpleTypes.LONG)},
                 SimpleTypes.BOOLEAN,
-                new If(new BinaryComparison(Tests.EQ, new GetValue("x", new ObjectType(SimpleTypes.LONG.getBoxType())),
+                new If(new BinaryComparison(Tests.EQ, new GetValue("x", new ObjectType(SimpleTypes.LONG.getBoxTypeName())),
                         new GetValue("y", SimpleTypes.LONG)),
                         new IntConstant(1), new IntConstant(0)));
 

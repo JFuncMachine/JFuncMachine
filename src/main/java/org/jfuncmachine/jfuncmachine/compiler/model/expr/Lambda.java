@@ -1,9 +1,25 @@
 package org.jfuncmachine.jfuncmachine.compiler.model.expr;
 
-import org.jfuncmachine.jfuncmachine.compiler.classgen.*;
+import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
+import org.jfuncmachine.jfuncmachine.compiler.classgen.EnvVar;
+import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
+import org.jfuncmachine.jfuncmachine.compiler.classgen.Handle;
+import org.jfuncmachine.jfuncmachine.compiler.classgen.LambdaInfo;
+import org.jfuncmachine.jfuncmachine.compiler.classgen.LambdaIntInfo;
 import org.jfuncmachine.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FunctionType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 import org.objectweb.asm.Opcodes;
 
 import java.util.Set;
@@ -18,6 +34,8 @@ public class Lambda extends Expression {
     public final Type returnType;
     /** The type of the interface representing the lambda */
     public final Type interfaceType;
+    /** The name of the method in the lambda's interface */
+    public final String interfaceMethodName;
     /** The types of the lambda parameters */
     public Type[] parameterTypes;
     /** If true, the interface describing this lambda should use objects instead of native types. This allows
@@ -34,6 +52,7 @@ public class Lambda extends Expression {
         this.parameters = parameters;
         this.returnType = returnType;
         this.useObjectInterface = false;
+        this.interfaceMethodName = null;
         this.body = body;
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
@@ -53,6 +72,7 @@ public class Lambda extends Expression {
         this.parameters = parameters;
         this.returnType = returnType;
         this.useObjectInterface = false;
+        this.interfaceMethodName = null;
         this.body = body;
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
@@ -65,7 +85,7 @@ public class Lambda extends Expression {
      * @param returnType The lambda return type
      * @param body The body of the lambda
      */
-    public Lambda(Type interfaceType, Field[] parameters, Type returnType, Expression body) {
+    public Lambda(Type interfaceType, String interfaceMethodName, Field[] parameters, Type returnType, Expression body) {
         super(null, 0);
         this.parameters = parameters;
         this.returnType = returnType;
@@ -74,6 +94,7 @@ public class Lambda extends Expression {
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
         this.interfaceType = interfaceType;
+        this.interfaceMethodName = interfaceMethodName;
     }
 
     /** Create a lambda expression
@@ -84,8 +105,8 @@ public class Lambda extends Expression {
      * @param filename The source filename this expression is associated with
      * @param lineNumber The source line number this expression is associated with
      */
-    public Lambda(Type interfaceType, Field[] parameters, Type returnType, Expression body,
-                  String filename, int lineNumber) {
+    public Lambda(Type interfaceType, String interfaceMethodName, Field[] parameters, Type returnType,
+                  Expression body, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.parameters = parameters;
         this.returnType = returnType;
@@ -94,6 +115,7 @@ public class Lambda extends Expression {
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
         this.interfaceType = interfaceType;
+        this.interfaceMethodName = interfaceMethodName;
     }
 
     /** Create a lambda expression
@@ -111,6 +133,7 @@ public class Lambda extends Expression {
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
         this.interfaceType = null;
+        this.interfaceMethodName = null;
     }
 
     /** Create a lambda expression
@@ -131,6 +154,7 @@ public class Lambda extends Expression {
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
         this.interfaceType = null;
+        this.interfaceMethodName = null;
     }
 
     /** Create a lambda expression
@@ -140,7 +164,8 @@ public class Lambda extends Expression {
      * @param useObjectInterface If true, the lambda interface should not use native types
      * @param body The body of the lambda
      */
-    public Lambda(Type interfaceType, Field[] parameters, Type returnType, boolean useObjectInterface, Expression body) {
+    public Lambda(Type interfaceType, String interfaceMethodName, Field[] parameters, Type returnType,
+                  boolean useObjectInterface, Expression body) {
         super(null, 0);
         this.parameters = parameters;
         this.returnType = returnType;
@@ -149,6 +174,7 @@ public class Lambda extends Expression {
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
         this.interfaceType = interfaceType;
+        this.interfaceMethodName = interfaceMethodName;
     }
 
     /** Create a lambda expression
@@ -160,7 +186,8 @@ public class Lambda extends Expression {
      * @param filename The source filename this expression is associated with
      * @param lineNumber The source line number this expression is associated with
      */
-    public Lambda(Type interfaceType, Field[] parameters, Type returnType, boolean useObjectInterface, Expression body,
+    public Lambda(Type interfaceType, String interfaceMethodName, Field[] parameters, Type returnType,
+                  boolean useObjectInterface, Expression body,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
         this.parameters = parameters;
@@ -170,6 +197,7 @@ public class Lambda extends Expression {
         parameterTypes = new Type[parameters.length];
         for (int i=0; i < parameters.length; i++) parameterTypes[i] = parameters[i].type;
         this.interfaceType = interfaceType;
+        this.interfaceMethodName = interfaceMethodName;
     }
 
     public Type getType() {
@@ -216,19 +244,22 @@ public class Lambda extends Expression {
         FunctionType extendedType = new FunctionType(
                 allParameterTypes, returnType);
 
-        // Allocate a method name for this lambda
-        LambdaInfo lambdaInfo = generator.allocateLambda(extendedType);
+
         LambdaIntInfo intInfo = null;
+        LambdaInfo lambdaInfo = generator.allocateLambda(extendedType);
+
         if (interfaceType == null) {
             // If there was no interface specified to indicate the return type, create one (if necessary)
             intInfo = generator.allocateLambdaInt(new FunctionType(
                     parameterTypes, returnType));
+            // Allocate a method name for this lambda
         }
 
+        String methodName;
         // Create a declaration for the lambda method
         MethodDef lambdaMethod = new MethodDef(lambdaInfo.name,
-                Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
-                allFields, returnType, body);
+                    Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
+                    allFields, returnType, body);
 
         // Schedule the generation of the lambda method
         generator.addMethodToGenerate(lambdaMethod);
@@ -266,8 +297,15 @@ public class Lambda extends Expression {
             signatureType = org.objectweb.asm.Type.getType(generator.methodDescriptor(parameterTypes, returnType));
         }
 
+        String inDyMethodName = generator.options.lambdaMethodName;
+        if (interfaceMethodName != null) {
+            inDyMethodName = interfaceMethodName;
+        }
+        Handle handle = new Handle(Handle.INVOKESTATIC, generator.currentClass.packageName.replace('.', '/')+
+                    "/"+ generator.currentClass.name, lambdaInfo.name,
+                    generator.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false);
         // Call invokedynamic to generate a lambda method handle
-        generator.instGen.invokedynamic(generator.options.lambdaMethodName,
+        generator.instGen.invokedynamic(inDyMethodName,
                 generator.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
                 // Boilerplate for Java's built-in lambda bootstrap
                 new Handle(Handle.INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
@@ -276,9 +314,7 @@ public class Lambda extends Expression {
                 // Create an ASM Type descriptor for this descriptor
                 signatureType,
                 // Create a handle for the generated lambda method
-                new Handle(Handle.INVOKESTATIC, generator.currentClass.packageName.replace('.', '/')+
-                        "/"+ generator.currentClass.name, lambdaInfo.name,
-                        generator.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false),
+                handle,
                 // Create an another ASM Type descriptor for this descriptor
                 org.objectweb.asm.Type.getType(generator.methodDescriptor(parameterTypes, returnType)));
     }

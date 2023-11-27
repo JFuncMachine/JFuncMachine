@@ -133,5 +133,9 @@ public class CallJavaSpecialMethod extends Expression {
         generator.instGen.invokespecial(
                 generator.className(className),
                 methodName, generator.methodDescriptor(parameterTypes, returnType));
+
+        if (inTailPosition && generator.options.fullTailCalls) {
+            generator.instGen.generateBox(returnType);
+        }
     }
 }

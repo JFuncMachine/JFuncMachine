@@ -3,9 +3,38 @@ package org.jfuncmachine.jfuncmachine.compiler.classgen;
 import org.jfuncmachine.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import org.jfuncmachine.jfuncmachine.compiler.model.ClassDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ArrayType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FunctionType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.StringType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.UnitType;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.IincInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.InvokeDynamicInsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.LocalVariableNode;
+import org.objectweb.asm.tree.LookupSwitchInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MultiANewArrayInsnNode;
+import org.objectweb.asm.tree.TableSwitchInsnNode;
+import org.objectweb.asm.tree.TryCatchBlockNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import java.lang.reflect.Method;
 
@@ -705,6 +734,16 @@ public class InstructionGenerator {
             case UnitType s -> Opcodes.RETURN;
         };
         instructionList.add(new InsnNode(opcode));
+        return this;
+    }
+
+    public InstructionGenerator generateBox(Type type) {
+        String boxType = type.getBoxTypeName();
+        if (boxType != null) {
+            invokestatic(classGen.className(boxType),
+                    "valueOf", classGen.methodDescriptor(new Type[] { type },
+                            new ObjectType(boxType)));
+        }
         return this;
     }
 

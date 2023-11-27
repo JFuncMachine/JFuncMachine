@@ -47,5 +47,9 @@ public class GetValue extends Expression {
 
         EnvVar envVar = env.getVar(name);
         envVar.generateGet(generator);
+
+        if (inTailPosition && generator.options.fullTailCalls) {
+            generator.instGen.generateBox(envVar.type);
+        }
     }
 }

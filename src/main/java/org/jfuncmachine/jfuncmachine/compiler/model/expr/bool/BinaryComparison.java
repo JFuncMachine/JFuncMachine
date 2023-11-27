@@ -7,7 +7,13 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Test;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Unbox;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.StringType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 import org.objectweb.asm.Opcodes;
 
 import java.util.List;

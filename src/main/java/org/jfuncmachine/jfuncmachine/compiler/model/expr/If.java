@@ -3,7 +3,11 @@ package org.jfuncmachine.jfuncmachine.compiler.model.expr;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Label;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.BinaryComparison;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.BooleanExpr;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.InstanceofComparison;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.Result;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.UnaryComparison;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 
 import java.util.List;

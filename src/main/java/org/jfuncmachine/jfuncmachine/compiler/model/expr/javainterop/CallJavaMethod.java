@@ -133,5 +133,9 @@ public class CallJavaMethod extends Expression {
         generator.instGen.invokevirtual(
                 generator.className(className),
                 methodName, generator.methodDescriptor(parameterTypes, returnType));
+
+        if (inTailPosition && generator.options.fullTailCalls) {
+            generator.instGen.generateBox(returnType);
+        }
     }
 }

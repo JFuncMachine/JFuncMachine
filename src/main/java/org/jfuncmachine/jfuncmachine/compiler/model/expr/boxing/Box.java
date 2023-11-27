@@ -103,7 +103,7 @@ public class Box extends Expression {
     public Type getType() {
         Type exprType = boxType;
 
-        String boxTypeName = exprType.getBoxType();
+        String boxTypeName = exprType.getBoxTypeName();
         if (boxTypeName != null) {
             return new ObjectType(boxTypeName);
         } else {
@@ -120,8 +120,8 @@ public class Box extends Expression {
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String boxName;
 
-        if (desiredBoxType == null) {
-            boxName = boxType.getBoxType();
+        if (desiredBoxType == null || desiredBoxType.equals(new ObjectType())) {
+            boxName = boxType.getBoxTypeName();
         } else {
             boxName = ((ObjectType) desiredBoxType).className;
         }

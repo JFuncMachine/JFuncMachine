@@ -21,7 +21,7 @@ public class Autobox {
                 return expr;
             }
         } else if (!(expr.getType() instanceof ObjectType) && (desiredType instanceof ObjectType desiredObj)
-                && desiredType.isBoxType()) {
+                && (desiredType.isBoxType() || desiredType.equals(new ObjectType()))) {
             if (desiredObj.isBoxableFrom(expr.getType())) {
                 return new Box(expr, desiredType);
             } else {
@@ -40,7 +40,7 @@ public class Autobox {
                 return false;
             }
         } else if (!(expr.getType() instanceof ObjectType) && (desiredType instanceof ObjectType desiredObj)
-                && desiredType.isBoxType()) {
+                && (desiredType.isBoxType() || desiredType.equals(new ObjectType()))) {
             if (desiredObj.isBoxableFrom(expr.getType())) {
                 return true;
             } else {

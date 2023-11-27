@@ -57,5 +57,10 @@ public class ToUnit extends Expression {
                 }
             }
         }
+
+        if (inTailPosition && generator.options.fullTailCalls) {
+            // Return a null as the void value
+            generator.instGen.aconst_null();
+        }
     }
 }

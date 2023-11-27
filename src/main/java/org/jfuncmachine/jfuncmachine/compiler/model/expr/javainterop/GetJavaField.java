@@ -64,5 +64,9 @@ public class GetJavaField extends Expression {
 
         generator.instGen.getfield(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));
+
+        if (inTailPosition && generator.options.fullTailCalls) {
+            generator.instGen.generateBox(fieldType);
+        }
     }
 }

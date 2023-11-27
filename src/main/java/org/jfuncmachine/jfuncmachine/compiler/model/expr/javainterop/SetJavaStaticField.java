@@ -68,5 +68,9 @@ public class SetJavaStaticField extends Expression {
 
         generator.instGen.putstatic(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));
+
+        if (inTailPosition && generator.options.fullTailCalls) {
+            generator.instGen.aconst_null();
+        }
     }
 }

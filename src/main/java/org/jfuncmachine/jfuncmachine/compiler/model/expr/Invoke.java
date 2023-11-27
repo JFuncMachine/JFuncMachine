@@ -2,11 +2,22 @@ package org.jfuncmachine.jfuncmachine.compiler.model.expr;
 
 import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
+import org.jfuncmachine.jfuncmachine.compiler.classgen.Label;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.LambdaIntInfo;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Autobox;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.FunctionType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
+import org.jfuncmachine.jfuncmachine.runtime.TailCall;
+import org.objectweb.asm.Opcodes;
 
 /** An expression to invoke a method reference */
 public class Invoke extends Expression {
@@ -180,5 +191,38 @@ public class Invoke extends Expression {
         generator.instGen.invokeinterface(
                 generator.className(className),
                 intMethodName, generator.methodDescriptor(parameterTypes, returnType));
+        if (generator.options.fullTailCalls) {
+            Label loopStart = new Label();
+            Label loopEnd = new Label();
+            generator.instGen.label(loopStart);
+            generator.instGen.dup();
+            generator.instGen.instance_of(TailCall.class.getName());
+            generator.instGen.rawJumpOpcode(Opcodes.IFEQ, loopEnd);
+            generator.instGen.invokeinterface(TailCall.class.getName(), "invoke",
+                    generator.methodDescriptor(new Type[0], new ObjectType()));
+            generator.instGen.gotolabel(loopStart);
+            generator.instGen.label(loopEnd);
+            if (returnType.getBoxTypeName() != null) {
+                switch (returnType) {
+                    case BooleanType b -> generator.instGen.invokevirtual("java.lang.Boolean",
+                            "booleanValue", "()Z");
+                    case ByteType b -> generator.instGen.invokevirtual("java.lang.Byte",
+                            "byteValue", "()B");
+                    case CharType c -> generator.instGen.invokevirtual("java.lang.Character",
+                            "charValue", "()C");
+                    case DoubleType d -> generator.instGen.invokevirtual("java.lang.Double",
+                            "doubleValue", "()D");
+                    case FloatType f -> generator.instGen.invokevirtual("java.lang.Float",
+                            "floatValue", "()F");
+                    case IntType i -> generator.instGen.invokevirtual("java.lang.Integer",
+                            "intValue", "()I");
+                    case LongType l -> generator.instGen.invokevirtual("java.lang.Long",
+                            "longValue", "()J");
+                    case ShortType s -> generator.instGen.invokevirtual("java.lang.Short",
+                            "shortValue", "()S");
+                    default -> {}
+                }
+            }
+        }
     }
 }

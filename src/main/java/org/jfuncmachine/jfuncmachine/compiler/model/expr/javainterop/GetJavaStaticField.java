@@ -51,5 +51,9 @@ public class GetJavaStaticField extends Expression {
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         generator.instGen.getstatic(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));
+
+        if (inTailPosition && generator.options.fullTailCalls) {
+            generator.instGen.generateBox(fieldType);
+        }
     }
 }

@@ -1,6 +1,12 @@
 package org.jfuncmachine.jfuncmachine.compiler.testlang.parser;
 
-import org.jfuncmachine.jfuncmachine.sexprlang.parser.*;
+import org.jfuncmachine.jfuncmachine.sexprlang.parser.Parser;
+import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprFloat;
+import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprInt;
+import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprItem;
+import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprList;
+import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprString;
+import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprSymbol;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

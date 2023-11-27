@@ -3,7 +3,16 @@ package org.jfuncmachine.jfuncmachine.compiler.model.expr.conv;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 
 /** Converts an expression to a char */
 public class ToChar extends Expression {
@@ -53,6 +62,10 @@ public class ToChar extends Expression {
             case ShortType s -> generator.instGen.i2c();
             default -> throw generateException(
                     String.format("Can't convert %s into char", exprType));
+        }
+
+        if (inTailPosition && generator.options.fullTailCalls) {
+            generator.instGen.generateBox(SimpleTypes.CHAR.getBoxType());
         }
     }
 }

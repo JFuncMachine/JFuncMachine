@@ -129,5 +129,9 @@ public class CallJavaInterface extends Expression {
         generator.instGen.invokeinterface(
                 generator.className(interfaceName),
                 methodName, generator.methodDescriptor(parameterTypes, returnType));
+
+        if (inTailPosition && generator.options.fullTailCalls) {
+            generator.instGen.generateBox(returnType);
+        }
     }
 }

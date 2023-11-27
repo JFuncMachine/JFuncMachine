@@ -16,9 +16,9 @@ public class TestBoxing {
     public void testBoxBoolean() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
-                new ObjectType(SimpleTypes.BOOLEAN.getBoxType()),
+                new ObjectType(SimpleTypes.BOOLEAN.getBoxTypeName()),
                 new Box(new GetValue("x", SimpleTypes.INT), SimpleTypes.BOOLEAN,
-                        new ObjectType(SimpleTypes.BOOLEAN.getBoxType())));
+                        new ObjectType(SimpleTypes.BOOLEAN.getBoxTypeName())));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -32,9 +32,9 @@ public class TestBoxing {
     public void testBoxByte() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
-                new ObjectType(SimpleTypes.BYTE.getBoxType()),
+                new ObjectType(SimpleTypes.BYTE.getBoxTypeName()),
                 new Box(new GetValue("x", SimpleTypes.INT), SimpleTypes.BYTE,
-                        new ObjectType(SimpleTypes.BYTE.getBoxType())));
+                        new ObjectType(SimpleTypes.BYTE.getBoxTypeName())));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -48,9 +48,9 @@ public class TestBoxing {
     public void testBoxChar() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
-                new ObjectType(SimpleTypes.CHAR.getBoxType()),
+                new ObjectType(SimpleTypes.CHAR.getBoxTypeName()),
                 new Box(new GetValue("x", SimpleTypes.INT), SimpleTypes.CHAR,
-                        new ObjectType(SimpleTypes.CHAR.getBoxType())));
+                        new ObjectType(SimpleTypes.CHAR.getBoxTypeName())));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -64,9 +64,9 @@ public class TestBoxing {
     public void testBoxDouble() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.DOUBLE)},
-                new ObjectType(SimpleTypes.DOUBLE.getBoxType()),
+                new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName()),
                 new Box(new GetValue("x", SimpleTypes.DOUBLE), SimpleTypes.DOUBLE,
-                        new ObjectType(SimpleTypes.DOUBLE.getBoxType())));
+                        new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName())));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -80,9 +80,9 @@ public class TestBoxing {
     public void testBoxFloat() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.FLOAT)},
-                new ObjectType(SimpleTypes.FLOAT.getBoxType()),
+                new ObjectType(SimpleTypes.FLOAT.getBoxTypeName()),
                 new Box(new GetValue("x", SimpleTypes.FLOAT), SimpleTypes.FLOAT,
-                        new ObjectType(SimpleTypes.FLOAT.getBoxType())));
+                        new ObjectType(SimpleTypes.FLOAT.getBoxTypeName())));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -96,9 +96,9 @@ public class TestBoxing {
     public void testBoxInt() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
-                new ObjectType(SimpleTypes.INT.getBoxType()),
+                new ObjectType(SimpleTypes.INT.getBoxTypeName()),
                 new Box(new GetValue("x", SimpleTypes.INT), SimpleTypes.INT,
-                        new ObjectType(SimpleTypes.INT.getBoxType())));
+                        new ObjectType(SimpleTypes.INT.getBoxTypeName())));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -112,9 +112,9 @@ public class TestBoxing {
     public void testBoxLong() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.LONG)},
-                new ObjectType(SimpleTypes.LONG.getBoxType()),
+                new ObjectType(SimpleTypes.LONG.getBoxTypeName()),
                 new Box(new GetValue("x", SimpleTypes.LONG), SimpleTypes.LONG,
-                        new ObjectType(SimpleTypes.LONG.getBoxType())));
+                        new ObjectType(SimpleTypes.LONG.getBoxTypeName())));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -128,9 +128,9 @@ public class TestBoxing {
     public void testBoxShort() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
-                new ObjectType(SimpleTypes.SHORT.getBoxType()),
+                new ObjectType(SimpleTypes.SHORT.getBoxTypeName()),
                 new Box(new GetValue("x", SimpleTypes.INT), SimpleTypes.SHORT,
-                        new ObjectType(SimpleTypes.SHORT.getBoxType())));
+                        new ObjectType(SimpleTypes.SHORT.getBoxTypeName())));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -144,7 +144,7 @@ public class TestBoxing {
     public void testAutoboxBoolean() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
-                new ObjectType(SimpleTypes.BOOLEAN.getBoxType()),
+                new ObjectType(SimpleTypes.BOOLEAN.getBoxTypeName()),
                 new GetValue("x", SimpleTypes.INT));
         ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0);
@@ -157,7 +157,7 @@ public class TestBoxing {
     public void testAutoboxByte() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
-                new ObjectType(SimpleTypes.BYTE.getBoxType()),
+                new ObjectType(SimpleTypes.BYTE.getBoxTypeName()),
                 new GetValue("x", SimpleTypes.INT));
 
         ClassGenerator generator = new ClassGenerator();
@@ -171,7 +171,7 @@ public class TestBoxing {
     public void testAutoboxChar() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
-                new ObjectType(SimpleTypes.CHAR.getBoxType()),
+                new ObjectType(SimpleTypes.CHAR.getBoxTypeName()),
                 new GetValue("x", SimpleTypes.INT));
 
         ClassGenerator generator = new ClassGenerator();
@@ -185,7 +185,7 @@ public class TestBoxing {
     public void testAutoboxDouble() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.DOUBLE)},
-                new ObjectType(SimpleTypes.DOUBLE.getBoxType()),
+                new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName()),
                 new GetValue("x", SimpleTypes.DOUBLE));
 
         ClassGenerator generator = new ClassGenerator();
@@ -199,7 +199,7 @@ public class TestBoxing {
     public void testAutoboxFloat() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.FLOAT)},
-                new ObjectType(SimpleTypes.FLOAT.getBoxType()),
+                new ObjectType(SimpleTypes.FLOAT.getBoxTypeName()),
                 new GetValue("x", SimpleTypes.FLOAT));
 
         ClassGenerator generator = new ClassGenerator();
@@ -213,7 +213,7 @@ public class TestBoxing {
     public void testAutoboxInt() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
-                new ObjectType(SimpleTypes.INT.getBoxType()),
+                new ObjectType(SimpleTypes.INT.getBoxTypeName()),
                 new GetValue("x", SimpleTypes.INT));
 
         ClassGenerator generator = new ClassGenerator();
@@ -227,7 +227,7 @@ public class TestBoxing {
     public void testAutoboxLong() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.LONG)},
-                new ObjectType(SimpleTypes.LONG.getBoxType()),
+                new ObjectType(SimpleTypes.LONG.getBoxTypeName()),
                 new GetValue("x", SimpleTypes.LONG));
 
         ClassGenerator generator = new ClassGenerator();
@@ -241,7 +241,7 @@ public class TestBoxing {
     public void testAutoboxShort() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
-                new ObjectType(SimpleTypes.SHORT.getBoxType()),
+                new ObjectType(SimpleTypes.SHORT.getBoxTypeName()),
                 new GetValue("x", SimpleTypes.INT));
 
         ClassGenerator generator = new ClassGenerator();
@@ -267,9 +267,9 @@ public class TestBoxing {
     @Test
     public void testUnboxBoolean() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.BOOLEAN.getBoxType()))},
+                new Field("x", new ObjectType(SimpleTypes.BOOLEAN.getBoxTypeName()))},
                 SimpleTypes.BOOLEAN,
-                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.BOOLEAN.getBoxType()))));
+                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.BOOLEAN.getBoxTypeName()))));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -282,9 +282,9 @@ public class TestBoxing {
     @Test
     public void testUnboxByte() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.BYTE.getBoxType()))},
+                new Field("x", new ObjectType(SimpleTypes.BYTE.getBoxTypeName()))},
                 SimpleTypes.BYTE,
-                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.BYTE.getBoxType()))));
+                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.BYTE.getBoxTypeName()))));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -297,9 +297,9 @@ public class TestBoxing {
     @Test
     public void testUnboxChar() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.CHAR.getBoxType()))},
+                new Field("x", new ObjectType(SimpleTypes.CHAR.getBoxTypeName()))},
                 SimpleTypes.CHAR,
-                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.CHAR.getBoxType()))));
+                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.CHAR.getBoxTypeName()))));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -312,9 +312,9 @@ public class TestBoxing {
     @Test
     public void testUnboxDouble() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.DOUBLE.getBoxType()))},
+                new Field("x", new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName()))},
                 SimpleTypes.DOUBLE,
-                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.DOUBLE.getBoxType()))));
+                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName()))));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -327,9 +327,9 @@ public class TestBoxing {
     @Test
     public void testUnboxFloat() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.FLOAT.getBoxType()))},
+                new Field("x", new ObjectType(SimpleTypes.FLOAT.getBoxTypeName()))},
                 SimpleTypes.FLOAT,
-                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.FLOAT.getBoxType()))));
+                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.FLOAT.getBoxTypeName()))));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -342,9 +342,9 @@ public class TestBoxing {
     @Test
     public void testUnboxInt() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.INT.getBoxType()))},
+                new Field("x", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
                 SimpleTypes.INT,
-                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.INT.getBoxType()))));
+                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.INT.getBoxTypeName()))));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -357,9 +357,9 @@ public class TestBoxing {
     @Test
     public void testUnboxLong() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.LONG.getBoxType()))},
+                new Field("x", new ObjectType(SimpleTypes.LONG.getBoxTypeName()))},
                 SimpleTypes.LONG,
-                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.LONG.getBoxType()))));
+                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.LONG.getBoxTypeName()))));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);
@@ -372,9 +372,9 @@ public class TestBoxing {
     @Test
     public void testUnboxShort() {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", new ObjectType(SimpleTypes.SHORT.getBoxType()))},
+                new Field("x", new ObjectType(SimpleTypes.SHORT.getBoxTypeName()))},
                 SimpleTypes.SHORT,
-                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.SHORT.getBoxType()))));
+                new Unbox(new GetValue("x", new ObjectType(SimpleTypes.SHORT.getBoxTypeName()))));
 
         ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder().withAutobox(false).build();
         ClassGenerator generator = new ClassGenerator(options);

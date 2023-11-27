@@ -38,6 +38,7 @@ public final class ObjectType implements Type {
     }
 
     public boolean isBoxableFrom(Type desiredType) {
+        if (className.equals("java.lang.Object")) return true;
         return isUnboxableTo(desiredType);
     }
 

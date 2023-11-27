@@ -15,7 +15,11 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaMet
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaStaticMethod;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.GetJavaStaticField;
 import org.jfuncmachine.jfuncmachine.compiler.model.inline.Inlines;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ArrayType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

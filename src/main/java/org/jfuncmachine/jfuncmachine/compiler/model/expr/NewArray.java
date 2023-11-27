@@ -4,7 +4,12 @@ import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.LambdaIntInfo;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Autobox;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ArrayType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.FunctionType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.StringType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 
 /** An expression to create a new array */
 public class NewArray extends Expression {

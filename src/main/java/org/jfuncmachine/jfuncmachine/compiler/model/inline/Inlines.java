@@ -12,9 +12,9 @@ public class Inlines {
     public static final SingleInstructionInline IntDiv =
             new SingleInstructionInline(new Type[] { SimpleTypes.INT, SimpleTypes.INT}, SimpleTypes.INT, Opcodes.IDIV);
     public static final SingleInstructionInline IntMul =
-            new SingleInstructionInline(new Type[] { SimpleTypes.INT, SimpleTypes.INT}, SimpleTypes.INT, Opcodes.IDIV);
+            new SingleInstructionInline(new Type[] { SimpleTypes.INT, SimpleTypes.INT}, SimpleTypes.INT, Opcodes.IMUL);
     public static final SingleInstructionInline IntNeg =
-            new SingleInstructionInline(new Type[] { SimpleTypes.INT }, SimpleTypes.INT, Opcodes.IDIV);
+            new SingleInstructionInline(new Type[] { SimpleTypes.INT }, SimpleTypes.INT, Opcodes.INEG);
     public static final SingleInstructionInline IntOr =
             new SingleInstructionInline(new Type[] { SimpleTypes.INT, SimpleTypes.INT}, SimpleTypes.INT, Opcodes.IOR);
     public static final SingleInstructionInline IntRem =
@@ -60,9 +60,9 @@ public class Inlines {
     public static final SingleInstructionInline LongDiv =
             new SingleInstructionInline(new Type[] { SimpleTypes.LONG, SimpleTypes.LONG}, SimpleTypes.LONG, Opcodes.LDIV);
     public static final SingleInstructionInline LongMul =
-            new SingleInstructionInline(new Type[] { SimpleTypes.LONG, SimpleTypes.LONG}, SimpleTypes.LONG, Opcodes.LDIV);
+            new SingleInstructionInline(new Type[] { SimpleTypes.LONG, SimpleTypes.LONG}, SimpleTypes.LONG, Opcodes.LMUL);
     public static final SingleInstructionInline LongNeg =
-            new SingleInstructionInline(new Type[] { SimpleTypes.LONG }, SimpleTypes.LONG, Opcodes.LDIV);
+            new SingleInstructionInline(new Type[] { SimpleTypes.LONG }, SimpleTypes.LONG, Opcodes.LNEG);
     public static final SingleInstructionInline LongOr =
             new SingleInstructionInline(new Type[] { SimpleTypes.LONG, SimpleTypes.LONG}, SimpleTypes.LONG, Opcodes.LOR);
     public static final SingleInstructionInline LongRem =
