@@ -2,7 +2,7 @@ plugins {
     id 'application'
 }
 
-group = 'com.wutka.jfuncmachine'
+group = 'org.jfuncmachine.jfuncmachine'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -15,7 +15,7 @@ run {
 }
 
 application {
-    mainClass = 'com.wutka.jfuncmachine.sexprlang.compiler.Main'
+    mainClass = 'org.jfuncmachine.jfuncmachine.sexprlang.compiler.Main'
 }
 
 
@@ -37,7 +37,7 @@ task copyJar(type: Copy) {
  jar {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     manifest {
-        attributes 'Main-Class':  'com.wutka.jfuncmachine.sexprlang.compiler.Main'
+        attributes 'Main-Class':  'org.jfuncmachine.jfuncmachine.sexprlang.compiler.Main'
     }
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 }

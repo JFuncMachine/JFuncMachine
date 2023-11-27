@@ -1,4 +1,4 @@
-(ClassDef "com.wutka.test" "CapturingLambda" (Access PUBLIC SUPER)
+(ClassDef "org.jfuncmachine.test" "CapturingLambda" (Access PUBLIC SUPER)
   (
     (MethodDef "createLambda" (Access PUBLIC STATIC)
         ((Field "num" (object java.lang.Integer)))
@@ -20,7 +20,7 @@
         (Binding
             {Create a variable named lam to hold the generated lambda}
             ((BindingPair "lam"
-                    (CallJavaStaticMethod "com.wutka.test.CapturingLambda" "createLambda"
+                    (CallJavaStaticMethod "org.jfuncmachine.test.CapturingLambda" "createLambda"
                         ((Box (IntConstant 5))) (object java.util.function.BiFunction))))
                  Visibility.Separate
             {Call the println method ...}

@@ -1,4 +1,4 @@
-(ClassDef "com.wutka.test" "HelloWorld" (Access PUBLIC)
+(ClassDef "org.jfuncmachine.test" "HelloWorld" (Access PUBLIC)
   (
     (MethodDef "main" (Access PUBLIC STATIC)
       {param types}
