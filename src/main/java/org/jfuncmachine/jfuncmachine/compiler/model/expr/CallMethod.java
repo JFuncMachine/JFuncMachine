@@ -149,7 +149,7 @@ public class CallMethod extends Expression {
         int argPos = 1;
         if (!inTailPosition || !generator.options.localTailCallsToLoops ||
                 !isCurrentFunc(generator.currentClass, generator.currentMethod)) {
-            if (!generator.options.fullTailCalls) {
+            if (!inTailPosition || !generator.options.fullTailCalls) {
                 target.generate(generator, env, false);
             }
         }
@@ -175,39 +175,46 @@ public class CallMethod extends Expression {
         } else if (inTailPosition && generator.options.fullTailCalls) {
             generateTailLambda(invokeClassName, name, parameterTypes, target, arguments, generator, env);
         } else{
-            generator.instGen.invokevirtual(
-                    generator.className(invokeClassName),
-                    name, generator.methodDescriptor(parameterTypes, returnType));
-            if (generator.options.fullTailCalls) {
-                Label loopStart = new Label();
-                Label loopEnd = new Label();
-                generator.instGen.label(loopStart);
-                generator.instGen.dup();
-                generator.instGen.instance_of(generator.className(TailCall.class.getName()));
-                generator.instGen.rawJumpOpcode(Opcodes.IFEQ, loopEnd);
-                generator.instGen.invokeinterface(generator.className(TailCall.class.getName()), "invoke",
-                        generator.methodDescriptor(new Type[0], new ObjectType()));
-                generator.instGen.gotolabel(loopStart);
-                generator.instGen.label(loopEnd);
-                if (returnType.getBoxTypeName() != null) {
-                    switch (returnType) {
-                        case BooleanType b -> generator.instGen.invokevirtual("java.lang.Boolean",
-                                "booleanValue", "()Z");
-                        case ByteType b -> generator.instGen.invokevirtual("java.lang.Byte",
-                                "byteValue", "()B");
-                        case CharType c -> generator.instGen.invokevirtual("java.lang.Character",
-                                "charValue", "()C");
-                        case DoubleType d -> generator.instGen.invokevirtual("java.lang.Double",
-                                "doubleValue", "()D");
-                        case FloatType f -> generator.instGen.invokevirtual("java.lang.Float",
-                                "floatValue", "()F");
-                        case IntType i -> generator.instGen.invokevirtual("java.lang.Integer",
-                                "intValue", "()I");
-                        case LongType l -> generator.instGen.invokevirtual("java.lang.Long",
-                                "longValue", "()J");
-                        case ShortType s -> generator.instGen.invokevirtual("java.lang.Short",
-                                "shortValue", "()S");
-                        default -> {}
+            if (!generator.options.fullTailCalls) {
+                generator.instGen.invokevirtual(
+                        generator.className(invokeClassName),
+                        name, generator.methodDescriptor(parameterTypes, returnType));
+            } else {
+                generator.instGen.invokevirtual(
+                        generator.className(invokeClassName),
+                        name, generator.methodDescriptor(parameterTypes, new ObjectType()));
+                if (generator.options.fullTailCalls) {
+                    Label loopStart = new Label();
+                    Label loopEnd = new Label();
+                    generator.instGen.label(loopStart);
+                    generator.instGen.dup();
+                    generator.instGen.instance_of(generator.className(TailCall.class.getName()));
+                    generator.instGen.rawJumpOpcode(Opcodes.IFEQ, loopEnd);
+                    generator.instGen.invokeinterface(generator.className(TailCall.class.getName()), "invoke",
+                            generator.methodDescriptor(new Type[0], new ObjectType()));
+                    generator.instGen.gotolabel(loopStart);
+                    generator.instGen.label(loopEnd);
+                    if (returnType.getBoxTypeName() != null) {
+                        switch (returnType) {
+                            case BooleanType b -> generator.instGen.invokevirtual("java.lang.Boolean",
+                                    "booleanValue", "()Z");
+                            case ByteType b -> generator.instGen.invokevirtual("java.lang.Byte",
+                                    "byteValue", "()B");
+                            case CharType c -> generator.instGen.invokevirtual("java.lang.Character",
+                                    "charValue", "()C");
+                            case DoubleType d -> generator.instGen.invokevirtual("java.lang.Double",
+                                    "doubleValue", "()D");
+                            case FloatType f -> generator.instGen.invokevirtual("java.lang.Float",
+                                    "floatValue", "()F");
+                            case IntType i -> generator.instGen.invokevirtual("java.lang.Integer",
+                                    "intValue", "()I");
+                            case LongType l -> generator.instGen.invokevirtual("java.lang.Long",
+                                    "longValue", "()J");
+                            case ShortType s -> generator.instGen.invokevirtual("java.lang.Short",
+                                    "shortValue", "()S");
+                            default -> {
+                            }
+                        }
                     }
                 }
             }

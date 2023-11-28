@@ -74,19 +74,21 @@ public class FactorialTimingLocal {
                     .withFullTailCalls(false)
                     .build();
 
+            /*
             ClassDef factClass = new ClassDef("org.jfuncmachine.jfuncmachine.examples", "FactorialWithLocal",
                     Access.PUBLIC, new MethodDef[] { constructor, factMethod, mainMethod }, new ClassField[0], new String[0]);
             ClassGenerator generator = new ClassGenerator(options);
             generator.generate(factClass, "test");
+             */
 
             options = new ClassGeneratorOptionsBuilder()
                     .withLocalTailCallsToLoops(false)
                     .withFullTailCalls(true)
                     .build();
 
-            factClass = new ClassDef("org.jfuncmachine.jfuncmachine.examples", "FactorialWithFullTail",
+            ClassDef factClass = new ClassDef("org.jfuncmachine.jfuncmachine.examples", "FactorialWithFullTail",
                     Access.PUBLIC, new MethodDef[] { constructor, factMethod, mainMethod }, new ClassField[0], new String[0]);
-            generator = new ClassGenerator(options);
+            ClassGenerator generator = new ClassGenerator(options);
             generator.generate(factClass, "test");
         } catch (Exception exc) {
             exc.printStackTrace();
