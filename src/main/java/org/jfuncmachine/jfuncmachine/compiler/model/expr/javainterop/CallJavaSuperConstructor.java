@@ -4,6 +4,7 @@ import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Autobox;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 
 /** An expression to call a Java method */
@@ -14,66 +15,56 @@ public class CallJavaSuperConstructor extends Expression {
     public final Expression target;
     /** The method arguments */
     public final Expression[] arguments;
-    /** The return type of the method */
-    public final Type returnType;
 
     /**
      * Create a Java super constructor call
      *
-     * @param returnType The return type of the method
      * @param target     The object to invoke the method on
      * @param arguments  The method arguments
      */
-    public CallJavaSuperConstructor(Type returnType, Expression target, Expression[] arguments) {
+    public CallJavaSuperConstructor(Expression target, Expression[] arguments) {
         super(null, 0);
         this.parameterTypes = new Type[arguments.length];
         for (int i=0; i < parameterTypes.length; i++) parameterTypes[i] = arguments[i].getType();
         this.target = target;
         this.arguments = arguments;
-        this.returnType = returnType;
     }
 
     /**
      * Create a Java super constructor call
      *
-     * @param returnType The return type of the method
      * @param target     The object to invoke the method on
      * @param arguments  The method arguments
      * @param filename The source filename this expression is associated with
      * @param lineNumber The source line number this expression is associated with
      */
-    public CallJavaSuperConstructor(Type returnType, Expression target, Expression[] arguments,
+    public CallJavaSuperConstructor(Expression target, Expression[] arguments,
                                     String filename, int lineNumber) {
         super(filename, lineNumber);
         this.parameterTypes = new Type[arguments.length];
         for (int i=0; i < parameterTypes.length; i++) parameterTypes[i] = arguments[i].getType();
         this.target = target;
         this.arguments = arguments;
-        this.returnType = returnType;
     }
-
     /**
      * Create a Java super constructor call
      *
      * @param parameterTypes The types of the method arguments
-     * @param returnType     The return type of the method
      * @param target         The object to invoke the method on
      * @param arguments      The method arguments
      */
     public CallJavaSuperConstructor(Type[] parameterTypes,
-                                    Type returnType, Expression target, Expression[] arguments) {
+                                    Expression target, Expression[] arguments) {
         super(null, 0);
         this.parameterTypes = parameterTypes;
         this.target = target;
         this.arguments = arguments;
-        this.returnType = returnType;
     }
 
     /**
      * Create a Java super constructor call
      *
      * @param parameterTypes The types of the method arguments
-     * @param returnType     The return type of the method
      * @param target         The object to invoke the method on
      * @param arguments      The method arguments
      * @param filename       The source filename this expression is associated with
@@ -86,11 +77,10 @@ public class CallJavaSuperConstructor extends Expression {
         this.parameterTypes = parameterTypes;
         this.target = target;
         this.arguments = arguments;
-        this.returnType = returnType;
     }
 
     public Type getType() {
-        return returnType;
+        return SimpleTypes.UNIT;
     }
 
     public void findCaptured(Environment env) {
@@ -112,6 +102,6 @@ public class CallJavaSuperConstructor extends Expression {
         }
         generator.instGen.invokespecial(
                 generator.className(generator.currentClass.superPackageName+"."+generator.currentClass.superName),
-                "<init>", generator.methodDescriptor(parameterTypes, returnType));
+                "<init>", generator.methodDescriptor(parameterTypes, SimpleTypes.UNIT));
     }
 }

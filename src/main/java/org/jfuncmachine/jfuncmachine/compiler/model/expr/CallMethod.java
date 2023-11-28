@@ -183,9 +183,9 @@ public class CallMethod extends Expression {
                 Label loopEnd = new Label();
                 generator.instGen.label(loopStart);
                 generator.instGen.dup();
-                generator.instGen.instance_of(TailCall.class.getName());
+                generator.instGen.instance_of(generator.className(TailCall.class.getName()));
                 generator.instGen.rawJumpOpcode(Opcodes.IFEQ, loopEnd);
-                generator.instGen.invokeinterface(TailCall.class.getName(), "invoke",
+                generator.instGen.invokeinterface(generator.className(TailCall.class.getName()), "invoke",
                         generator.methodDescriptor(new Type[0], new ObjectType()));
                 generator.instGen.gotolabel(loopStart);
                 generator.instGen.label(loopEnd);

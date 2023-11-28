@@ -99,7 +99,16 @@ public class CallJavaConstructor extends Expression {
 
     @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
-        generator.instGen.new_object(generator.className(className));
+        String currClassName = className;
+        if (currClassName == null) {
+            currClassName = generator.currentClass.getFullClassName();
+        }
+        if (className == null) {
+            generator.instGen.new_object(generator.className(currClassName));
+        } else {
+            generator.instGen.new_object(generator.className(className));
+
+        }
         generator.instGen.dup();
         for (int i=0; i < arguments.length; i++) {
             Expression expr = arguments[i];
@@ -108,7 +117,7 @@ public class CallJavaConstructor extends Expression {
             }
             expr.generate(generator, env, false);
         }
-        generator.instGen.invokespecial(generator.className(className),
+        generator.instGen.invokespecial(generator.className(currClassName),
                 "<init>", generator.methodDescriptor(parameterTypes, SimpleTypes.UNIT));
     }
 }

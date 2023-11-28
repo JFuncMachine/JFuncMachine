@@ -257,9 +257,7 @@ public class ClassGenerator {
 
         if ((methodDef.access & Access.STATIC) == 0) {
             ConstructorDef constructor = new ConstructorDef(Access.PUBLIC, new Field[0],
-                    SimpleTypes.UNIT,
                     new CallJavaSuperConstructor(
-                            SimpleTypes.UNIT,
                             new GetValue("this", new ObjectType(packageName+"."+className)), new Expression[0]));
             classDef = new ClassDef(packageName, className, Access.PUBLIC,
                     new MethodDef[]{constructor, methodDef}, new ClassField[0], new String[0]);
@@ -304,9 +302,7 @@ public class ClassGenerator {
 
         if ((methodDef.access & Access.STATIC) == 0) {
             ConstructorDef constructor = new ConstructorDef(Access.PUBLIC, new Field[0],
-                    SimpleTypes.UNIT,
                     new CallJavaSuperConstructor(
-                            SimpleTypes.UNIT,
                             new GetValue("this", new ObjectType(packageName+"."+className)), new Expression[0]));
             classDef = new ClassDef(packageName, className, Access.PUBLIC,
                     new MethodDef[]{constructor, methodDef}, new ClassField[0], new String[0]);

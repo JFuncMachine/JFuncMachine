@@ -385,7 +385,7 @@ public class InstructionGenerator {
      * @param descriptor The type descriptor of the method
      */
     public InstructionGenerator invokeinterface(String owner, String name, String descriptor) {
-        instructionList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, owner, name, descriptor));
+        instructionList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, classGen.className(owner), name, descriptor));
         return this;
     }
 
@@ -395,7 +395,7 @@ public class InstructionGenerator {
      * @param descriptor The type descriptor of the method
      */
     public InstructionGenerator invokespecial(String owner, String name, String descriptor) {
-        instructionList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, owner, name, descriptor));
+        instructionList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, classGen.className(owner), name, descriptor));
         return this;
     }
     /** Emit an instruction to invoke a static method
@@ -404,7 +404,7 @@ public class InstructionGenerator {
      * @param descriptor The type descriptor of the method
      */
     public InstructionGenerator invokestatic(String owner, String name, String descriptor) {
-        instructionList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, owner, name, descriptor));
+        instructionList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, classGen.className(owner), name, descriptor));
         return this;
     }
 
@@ -414,7 +414,7 @@ public class InstructionGenerator {
      * @param descriptor The type descriptor of the method
      */
     public InstructionGenerator invokevirtual(String owner, String name, String descriptor) {
-        instructionList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner, name, descriptor));
+        instructionList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, classGen.className(owner), name, descriptor));
         return this;
     }
     /** Emit an instruction to perform a bitwise or of two ints */
