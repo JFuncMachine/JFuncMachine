@@ -1,5 +1,7 @@
 package org.jfuncmachine.jfuncmachine.examples.minilang.expr;
 
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.Lambda;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.LambdaType;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
@@ -31,5 +33,17 @@ public class LambdaExpr extends Expr {
         body.unify(returnType, env);
         LambdaType lambdaType = new LambdaType(paramTypes, returnType, filename, lineNumber);
         other.unify(new TypeHolder(lambdaType));
+        type.unify(other);
+    }
+
+    public Expression generate() {
+        org.jfuncmachine.jfuncmachine.compiler.model.types.Field[] jfmFields =
+                new org.jfuncmachine.jfuncmachine.compiler.model.types.Field[fields.length];
+        for (int i=0; i < fields.length; i++) {
+            jfmFields[i] = new org.jfuncmachine.jfuncmachine.compiler.model.types.Field(fields[i].name,
+                    ((Type)fields[i].type.concreteType).toJFMType());
+        }
+        return new Lambda(jfmFields, ((Type)type.concreteType).toJFMType(),
+                body.generate());
     }
 }

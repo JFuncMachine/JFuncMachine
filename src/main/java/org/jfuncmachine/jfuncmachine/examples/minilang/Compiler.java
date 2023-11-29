@@ -8,11 +8,7 @@ import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ArrayType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
-import org.jfuncmachine.jfuncmachine.examples.minilang.expr.Expr;
-import org.jfuncmachine.jfuncmachine.examples.minilang.expr.Field;
-import org.jfuncmachine.jfuncmachine.examples.minilang.expr.IntConstantExpr;
-import org.jfuncmachine.jfuncmachine.examples.minilang.expr.StringConstantExpr;
-import org.jfuncmachine.jfuncmachine.examples.minilang.expr.SymbolExpr;
+import org.jfuncmachine.jfuncmachine.examples.minilang.expr.*;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.Parser;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprDouble;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprInt;
@@ -39,8 +35,49 @@ public class Compiler {
 
     }
 
-    public static Func parseDefinition(SexprList defList) {
+    public static Expr parseExpressionList(SexprList sexprList) {
+        if (sexprList.value.size() < 1) {
+            throw new RuntimeException(String.format(
+                    "%s %d: Empty expression list", sexprList.filename, sexprList.lineNumber));
+        }
+        if (!(sexprList.value.get(0) instanceof SexprSymbol sym)) {
+            throw new RuntimeException(String.format(
+                    "%s %d: Expected symbol at head of list, not %s", sexprList.filename, sexprList.lineNumber,
+                    sexprList.value.get(0)));
+        }
 
+        return switch (sym.value) {
+            case "and" -> new BoolBinaryExpr(BoolBinaryExpr.ExprType.And,
+                    parseExpression(sexprList.value.get(1)),
+                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
+            case "or" -> new BoolBinaryExpr(BoolBinaryExpr.ExprType.Or,
+                    parseExpression(sexprList.value.get(1)),
+                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
+            case "equal" -> new BoolComparison(BoolComparison.CompType.Equal,
+                    parseExpression(sexprList.value.get(1)),
+                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
+            case "notequal" -> new BoolComparison(BoolComparison.CompType.NotEqual,
+                    parseExpression(sexprList.value.get(1)),
+                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
+            case "lessthan" -> new BoolComparison(BoolComparison.CompType.LessThan,
+                    parseExpression(sexprList.value.get(1)),
+                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
+            case "lessorequal" -> new BoolComparison(BoolComparison.CompType.LessOrEqual,
+                    parseExpression(sexprList.value.get(1)),
+                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
+            case "greaterthan" -> new BoolComparison(BoolComparison.CompType.GreaterThan,
+                    parseExpression(sexprList.value.get(1)),
+                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
+            case "greaterorequal" -> new BoolComparison(BoolComparison.CompType.GreaterOrEqual,
+                    parseExpression(sexprList.value.get(1)),
+                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
+            case "not" -> new BoolNotExpr(parseExpression(sexprList.value.get(1)),
+                     sexprList.filename, sexprList.lineNumber);
+            default -> null;
+        };
+    }
+    public static Func parseDefinition(SexprList defList) {
+        return null;
     }
 
     public static void main(String[] args) {
@@ -101,13 +138,14 @@ public class Compiler {
                 func.unify();
             }
 
-            
+/*
             ClassDef classDef = new ClassDef("", className, Access.PUBLIC,
                     methods.toArray(new MethodDef[0]), new ClassField[0], new String[0]);
 
             ClassGenerator generator = new ClassGenerator();
             generator.generate(classDef, "out");
             System.out.printf("Class %s generated to out directory", className);
+ */
 
         } catch (Exception exc) {
             exc.printStackTrace();

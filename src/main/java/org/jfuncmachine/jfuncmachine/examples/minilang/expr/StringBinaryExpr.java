@@ -1,5 +1,8 @@
 package org.jfuncmachine.jfuncmachine.examples.minilang.expr;
 
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.StringType;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
@@ -26,5 +29,14 @@ public class StringBinaryExpr extends StringExpr {
         other.unify(stringType);
         left.unify(stringType, env);
         right.unify(stringType, env);
+    }
+
+    public Expression generate() {
+        String methodName = switch(exprType) {
+            case Concat -> "concat";
+        };
+
+        return new CallJavaMethod("java.lang.String", methodName, SimpleTypes.STRING,
+                left.generate(), new Expression[] { right.generate() }, filename, lineNumber);
     }
 }

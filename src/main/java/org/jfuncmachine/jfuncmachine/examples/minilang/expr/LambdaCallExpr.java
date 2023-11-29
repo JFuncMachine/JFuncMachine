@@ -1,5 +1,7 @@
 package org.jfuncmachine.jfuncmachine.examples.minilang.expr;
 
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.Invoke;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.LambdaType;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
@@ -38,5 +40,15 @@ public class LambdaCallExpr extends Expr {
         }
 
         other.unify(lambdaType.returnType);
+    }
+
+    public Expression generate() {
+        Expression targetExpr = target.generate();
+        Expression[] argExprs = new Expression[arguments.length];
+        for (int i=0; i < argExprs.length; i++) {
+            argExprs[i] = arguments[i].generate();
+        }
+        return new Invoke(targetExpr, argExprs, filename, lineNumber);
+
     }
 }

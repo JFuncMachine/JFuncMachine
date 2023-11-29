@@ -1,6 +1,9 @@
 package org.jfuncmachine.jfuncmachine.examples.minilang.expr;
 
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.GetValue;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
+import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
@@ -19,5 +22,10 @@ public class SymbolExpr extends Expr {
             throw createException(String.format("Invalid symbol %s", name));
         }
         symbolLookup.unify(other);
+        type.unify(other);
+    }
+
+    public Expression generate() {
+        return new GetValue(name, ((Type)type.concreteType).toJFMType());
     }
 }

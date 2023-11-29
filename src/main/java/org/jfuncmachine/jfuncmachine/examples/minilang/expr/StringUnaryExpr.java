@@ -1,5 +1,8 @@
 package org.jfuncmachine.jfuncmachine.examples.minilang.expr;
 
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.StringType;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
@@ -24,5 +27,15 @@ public class StringUnaryExpr extends StringExpr {
         TypeHolder stringType = new TypeHolder(new StringType(filename, lineNumber));
         other.unify(stringType);
         expr.unify(stringType, env);
+    }
+
+    public Expression generate() {
+        String methodName = switch(exprType) {
+            case ToUpper -> "toUpperCase";
+            case ToLower -> "toLowerCase";
+        };
+
+        return new CallJavaMethod("java.lang.String", methodName, SimpleTypes.STRING,
+                expr.generate(), new Expression[0], filename, lineNumber);
     }
 }
