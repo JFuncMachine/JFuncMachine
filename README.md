@@ -1,3 +1,5 @@
+![](images/jfuncmachine2.gif)
+
 # JFuncMachine
 
 JFuncMachine is a library for creating functional languages that

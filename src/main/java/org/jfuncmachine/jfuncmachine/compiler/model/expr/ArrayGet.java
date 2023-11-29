@@ -91,7 +91,7 @@ public class ArrayGet extends Expression {
 
             generator.instGen.rawOpcode(opcode);
 
-            if (inTailPosition && generator.options.fullTailCalls) {
+            if (inTailPosition && generator.currentMethod.isTailCallable) {
                 generator.instGen.generateBox(containedType);
             }
         } else {

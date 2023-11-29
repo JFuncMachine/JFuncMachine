@@ -64,7 +64,7 @@ public class ToShort extends Expression {
                     String.format("Can't convert %s into short", exprType));
         }
 
-        if (inTailPosition && generator.options.fullTailCalls) {
+        if (inTailPosition && generator.currentMethod.isTailCallable) {
             generator.instGen.generateBox(SimpleTypes.SHORT.getBoxType());
         }
     }

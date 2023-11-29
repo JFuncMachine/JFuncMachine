@@ -136,9 +136,17 @@ public class CallStaticMethod extends Expression {
         }
         int[] argumentLocations = new int[arguments.length];
         int argPos = 0;
-        if (!inTailPosition || !generator.options.fullTailCalls ||
-            (generator.options.localTailCallsToLoops &&
-                    isCurrentFunc(generator.currentClass, generator.currentMethod))) {
+
+        boolean tailCallReturn = inTailPosition && generator.currentMethod.isTailCallable;
+        boolean makeTailCall = inTailPosition &&
+                !(generator.options.localTailCallsToLoops &&
+                        isCurrentFunc(generator.currentClass, generator.currentMethod)) &&
+                generator.options.fullTailCalls;
+        boolean localCall = inTailPosition &&
+                generator.options.localTailCallsToLoops &&
+                isCurrentFunc(generator.currentClass, generator.currentMethod);
+
+        if (!tailCallReturn) {
             for (int i = 0; i < arguments.length; i++) {
                 Expression expr = arguments[i];
                 if (generator.options.autobox) {
@@ -149,50 +157,79 @@ public class CallStaticMethod extends Expression {
                 argPos += parameterTypes[i].getStackSize();
             }
         }
-        if (inTailPosition && generator.options.localTailCallsToLoops &&
-                isCurrentFunc(generator.currentClass, generator.currentMethod)) {
+        if (localCall) {
             for (int i=arguments.length-1; i >= 0; i--) {
                 generator.instGen.rawIntOpcode(EnvVar.setOpcode(arguments[i].getType()), argumentLocations[i]);
             }
             generator.instGen.gotolabel(generator.currentMethod.startLabel);
-        } else if (inTailPosition && generator.options.fullTailCalls) {
+        } else if (tailCallReturn) {
             generateTailLambda(invokeClassName, name, parameterTypes, arguments, generator, env);
-        } else{
-            generator.instGen.invokestatic(
-                    generator.className(invokeClassName),
-                    name, generator.methodDescriptor(parameterTypes, returnType));
-
-            if (generator.options.fullTailCalls) {
-                Label loopStart = new Label();
-                Label loopEnd = new Label();
-                generator.instGen.label(loopStart);
-                generator.instGen.dup();
-                generator.instGen.instance_of(generator.className(TailCall.class.getName()));
-                generator.instGen.rawJumpOpcode(Opcodes.IFEQ, loopEnd);
-                generator.instGen.invokeinterface(generator.className(TailCall.class.getName()), "invoke",
-                        generator.methodDescriptor(new Type[0], new ObjectType()));
-                generator.instGen.gotolabel(loopStart);
-                generator.instGen.label(loopEnd);
-                if (returnType.getBoxTypeName() != null) {
-                    switch (returnType) {
-                        case BooleanType b -> generator.instGen.invokevirtual("java.lang.Boolean",
-                                "booleanValue", "()Z");
-                        case ByteType b -> generator.instGen.invokevirtual("java.lang.Byte",
-                                "byteValue", "()B");
-                        case CharType c -> generator.instGen.invokevirtual("java.lang.Character",
-                                "charValue", "()C");
-                        case DoubleType d -> generator.instGen.invokevirtual("java.lang.Double",
-                                "doubleValue", "()D");
-                        case FloatType f -> generator.instGen.invokevirtual("java.lang.Float",
-                                "floatValue", "()F");
-                        case IntType i -> generator.instGen.invokevirtual("java.lang.Integer",
-                                "intValue", "()I");
-                        case LongType l -> generator.instGen.invokevirtual("java.lang.Long",
-                                "longValue", "()J");
-                        case ShortType s -> generator.instGen.invokevirtual("java.lang.Short",
-                                "shortValue", "()S");
-                        default -> {}
-                    };
+        } else {
+            if (!makeTailCall) {
+                generator.instGen.invokestatic(
+                        generator.className(invokeClassName),
+                        name, generator.methodDescriptor(parameterTypes, returnType));
+            } else {
+                generator.instGen.invokestatic(
+                        generator.className(invokeClassName),
+                        name+"$$TC$$", generator.methodDescriptor(parameterTypes, new ObjectType()));
+                if (!tailCallReturn) {
+                    Label loopStart = new Label();
+                    Label loopEnd = new Label();
+                    generator.instGen.label(loopStart);
+                    generator.instGen.dup();
+                    generator.instGen.instance_of(generator.className(TailCall.class.getName()));
+                    generator.instGen.rawJumpOpcode(Opcodes.IFEQ, loopEnd);
+                    generator.instGen.invokeinterface(generator.className(TailCall.class.getName()), "invoke",
+                            generator.methodDescriptor(new Type[0], new ObjectType()));
+                    generator.instGen.gotolabel(loopStart);
+                    generator.instGen.label(loopEnd);
+                    if (returnType.getBoxTypeName() != null) {
+                        switch (returnType) {
+                            case BooleanType b -> {
+                                generator.instGen.checkcast(b.getBoxTypeName());
+                                generator.instGen.invokevirtual("java.lang.Boolean",
+                                        "booleanValue", "()Z");
+                            }
+                            case ByteType b -> {
+                                generator.instGen.checkcast(b.getBoxTypeName());
+                                generator.instGen.invokevirtual("java.lang.Byte",
+                                        "byteValue", "()B");
+                            }
+                            case CharType c -> {
+                                generator.instGen.checkcast(c.getBoxTypeName());
+                                generator.instGen.invokevirtual("java.lang.Character",
+                                        "charValue", "()C");
+                            }
+                            case DoubleType d -> {
+                                generator.instGen.checkcast(d.getBoxTypeName());
+                                generator.instGen.invokevirtual("java.lang.Double",
+                                        "doubleValue", "()D");
+                            }
+                            case FloatType f -> {
+                                generator.instGen.checkcast(f.getBoxTypeName());
+                                generator.instGen.invokevirtual("java.lang.Float",
+                                        "floatValue", "()F");
+                            }
+                            case IntType i -> {
+                                generator.instGen.checkcast(i.getBoxTypeName());
+                                generator.instGen.invokevirtual("java.lang.Integer",
+                                        "intValue", "()I");
+                            }
+                            case LongType l -> {
+                                generator.instGen.checkcast(l.getBoxTypeName());
+                                generator.instGen.invokevirtual("java.lang.Long",
+                                        "longValue", "()J");
+                            }
+                            case ShortType s -> {
+                                generator.instGen.checkcast(s.getBoxTypeName());
+                                generator.instGen.invokevirtual("java.lang.Short",
+                                        "shortValue", "()S");
+                            }
+                            default -> {
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -228,7 +265,7 @@ public class CallStaticMethod extends Expression {
         MethodDef lambdaMethod = new MethodDef(lambdaInfo.name,
                 Access.PRIVATE + Access.SYNTHETIC + Access.STATIC,
                 lambdaFields, new ObjectType(),
-                new CallJavaStaticMethod(invokeClassName, name, parameterTypes, new ObjectType(),
+                new CallJavaStaticMethod(invokeClassName, name+"$$TC$$", parameterTypes, new ObjectType(),
                         lambdaArguments));
 
         // Schedule the generation of the lambda method

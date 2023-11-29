@@ -46,7 +46,7 @@ public class Factorial1 {
 
             ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder()
                     .withLocalTailCallsToLoops(false)
-                    .withFullTailCalls(false)
+                    .withFullTailCalls(true)
                     .build();
             ClassGenerator generator = new ClassGenerator(options);
             Object result = generator.invokeMethod("Factorial", factMethod, 20, 1l);

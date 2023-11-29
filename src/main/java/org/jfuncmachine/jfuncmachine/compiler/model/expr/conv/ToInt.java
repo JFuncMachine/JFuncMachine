@@ -64,7 +64,7 @@ public class ToInt extends Expression {
                     String.format("Can't convert %s into int", exprType));
         }
 
-        if (inTailPosition && generator.options.fullTailCalls) {
+        if (inTailPosition && generator.currentMethod.isTailCallable) {
             generator.instGen.generateBox(SimpleTypes.INT.getBoxType());
         }
     }

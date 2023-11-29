@@ -14,6 +14,7 @@ import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.StringType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.UnitType;
@@ -95,7 +96,7 @@ public class InstructionGenerator {
     /** Emit an instruction to store an object into an array */
     public InstructionGenerator aastore() { instructionList.add(new InsnNode(Opcodes.AASTORE)); return this; }
     /** Emit an instruction to push a null constant onto the stack */
-    public InstructionGenerator aconst_null() { instructionList.add(new InsnNode(Opcodes.AASTORE)); return this; }
+    public InstructionGenerator aconst_null() { instructionList.add(new InsnNode(Opcodes.ACONST_NULL)); return this; }
     /** Emit an instruction to load a reference from a local variable */
     public InstructionGenerator aload(int index) { instructionList.add(new VarInsnNode(Opcodes.ALOAD, index)); return this; }
     /** Emit an instruction to create a new array of objects of a specified type */
@@ -120,7 +121,8 @@ public class InstructionGenerator {
     /** Emit an instruction to store a value in a char array */
     public InstructionGenerator castore() { instructionList.add(new InsnNode(Opcodes.CASTORE)); return this; }
     /** Emit an instruction to verify that an object can be cast to the specified type */
-    public InstructionGenerator checkcast(String type) { instructionList.add(new TypeInsnNode(Opcodes.CHECKCAST, type)); return this; }
+    public InstructionGenerator checkcast(String type) { instructionList.add(
+            new TypeInsnNode(Opcodes.CHECKCAST, classGen.className(type))); return this; }
     /** Emit an instruction to convert a double value to a float */
     public InstructionGenerator d2f() { instructionList.add(new InsnNode(Opcodes.D2F)); return this; }
     /** Emit an instruction to convert a double value to an int */
@@ -743,6 +745,8 @@ public class InstructionGenerator {
             invokestatic(classGen.className(boxType),
                     "valueOf", classGen.methodDescriptor(new Type[] { type },
                             new ObjectType(boxType)));
+        } else if (type.equals(SimpleTypes.UNIT)) {
+            aconst_null();
         }
         return this;
     }

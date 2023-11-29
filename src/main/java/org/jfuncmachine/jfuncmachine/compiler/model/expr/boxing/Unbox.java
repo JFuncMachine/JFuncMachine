@@ -93,7 +93,7 @@ public class Unbox extends Expression {
 
         // Don't unbox if this value is in the tail position and full-tail calls are enabled,
         // because the value must remain an object
-        if (inTailPosition && generator.options.fullTailCalls) {
+        if (inTailPosition && generator.currentMethod.isTailCallable) {
             return;
         }
 

@@ -80,7 +80,7 @@ public class SetJavaField extends Expression {
         generator.instGen.putfield(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));
 
-        if (inTailPosition && generator.options.fullTailCalls) {
+        if (inTailPosition && generator.currentMethod.isTailCallable) {
             generator.instGen.aconst_null();
         }
     }

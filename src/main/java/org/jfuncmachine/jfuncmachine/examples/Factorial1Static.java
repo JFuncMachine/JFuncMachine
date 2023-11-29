@@ -43,7 +43,7 @@ public class Factorial1Static {
                             ));
 
             ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder()
-                    .withLocalTailCallsToLoops(false)
+                    .withLocalTailCallsToLoops(true)
                     .withFullTailCalls(true)
                     .build();
             ClassGenerator generator = new ClassGenerator(options);

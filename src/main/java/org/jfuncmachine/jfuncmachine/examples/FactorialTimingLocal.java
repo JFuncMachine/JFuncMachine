@@ -18,7 +18,6 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.LongConstant;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaConstructor;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaSuperConstructor;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.GetJavaStaticField;
 import org.jfuncmachine.jfuncmachine.compiler.model.inline.Inlines;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ArrayType;
@@ -44,7 +43,7 @@ public class FactorialTimingLocal {
                                         new InlineCall(Inlines.LongSub, new Expression[] {
                                                 new GetValue("n", SimpleTypes.LONG),
                                                 new LongConstant(1)}),
-                                        new InlineCall(Inlines.LongMul, new Expression[] {
+                                        new InlineCall(Inlines.LongAdd, new Expression[] {
                                                 new GetValue("acc", SimpleTypes.LONG),
                                                 new GetValue("n", SimpleTypes.LONG)
                                         })
@@ -74,21 +73,19 @@ public class FactorialTimingLocal {
                     .withFullTailCalls(false)
                     .build();
 
-            /*
             ClassDef factClass = new ClassDef("org.jfuncmachine.jfuncmachine.examples", "FactorialWithLocal",
                     Access.PUBLIC, new MethodDef[] { constructor, factMethod, mainMethod }, new ClassField[0], new String[0]);
             ClassGenerator generator = new ClassGenerator(options);
             generator.generate(factClass, "test");
-             */
 
             options = new ClassGeneratorOptionsBuilder()
                     .withLocalTailCallsToLoops(false)
                     .withFullTailCalls(true)
                     .build();
 
-            ClassDef factClass = new ClassDef("org.jfuncmachine.jfuncmachine.examples", "FactorialWithFullTail",
+            factClass = new ClassDef("org.jfuncmachine.jfuncmachine.examples", "FactorialWithFullTail",
                     Access.PUBLIC, new MethodDef[] { constructor, factMethod, mainMethod }, new ClassField[0], new String[0]);
-            ClassGenerator generator = new ClassGenerator(options);
+            generator = new ClassGenerator(options);
             generator.generate(factClass, "test");
         } catch (Exception exc) {
             exc.printStackTrace();

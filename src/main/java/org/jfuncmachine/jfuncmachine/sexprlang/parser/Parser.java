@@ -19,10 +19,20 @@ public class Parser {
     public static SexprItem parseFile(String filename)
         throws IOException {
         String fileString = Files.readString(new File(filename).toPath());
-        return parseString(fileString, filename);
+        return parseString(fileString, filename, false);
     }
 
-    public static SexprItem parseString(String str, String filename)
+    public static SexprItem parseFile(String filename, boolean parseMultipleSexprs)
+            throws IOException {
+        String fileString = Files.readString(new File(filename).toPath());
+        return parseString(fileString, filename, parseMultipleSexprs);
+    }
+
+    public static SexprItem parseString(String str, String filename) throws IOException {
+        return parseString(str, filename, false);
+    }
+
+    public static SexprItem parseString(String str, String filename, boolean parseMultipleSexprs)
         throws IOException {
         int lineNumber = 1;
         char ch=' ';
@@ -65,10 +75,6 @@ public class Parser {
                         gotDecimal = false;
                         builder = new StringBuilder();
                         builder.append(ch);
-                    } else if (Character.isJavaIdentifierStart(ch)) {
-                        state = State.ReadingSymbol;
-                        builder = new StringBuilder();
-                        builder.append(ch);
                     } else if (ch == '"') {
                         state = State.ReadingString;
                         builder = new StringBuilder();
@@ -76,6 +82,10 @@ public class Parser {
                         state = State.SkippingLineComment;
                     } else if (ch == '{') {
                         state = State.SkippingBlockComment;
+                    } else if (Character.isJavaIdentifierStart(ch)) {
+                        state = State.ReadingSymbol;
+                        builder = new StringBuilder();
+                        builder.append(ch);
                     } else {
                         throw new IOException (
                                 String.format("Unexpected char %c (%02x) at column %d on line %d in %s",
@@ -96,7 +106,7 @@ public class Parser {
                         gotDecimal = true;
                     } else {
                         if (gotDecimal) {
-                            arrayStack.peek().add(new SexprFloat(Double.parseDouble(builder.toString()), filename, lineNumber));
+                            arrayStack.peek().add(new SexprDouble(Double.parseDouble(builder.toString()), filename, lineNumber));
                         } else {
                             arrayStack.peek().add(new SexprInt(Integer.parseInt(builder.toString()), filename, lineNumber));
                         }
@@ -159,9 +169,14 @@ public class Parser {
         }
 
         ArrayList<SexprItem> top = arrayStack.pop();
-        if (top.size() != 1) {
+        if ((top.size() != 1) && !parseMultipleSexprs) {
             throw new IOException("S-expression should contain only one item");
         }
-        return top.get(0);
+
+        if (!parseMultipleSexprs) {
+            return top.get(0);
+        } else {
+            return new SexprList(top, filename, 1);
+        }
     }
 }

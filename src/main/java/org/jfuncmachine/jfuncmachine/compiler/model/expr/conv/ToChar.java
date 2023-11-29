@@ -64,7 +64,7 @@ public class ToChar extends Expression {
                     String.format("Can't convert %s into char", exprType));
         }
 
-        if (inTailPosition && generator.options.fullTailCalls) {
+        if (inTailPosition && generator.currentMethod.isTailCallable) {
             generator.instGen.generateBox(SimpleTypes.CHAR.getBoxType());
         }
     }

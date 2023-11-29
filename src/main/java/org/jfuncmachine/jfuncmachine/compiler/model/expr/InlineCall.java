@@ -58,7 +58,7 @@ public class InlineCall extends Expression {
             expr.generate(generator, env, false);
         }
         func.generate(generator, env);
-        if (inTailPosition && generator.options.fullTailCalls) {
+        if (inTailPosition && generator.currentMethod.isTailCallable) {
             generator.instGen.generateBox(func.returnType);
         }
     }

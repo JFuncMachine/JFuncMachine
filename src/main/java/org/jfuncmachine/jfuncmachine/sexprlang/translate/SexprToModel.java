@@ -65,7 +65,7 @@ import org.jfuncmachine.jfuncmachine.compiler.model.types.FunctionType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
-import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprFloat;
+import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprDouble;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprInt;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprItem;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprList;
@@ -360,7 +360,7 @@ public class SexprToModel {
                     }
                 }
                 case "double" -> {
-                    if (param instanceof SexprFloat floatVal) {
+                    if (param instanceof SexprDouble floatVal) {
                         return floatVal.value;
                     } else if (param instanceof SexprInt intVal) {
                         return (double) intVal.value;
@@ -369,7 +369,7 @@ public class SexprToModel {
                     }
                 }
                 case "float" -> {
-                    if (param instanceof SexprFloat floatVal) {
+                    if (param instanceof SexprDouble floatVal) {
                         return (float) floatVal.value;
                     } else if (param instanceof SexprInt intVal) {
                         return (float) intVal.value;
@@ -476,7 +476,7 @@ public class SexprToModel {
                 }
             }
             case "java.land.Double" -> {
-                if (param instanceof SexprFloat floatVal) {
+                if (param instanceof SexprDouble floatVal) {
                     return floatVal.value;
                 } else if (param instanceof SexprInt intVal) {
                     return (double) intVal.value;
@@ -485,7 +485,7 @@ public class SexprToModel {
                 }
             }
             case "java.lang.Float" -> {
-                if (param instanceof SexprFloat floatVal) {
+                if (param instanceof SexprDouble floatVal) {
                     return (float) floatVal.value;
                 } else if (param instanceof SexprInt intVal) {
                     return (float) intVal.value;

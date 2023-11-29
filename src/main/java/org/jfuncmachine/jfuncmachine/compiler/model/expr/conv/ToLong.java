@@ -63,7 +63,7 @@ public class ToLong extends Expression {
             default -> throw generateException(
                     String.format("Can't convert %s into long", exprType));
         }
-        if (inTailPosition && generator.options.fullTailCalls) {
+        if (inTailPosition && generator.currentMethod.isTailCallable) {
             generator.instGen.generateBox(SimpleTypes.LONG.getBoxType());
         }
     }

@@ -102,7 +102,7 @@ public class ArraySet extends Expression {
 
             generator.instGen.rawOpcode(opcode);
 
-            if (inTailPosition && generator.options.fullTailCalls) {
+            if (inTailPosition && generator.currentMethod.isTailCallable) {
                 generator.instGen.aconst_null();
             }
         } else {

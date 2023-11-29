@@ -71,7 +71,7 @@ public class SetValue extends Expression {
         };
 
         generator.instGen.rawIntOpcode(opcode, envVar.index);
-        if (inTailPosition && generator.options.fullTailCalls) {
+        if (inTailPosition && generator.currentMethod.isTailCallable) {
             generator.instGen.aconst_null();
         }
     }

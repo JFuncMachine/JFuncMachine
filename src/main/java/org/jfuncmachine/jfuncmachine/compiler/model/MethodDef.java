@@ -12,6 +12,7 @@ public class MethodDef extends SourceElement {
     public final Expression body;
     public final Type returnType;
     public final Label startLabel;
+    public final boolean isTailCallable;
 
     public MethodDef(String name, int access, Field[] parameters, Type returnType, Expression body) {
         super(null, 0);
@@ -21,6 +22,7 @@ public class MethodDef extends SourceElement {
         this.body = body;
         this.returnType = returnType;
         this.startLabel = new Label();
+        this.isTailCallable = false;
     }
 
     public MethodDef(String name, int access, Field[] parameters, Type returnType, Expression body,
@@ -32,6 +34,35 @@ public class MethodDef extends SourceElement {
         this.body = body;
         this.returnType = returnType;
         this.startLabel = new Label();
+        this.isTailCallable = false;
+    }
+
+    public MethodDef(String name, int access, Field[] parameters, Type returnType, boolean isTailCallable,
+                     Expression body) {
+        super(null, 0);
+        this.name = name;
+        this.access = access;
+        this.parameters = parameters;
+        this.body = body;
+        this.returnType = returnType;
+        this.startLabel = new Label();
+        this.isTailCallable = isTailCallable;
+    }
+
+    public MethodDef(String name, int access, Field[] parameters, Type returnType, boolean isTailCallable,
+                    Expression body, String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.name = name;
+        this.access = access;
+        this.parameters = parameters;
+        this.body = body;
+        this.returnType = returnType;
+        this.startLabel = new Label();
+        this.isTailCallable = isTailCallable;
+    }
+
+    public MethodDef getTailCallVersion() {
+        return new MethodDef(name+"$$TC$$", access, parameters, returnType, true, body, filename, lineNumber);
     }
 
     public Type getReturnType() {

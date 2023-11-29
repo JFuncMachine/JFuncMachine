@@ -6,7 +6,6 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaSup
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 
 public class ConstructorDef extends MethodDef {
     public ConstructorDef(int access, Field[] parameters, Expression body) {

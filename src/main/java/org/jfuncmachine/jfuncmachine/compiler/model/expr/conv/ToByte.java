@@ -62,7 +62,7 @@ public class ToByte extends Expression {
                     String.format("Can't convert %s into byte", exprType));
             
         }
-        if (inTailPosition && generator.options.fullTailCalls) {
+        if (inTailPosition && generator.currentMethod.isTailCallable) {
             generator.instGen.generateBox(SimpleTypes.BYTE.getBoxType());
         }
     }

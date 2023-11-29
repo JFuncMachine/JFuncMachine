@@ -1,7 +1,7 @@
 package org.jfuncmachine.jfuncmachine.compiler.testlang.parser;
 
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.Parser;
-import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprFloat;
+import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprDouble;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprInt;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprItem;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprList;
@@ -42,8 +42,8 @@ public class TestSexprs {
     public void testDouble()
             throws IOException {
         SexprItem item = Parser.parseString("1234567.891011", "test");
-        Assertions.assertInstanceOf(SexprFloat.class, item, "Int parse failed");
-        Assertions.assertEquals(((SexprFloat)item).value, 1234567.891011, "Float should be 1234567.891011");
+        Assertions.assertInstanceOf(SexprDouble.class, item, "Int parse failed");
+        Assertions.assertEquals(((SexprDouble)item).value, 1234567.891011, "Float should be 1234567.891011");
     }
 
     @Test
@@ -66,8 +66,8 @@ public class TestSexprs {
         Assertions.assertEquals("bar", ((SexprString)list.value.get(1)).value, "Second item should be foobar");
         Assertions.assertInstanceOf(SexprInt.class, list.value.get(2), "Third item should be an int");
         Assertions.assertEquals(1234, ((SexprInt)list.value.get(2)).value, "Third item should be 1234");
-        Assertions.assertInstanceOf(SexprFloat.class, list.value.get(3), "Fourth item should be a float");
-        Assertions.assertEquals(37.5, ((SexprFloat)list.value.get(3)).value, "Fourth item should be 37.5");
+        Assertions.assertInstanceOf(SexprDouble.class, list.value.get(3), "Fourth item should be a float");
+        Assertions.assertEquals(37.5, ((SexprDouble)list.value.get(3)).value, "Fourth item should be 37.5");
     }
 
     @Test
@@ -86,7 +86,7 @@ public class TestSexprs {
         Assertions.assertEquals("bar", ((SexprString)nestedList.value.get(1)).value, "Second item should be foobar");
         Assertions.assertInstanceOf(SexprInt.class, nestedList.value.get(2), "Third item should be an int");
         Assertions.assertEquals(1234, ((SexprInt)nestedList.value.get(2)).value, "Third item should be 1234");
-        Assertions.assertInstanceOf(SexprFloat.class, nestedList.value.get(3), "Fourth item should be a float");
-        Assertions.assertEquals(37.5, ((SexprFloat)nestedList.value.get(3)).value, "Fourth item should be 37.5");
+        Assertions.assertInstanceOf(SexprDouble.class, nestedList.value.get(3), "Fourth item should be a float");
+        Assertions.assertEquals(37.5, ((SexprDouble)nestedList.value.get(3)).value, "Fourth item should be 37.5");
     }
 }
