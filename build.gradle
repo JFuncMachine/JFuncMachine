@@ -1,5 +1,6 @@
 plugins {
     id 'application'
+    id 'antlr'
 }
 
 group = 'org.jfuncmachine.jfuncmachine'
@@ -20,6 +21,7 @@ application {
 
 
 dependencies {
+    antlr 'org.antlr:antlr4:4.13.1'
     implementation 'org.ow2.asm:asm-tree:9.6'
     testImplementation platform('org.junit:junit-bom:5.9.3')
     testImplementation 'org.junit.jupiter:junit-jupiter'
