@@ -1,0 +1,42 @@
+
+package org.jfuncmachine.jfuncmachine.examples.minilang;
+
+import java_cup.runtime.*;
+import org.jfuncmachine.jfuncmachine.examples.minilang.expr.*;
+
+class MinilangParser;
+
+parser code {:
+    String filename;
+    Scanner s;
+
+    public MinilangParser(String filename, Scanner s) {
+        super(s);
+        this.filename = filename;
+        }
+ :}
+
+terminal PRINT, NOT, AND, OR, TRUE, FALSE, MINUS, MUL, DIV, ADD;
+terminal BITAND, BITOR, BITXOR, BITLSL, BITLSR, BITASR;
+terminal LPAREN, RPAREN, BACKSLASH, ARROW, PLUSPLUS;
+terminal EQUAL, NE, LT, LE, GT, GE;
+terminal String ID;
+terminal int NUMBER;
+
+non terminal Expr expr;
+non terminal BoolExpr boolExpr;
+non terminal Expr constant;
+
+precedence left OR;
+precedence left AND;
+precedence left NOT;
+precedence left LE, LT, GE, GT, EQUAL, NE;
+precedence left BITAND, BITOR, BITXOR, BITLSL, BITLSR, BITASR;
+precedence left MINUS, ADD;
+precedence left MUL, DIV;
+
+expr ::= ;
+
+boolExpr ::= ;
+
+constant ::= ;
