@@ -10,8 +10,8 @@ parser code {:
     String filename;
     Scanner s;
 
-    public MinilangParser(String filename, Scanner s) {
-        super(s);
+    public MinilangParser(String filename, Scanner scanner) {
+        super(scanner);
         this.filename = filename;
         }
  :}
@@ -20,7 +20,7 @@ terminal PRINT, NOT, AND, OR, TRUE, FALSE, MINUS, MUL, DIV, ADD;
 terminal BITAND, BITOR, BITXOR, BITLSL, BITLSR, BITASR;
 terminal LPAREN, RPAREN, BACKSLASH, ARROW, PLUSPLUS;
 terminal EQUAL, NE, LT, LE, GT, GE;
-terminal String ID;
+terminal String ID, STRING;
 terminal int NUMBER;
 
 non terminal Expr expr;
@@ -35,8 +35,12 @@ precedence left BITAND, BITOR, BITXOR, BITLSL, BITLSR, BITASR;
 precedence left MINUS, ADD;
 precedence left MUL, DIV;
 
-expr ::= ;
+expr ::= constant ;
 
-boolExpr ::= ;
+boolExpr ::= expr:l EQUAL expr:r {: RESULT=new BoolComparison(BoolComparison.CompType.Equal, l, r,
+    filename, 0); :}
+;
 
-constant ::= ;
+constant ::= NUMBER:n {: RESULT=new IntConstantExpr(n, filename, 0); :}
+    | STRING:s {: RESULT=new StringConstantExpr(s, filename, 0); :}
+    ;
