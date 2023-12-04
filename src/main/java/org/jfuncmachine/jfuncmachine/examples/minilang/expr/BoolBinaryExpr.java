@@ -10,13 +10,22 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.BoolType;
+import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
 public class BoolBinaryExpr extends BoolExpr {
+    @ModelItem(isExprStart = true)
     public enum ExprType {
-        And,
-        Or
+        And ("and"),
+        Or ("or");
+
+        public final String symbol;
+
+        ExprType(String symbol) {
+            this.symbol = symbol;
+        }
+
     }
 
     public final ExprType exprType;

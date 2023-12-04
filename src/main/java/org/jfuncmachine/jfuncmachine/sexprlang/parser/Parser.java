@@ -5,9 +5,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 public class Parser {
-    enum State {
+    public enum State {
         AwaitingItem,
         ReadingNumber,
         ReadingSymbol,
@@ -16,23 +17,42 @@ public class Parser {
         SkippingLineComment,
         SkippingBlockComment
     }
+
     public static SexprItem parseFile(String filename)
         throws IOException {
         String fileString = Files.readString(new File(filename).toPath());
-        return parseString(fileString, filename, false);
+        return parseString(fileString, filename, false, new JavaSymbolMatcher());
     }
 
     public static SexprItem parseFile(String filename, boolean parseMultipleSexprs)
             throws IOException {
         String fileString = Files.readString(new File(filename).toPath());
-        return parseString(fileString, filename, parseMultipleSexprs);
+        return parseString(fileString, filename, parseMultipleSexprs, new JavaSymbolMatcher());
     }
 
     public static SexprItem parseString(String str, String filename) throws IOException {
-        return parseString(str, filename, false);
+        return parseString(str, filename, false, new JavaSymbolMatcher());
     }
 
-    public static SexprItem parseString(String str, String filename, boolean parseMultipleSexprs)
+    public static SexprItem parseFile(String filename, SymbolMatcher symbolMatcher)
+            throws IOException {
+        String fileString = Files.readString(new File(filename).toPath());
+        return parseString(fileString, filename, false, symbolMatcher);
+    }
+
+    public static SexprItem parseFile(String filename, boolean parseMultipleSexprs,
+                                      SymbolMatcher symbolMatcher) throws IOException {
+        String fileString = Files.readString(new File(filename).toPath());
+        return parseString(fileString, filename, parseMultipleSexprs, symbolMatcher);
+    }
+
+    public static SexprItem parseString(String str, String filename, SymbolMatcher symbolMatcher)
+            throws IOException {
+        return parseString(str, filename, false, symbolMatcher);
+    }
+
+    public static SexprItem parseString(String str, String filename, boolean parseMultipleSexprs,
+                                        SymbolMatcher symbolMatcher)
         throws IOException {
         int lineNumber = 1;
         char ch=' ';
@@ -82,7 +102,7 @@ public class Parser {
                         state = State.SkippingLineComment;
                     } else if (ch == '{') {
                         state = State.SkippingBlockComment;
-                    } else if (Character.isJavaIdentifierStart(ch)) {
+                    } else if (symbolMatcher.isSymbolFirstChar(ch)) {
                         state = State.ReadingSymbol;
                         builder = new StringBuilder();
                         builder.append(ch);
@@ -126,7 +146,7 @@ public class Parser {
                     }
                 }
                 case State.ReadingSymbol -> {
-                    if (Character.isJavaIdentifierPart(ch) || ch == '.') {
+                    if (symbolMatcher.isSymbolChar(ch)) {
                         builder.append(ch);
                     } else {
                         arrayStack.peek().add(new SexprSymbol(builder.toString(), filename, lineNumber));

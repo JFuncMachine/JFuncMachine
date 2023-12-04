@@ -2,10 +2,11 @@ package org.jfuncmachine.jfuncmachine.sexprlang.compiler;
 
 import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.model.ClassDef;
+import org.jfuncmachine.jfuncmachine.sexprlang.parser.JavaExtSymbolMatcher;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.Parser;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprItem;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprList;
-import org.jfuncmachine.jfuncmachine.sexprlang.translate.SexprToModel;
+import org.jfuncmachine.jfuncmachine.sexprlang.translate.SexprToJFuncMachineModel;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,10 +16,10 @@ public class Main {
         }
 
         try {
-            SexprItem item = Parser.parseFile(args[0]);
+            SexprItem item = Parser.parseFile(args[0], new JavaExtSymbolMatcher());
 
             if (item instanceof SexprList list) {
-                ClassDef classDef = SexprToModel.translateClass(list);
+                ClassDef classDef = SexprToJFuncMachineModel.translateClass(list);
                 ClassGenerator generator = new ClassGenerator();
                 generator.generate(classDef, "out");
             } else {

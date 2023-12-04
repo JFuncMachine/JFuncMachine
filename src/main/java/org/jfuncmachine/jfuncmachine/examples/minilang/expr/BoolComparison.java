@@ -12,17 +12,24 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.BoolType;
+import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
 public class BoolComparison extends BoolExpr {
+    @ModelItem(isExprStart = true)
     public enum CompType {
-        Equal,
-        NotEqual,
-        LessThan,
-        LessOrEqual,
-        GreaterThan,
-        GreaterOrEqual
+        Equal("="),
+        NotEqual("!="),
+        LessThan("<"),
+        LessOrEqual("<="),
+        GreaterThan(">"),
+        GreaterOrEqual(">=");
+
+        public final String symbol;
+        CompType(String symbol) {
+            this.symbol = symbol;
+        }
     }
 
     public final CompType compType;
