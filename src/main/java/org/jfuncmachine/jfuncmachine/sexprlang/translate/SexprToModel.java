@@ -13,12 +13,12 @@ public class SexprToModel {
         throws MappingException {
         List<Object> objects = new ArrayList<>();
         for (SexprItem item: sexprs.value) {
-            objects.add(sexprToModel(item, mapper));
+            objects.add(sexprToModel(item, mapper, null));
         }
         return objects.toArray();
     }
 
-    public static Object sexprToModel(SexprItem item, SexprMapper mapper)
+    public static Object sexprToModel(SexprItem item, SexprMapper mapper, Class targetClass)
         throws MappingException {
         switch(item) {
             case SexprDouble d -> { return mapper.mapDouble(d); }
@@ -28,7 +28,12 @@ public class SexprToModel {
             case SexprList l ->  {
                 Object result = mapper.mapList(l);
                 if (result == null) {
-                    return sexprListToItemList(l, mapper);
+                    if (targetClass != null &&
+                            targetClass.getAnnotation(ModelItem.class) != null) {
+                        return sexprListToModel(targetClass, l, mapper);
+                    } else {
+                        return sexprListToItemList(l, mapper);
+                    }
                 } else if (result instanceof Class) {
                     return sexprListToModel((Class) result, l, mapper);
                 } else {
@@ -41,7 +46,7 @@ public class SexprToModel {
     public static Object sexprListToItemList(SexprList list, SexprMapper mapper) throws MappingException {
         Object[] items = new Object[list.value.size()];
         for (int i=0; i < items.length; i++) {
-            items[i] = sexprToModel(list.value.get(i), mapper);
+            items[i] = sexprToModel(list.value.get(i), mapper, null);
         }
         return items;
     }
@@ -50,13 +55,10 @@ public class SexprToModel {
         throws MappingException {
         ArrayList<SexprItem> items = list.value;
         Object[] params = new Object[items.size()-1];
-        for (int i=1; i < items.size(); i++) {
-            params[i-1] = sexprToModel(items.get(i), mapper);
-        }
 
         try {
             for (Constructor cons: clazz.getConstructors()) {
-                if (matchesWithLocation(cons, params)) {
+                if (matchesWithLocation(cons, params, items, mapper)) {
                     Class[] paramTypes = cons.getParameterTypes();
                     convertArrayTypes(paramTypes, params);
                     Object[] paramsExt = new Object[params.length + 2];
@@ -66,7 +68,7 @@ public class SexprToModel {
                 }
             }
             for (Constructor cons: clazz.getConstructors()) {
-                if (SexprToModel.matches(cons, params)) {
+                if (SexprToModel.matches(cons, params, items, mapper)) {
                     Class[] paramTypes = cons.getParameterTypes();
                     convertArrayTypes(paramTypes, params);
                     return cons.newInstance(params);
@@ -97,10 +99,12 @@ public class SexprToModel {
         }
     }
 
-    public static boolean matches(Constructor cons, Object[] params) {
+    public static boolean matches(Constructor cons, Object[] params, List<SexprItem> items,
+                                  SexprMapper mapper) throws MappingException {
         Class[] paramTypes = cons.getParameterTypes();
         if (paramTypes.length != params.length) return false;
         for (int i=0; i < paramTypes.length; i++) {
+            params[i] = sexprToModel(items.get(i+1), mapper, paramTypes[i]);
             if (paramTypes[i].isArray()) {
                 if (!params[i].getClass().isArray()) return false;
                 if (!paramTypes[i].getComponentType().isAssignableFrom(params[i].getClass().getComponentType())) {
@@ -113,7 +117,8 @@ public class SexprToModel {
         return true;
     }
 
-    public static boolean matchesWithLocation(Constructor cons, Object[] params) {
+    public static boolean matchesWithLocation(Constructor cons, Object[] params,
+                                              List<SexprItem> items, SexprMapper mapper) throws MappingException {
         Class[] paramTypes = cons.getParameterTypes();
         if (paramTypes.length != params.length + 2) return false;
         if (!paramTypes[paramTypes.length-2].getName().equals("java.lang.String")) return false;
@@ -121,6 +126,7 @@ public class SexprToModel {
                 paramTypes[paramTypes.length-1].getName().equals("int")) &&
             !paramTypes[paramTypes.length-1].getName().equals("java.lang.Integer")) return false;
         for (int i=0; i < params.length; i++) {
+            params[i] = sexprToModel(items.get(i+1), mapper, paramTypes[i]);
             if (paramTypes[i].isArray()) {
                 if (!params[i].getClass().isArray()) return false;
                 if (!paramTypes[i].getComponentType().isAssignableFrom(params[i].getClass().getComponentType())) {

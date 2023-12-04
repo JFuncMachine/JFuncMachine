@@ -6,22 +6,28 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.InlineCall;
 import org.jfuncmachine.jfuncmachine.compiler.model.inline.Inlines;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.IntType;
+import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
 public class IntBinaryExpr extends IntExpr {
+    @ModelItem(isExprStart = true, exprLength=3)
     public enum ExprType {
-        Add,
-        Sub,
-        Mul,
-        Div,
-        And,
-        Or,
-        Xor,
-        Lshr,
-        Ashr,
-        Shl
+        Add("+"),
+        Sub("-"),
+        Mul("*"),
+        Div("/"),
+        And("&"),
+        Or("|"),
+        Xor("^"),
+        Lshr(">>"),
+        Ashr(">>>"),
+        Shl("<<");
 
+        public final String symbol;
+        ExprType(String symbol) {
+            this.symbol = symbol;
+        }
     }
 
     public final ExprType exprType;

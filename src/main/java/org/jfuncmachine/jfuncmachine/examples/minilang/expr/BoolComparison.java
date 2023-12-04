@@ -17,7 +17,7 @@ import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
 public class BoolComparison extends BoolExpr {
-    @ModelItem(isExprStart = true)
+    @ModelItem(isExprStart = true, exprLength=3)
     public enum CompType {
         Equal("="),
         NotEqual("!="),

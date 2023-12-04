@@ -15,7 +15,7 @@ import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
 public class BoolBinaryExpr extends BoolExpr {
-    @ModelItem(isExprStart = true)
+    @ModelItem(isExprStart = true, exprLength=3)
     public enum ExprType {
         And ("and"),
         Or ("or");

@@ -5,9 +5,11 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.Lambda;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.LambdaType;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
+import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
+@ModelItem(symbol="lambda")
 public class LambdaExpr extends Expr {
     public final String[] fields;
     public final Expr body;

@@ -7,9 +7,11 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.BoolType;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
+import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
+@ModelItem(symbol="if", exprLength=3)
 public class IfExpr extends Expr {
     public final Expr test;
     public final Expr truePath;

@@ -5,12 +5,20 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaMet
 import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.StringType;
+import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
 public class StringBinaryExpr extends StringExpr {
+    @ModelItem(isExprStart = true, exprLength=3)
     public enum ExprType {
-        Concat
+        Concat("++");
+
+        public final String symbol;
+
+        ExprType(String symbol) {
+            this.symbol = symbol;
+        }
     }
 
     public final ExprType exprType;
