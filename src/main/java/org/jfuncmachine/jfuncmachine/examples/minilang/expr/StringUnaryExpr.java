@@ -9,6 +9,7 @@ import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
+@ModelItem(includeStartSymbol = true)
 public class StringUnaryExpr extends StringExpr {
     @ModelItem(isExprStart = true, exprLength=2)
     public enum ExprType {

@@ -9,12 +9,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ModelMapper implements SexprMapper {
     public final String packageName;
     protected Map<String, Class> symbolToClassMap;
+    protected Map<String, Class> enumSymbolToClassMap;
     protected Map<String, Object> symbolToEnumMap;
     protected Class stringValueClass;
     protected Class intValueClass;
@@ -28,6 +28,7 @@ public class ModelMapper implements SexprMapper {
 
     public void buildModelMaps() throws MappingException {
         symbolToClassMap = new HashMap<>();
+        enumSymbolToClassMap = new HashMap<>();
         symbolToEnumMap = new HashMap<>();
 
         try (ScanResult scanResult =
@@ -35,47 +36,59 @@ public class ModelMapper implements SexprMapper {
                              .enableAllInfo()         // Scan classes, methods, fields, annotations
                              .acceptPackages(packageName)     // Scan com.xyz and subpackages (omit to scan all packages)
                              .scan()) {               // Start the scan
-            for (ClassInfo modelItemClassInfo : scanResult.getClassesWithAnnotation(ModelItem.class.getName())) {
-                try {
-                    Class modelItemClass = Class.forName(modelItemClassInfo.getName());
-                    Annotation[] annotations = modelItemClass.getAnnotations();
-                    for (Annotation annotation: annotations) {
+            for (ClassInfo modelItemClassInfo : scanResult.getAllClasses()) {
+                Class modelItemClass = modelItemClassInfo.loadClass();
+                Annotation[] annotations = modelItemClass.getAnnotations();
+                for (Annotation annotation : annotations) {
+                    if (annotation instanceof ModelItem modelItem) {
+                        if (!modelItem.symbol().isEmpty()) {
+                            symbolToClassMap.put(modelItem.symbol(), modelItemClass);
+                        } else if (modelItemClass.isEnum()) {
+                            addEnumMapping(modelItemClass, modelItem.isExprStart());
+                        } else if (modelItem.isStringConstant()) {
+                            stringValueClass = modelItemClass;
+                        } else if (modelItem.isIntConstant()) {
+                            intValueClass = modelItemClass;
+                        } else if (modelItem.isDoubleConstant()) {
+                            doubleValueClass = modelItemClass;
+                        } else if (modelItem.isSymbolExpr()) {
+                            symbolExprClass = modelItemClass;
+                        }
+                    }
+                }
+                for (Class contained: modelItemClass.getClasses()) {
+                    for (Annotation annotation : contained.getAnnotations()) {
                         if (annotation instanceof ModelItem modelItem) {
-                            if (!modelItem.symbol().isEmpty()) {
-                                symbolToClassMap.put(modelItem.symbol(), modelItemClass);
-                            } else if (modelItemClass.isEnum()) {
-                                addEnumMapping(modelItemClass, modelItem.isExprStart());
-                            } else if (modelItem.isStringConstant()) {
-                                stringValueClass = modelItemClass;
-                            } else if (modelItem.isIntConstant()) {
-                                intValueClass = modelItemClass;
-                            } else if (modelItem.isDoubleConstant()) {
-                                doubleValueClass = modelItemClass;
-                            } else if (modelItem.isSymbolExpr()) {
-                                symbolExprClass = modelItemClass;
+                            if (contained.isEnum()) {
+                                addEnumMapping(contained, modelItem.isExprStart());
                             }
                         }
                     }
-                } catch (ClassNotFoundException exc) {
-                    throw new MappingException("Unable to load class "+modelItemClassInfo.getName(), exc);
                 }
             }
         }
     }
 
     protected void addEnumMapping(Class clazz, boolean isExprStart) throws MappingException {
-        for (Field field: clazz.getFields()) {
-            if (field.getName().equals("symbol") && field.getType().equals("java.lang.String")) {
-                for (Object enumVal: clazz.getEnumConstants()) {
-                    try {
-                        String sym = (String) field.get(enumVal);
-                        symbolToEnumMap.put(sym, enumVal);
-                        if (isExprStart) {
-                            symbolToClassMap.put(sym, clazz.getEnclosingClass());
+        for (Field enumField: clazz.getFields()) {
+            if (enumField.getType().equals(clazz)) {
+                try {
+                    Object enumValue = enumField.get(null);
+                    for (Field field : clazz.getFields()) {
+                        if (field.getName().equals("symbol") && field.getType().equals(String.class)) {
+                            try {
+                                String sym = (String) field.get(enumValue);
+                                symbolToEnumMap.put(sym, enumValue);
+                                if (isExprStart) {
+                                    symbolToClassMap.put(sym, clazz.getEnclosingClass());
+                                }
+                            } catch (IllegalAccessException e) {
+                                throw new MappingException("Unable to fetch symbol value from enum in " + clazz.getName(), e);
+                            }
                         }
-                    } catch (IllegalAccessException e) {
-                        throw new MappingException("Unable to fetch symbol value from enum in "+clazz.getName(), e);
                     }
+                } catch (IllegalAccessException e) {
+                    throw new MappingException(e);
                 }
             }
         }
@@ -86,18 +99,18 @@ public class ModelMapper implements SexprMapper {
 
     @Override
     public Object mapSymbol(SexprSymbol symbol) throws MappingException {
+        Object enumVal = symbolToEnumMap.get(symbol.value);
+        if (enumVal != null) {
+            return enumVal;
+        }
+
         Class symClass = symbolToClassMap.get(symbol.value);
         if (symClass != null) {
             return symClass;
         } else {
-            Object enumVal = symbolToEnumMap.get(symbol.value);
-            if (enumVal != null) {
-                return enumVal;
-            }
-
             if (symbolExprClass == null) {
                 throw new MappingException(
-                        String.format("No mapping for symbol %s and no symbol value class was found"));
+                        String.format("No mapping for symbol %s and no symbol value class was found", symbol.value));
             }
             return symbolExprClass;
         }

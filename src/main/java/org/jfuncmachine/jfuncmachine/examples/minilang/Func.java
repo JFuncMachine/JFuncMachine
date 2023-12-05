@@ -2,9 +2,11 @@ package org.jfuncmachine.jfuncmachine.examples.minilang;
 
 import org.jfuncmachine.jfuncmachine.examples.minilang.expr.Expr;
 import org.jfuncmachine.jfuncmachine.examples.minilang.expr.Field;
+import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
+@ModelItem(symbol="define")
 public class Func {
     public final String name;
     public final Field[] paramTypes;

@@ -16,70 +16,13 @@ import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprItem;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprList;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprString;
 import org.jfuncmachine.jfuncmachine.sexprlang.parser.SexprSymbol;
+import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelMapper;
+import org.jfuncmachine.jfuncmachine.sexprlang.translate.SexprToModel;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class Compiler {
-    public static Expr parseExpression(SexprItem item) {
-        return switch(item) {
-            case SexprSymbol sym -> new SymbolExpr(sym.value, sym.filename, sym.lineNumber);
-            case SexprInt sexprInt -> new IntConstantExpr(sexprInt.value, sexprInt.filename, sexprInt.lineNumber);
-            case SexprDouble sexprDouble ->
-                    throw new RuntimeException(String.format(
-                            "%s %d: Double values not supported", sexprDouble.filename, sexprDouble.lineNumber));
-            case SexprString sexprString ->
-                    new StringConstantExpr(sexprString.value, sexprString.filename, sexprString.lineNumber);
-            case SexprList sexprList -> parseExpressionList(sexprList);
-        };
-
-    }
-
-    public static Expr parseExpressionList(SexprList sexprList) {
-        if (sexprList.value.size() < 1) {
-            throw new RuntimeException(String.format(
-                    "%s %d: Empty expression list", sexprList.filename, sexprList.lineNumber));
-        }
-        if (!(sexprList.value.get(0) instanceof SexprSymbol sym)) {
-            throw new RuntimeException(String.format(
-                    "%s %d: Expected symbol at head of list, not %s", sexprList.filename, sexprList.lineNumber,
-                    sexprList.value.get(0)));
-        }
-
-        return switch (sym.value) {
-            case "and" -> new BoolBinaryExpr(BoolBinaryExpr.ExprType.And,
-                    parseExpression(sexprList.value.get(1)),
-                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
-            case "or" -> new BoolBinaryExpr(BoolBinaryExpr.ExprType.Or,
-                    parseExpression(sexprList.value.get(1)),
-                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
-            case "equal" -> new BoolComparison(BoolComparison.CompType.Equal,
-                    parseExpression(sexprList.value.get(1)),
-                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
-            case "notequal" -> new BoolComparison(BoolComparison.CompType.NotEqual,
-                    parseExpression(sexprList.value.get(1)),
-                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
-            case "lessthan" -> new BoolComparison(BoolComparison.CompType.LessThan,
-                    parseExpression(sexprList.value.get(1)),
-                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
-            case "lessorequal" -> new BoolComparison(BoolComparison.CompType.LessOrEqual,
-                    parseExpression(sexprList.value.get(1)),
-                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
-            case "greaterthan" -> new BoolComparison(BoolComparison.CompType.GreaterThan,
-                    parseExpression(sexprList.value.get(1)),
-                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
-            case "greaterorequal" -> new BoolComparison(BoolComparison.CompType.GreaterOrEqual,
-                    parseExpression(sexprList.value.get(1)),
-                    parseExpression(sexprList.value.get(2)), sexprList.filename, sexprList.lineNumber);
-            case "not" -> new BoolNotExpr(parseExpression(sexprList.value.get(1)),
-                     sexprList.filename, sexprList.lineNumber);
-            default -> null;
-        };
-    }
-    public static Func parseDefinition(SexprList defList) {
-        return null;
-    }
-
     public static void main(String[] args) {
         if (args.length < 1) {
             System.out.println("Please supply an input filename");
@@ -87,7 +30,7 @@ public class Compiler {
         }
 
         try {
-            SexprItem item = Parser.parseFile(args[0], true);
+            SexprItem item = Parser.parseFile(args[0], true, new MinilangSymbolMatcher());
 
             if (!(item instanceof SexprList sexprList)) {
                 System.out.println("Internal error, parser did not return a list");
@@ -103,41 +46,10 @@ public class Compiler {
             ArrayList<Func> funcs = new ArrayList<>();
             boolean parsedBody = false;
 
-            for (SexprItem listItem: sexprList.value) {
-                if (!(listItem instanceof SexprList defList)) {
-                    if (parsedBody) {
-                        System.out.println(String.format(
-                                "Found non-list expression %s, but have already parsed the main body",
-                                listItem));
-                        return;
-                    }
-                    Expr mainBody = parseExpression(listItem);
-                    Func mainFunc = new Func("main", new Field[0], mainBody, mainBody.filename, mainBody.lineNumber);
-                    funcs.add(mainFunc);
-                } else {
-                    if (defList.value.size() == 0) {
-                        System.out.println(String.format("%s %d: Empty list given as definition",
-                                defList.filename, defList.lineNumber));
-                        return;
-                    }
-                    SexprItem firstItem = defList.value.get(0);
-                    if (firstItem instanceof SexprSymbol sym) {
-                        if (sym.value.equals("define")) {
-                            Func newFunc = parseDefinition(defList);
-                            funcs.add(newFunc);
-                        }
-                    } else {
-                        Expr mainBody = parseExpression(defList);
-                        Func mainFunc = new Func("main", new Field[0], mainBody, mainBody.filename, mainBody.lineNumber);
-                        funcs.add(mainFunc);
-                    }
-                }
-            }
+            Object[] exprs = SexprToModel.sexprsToModel(sexprList,
+                    new ModelMapper("org.jfuncmachine.jfuncmachine.examples.minilang"));
 
-            for (Func func: funcs) {
-                func.unify();
-            }
-
+            System.out.println("Done");
 /*
             ClassDef classDef = new ClassDef("", className, Access.PUBLIC,
                     methods.toArray(new MethodDef[0]), new ClassField[0], new String[0]);
