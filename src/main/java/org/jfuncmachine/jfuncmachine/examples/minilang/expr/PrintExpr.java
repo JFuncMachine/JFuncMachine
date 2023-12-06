@@ -1,13 +1,18 @@
 package org.jfuncmachine.jfuncmachine.examples.minilang.expr;
 
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.If;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.UnaryComparison;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.StringConstant;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.GetJavaStaticField;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.MinilangException;
+import org.jfuncmachine.jfuncmachine.examples.minilang.types.BoolType;
+import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.UnitType;
 import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
@@ -23,11 +28,12 @@ public class PrintExpr extends Expr {
     }
 
     @Override
-    public void unify(TypeHolder other, Environment<TypeHolder> env) throws UnificationException {
-        TypeHolder unitType = new TypeHolder(new UnitType(filename, lineNumber));
+    public void unify(TypeHolder<Type> other, Environment<TypeHolder<Type>> env) throws UnificationException {
+        TypeHolder<Type> unitType = new TypeHolder<>(new UnitType(filename, lineNumber));
         other.unify(unitType);
-        exprType = new TypeHolder();
+        exprType = new TypeHolder<>();
         expr.unify(exprType, env);
+        type.unify(unitType);
     }
 
     public Expression generate() {
@@ -37,12 +43,21 @@ public class PrintExpr extends Expr {
                             filename, lineNumber));
         }
 
+        Expression exprToPrint;
+        if (exprType.concreteType instanceof BoolType) {
+            exprToPrint = new If(new UnaryComparison(Tests.IsTrue, expr.generate()),
+                    new StringConstant("true"), new StringConstant("false"),
+                    expr.filename, expr.lineNumber);
+        } else {
+            exprToPrint = expr.generate();
+        }
+
         return new CallJavaMethod("java.io.PrintStream", "println",
                 // Get the PrintStream object from System.out, that is the object
                 // that we will be calling println on
                 SimpleTypes.UNIT, new GetJavaStaticField("java.lang.System", "out",
                 new ObjectType("java.io.PrintStream")),
                 // Load up the arguments to println, which is just one, that is a string constant
-                new Expression[] { expr.generate() });
+                new Expression[] { exprToPrint });
     }
 }

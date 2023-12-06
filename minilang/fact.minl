@@ -1,0 +1,6 @@
+(define fact (n acc)
+    (if (< n 2)
+      acc
+      (fact (- n 1) (* acc n))))
+
+(print (fact 10 1))

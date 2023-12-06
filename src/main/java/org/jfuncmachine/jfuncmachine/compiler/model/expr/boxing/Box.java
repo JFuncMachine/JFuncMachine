@@ -2,9 +2,14 @@ package org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing;
 
 import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.CallMethod;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.CallStaticMethod;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.CallTailCallMethod;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.CallTailCallStaticMethod;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaStaticMethod;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 
 /** Boxes an expression - converts an expression returning a native type to the Object equivalent
@@ -126,6 +131,25 @@ public class Box extends Expression {
             boxName = ((ObjectType) desiredBoxType).className;
         }
 
+        if (expr.getType().equals(SimpleTypes.UNIT) && desiredBoxType.equals(new ObjectType())) {
+            generator.instGen.aconst_null();
+            return;
+        }
+
+        if (generator.options.fullTailCalls) {
+            switch (expr) {
+                case CallStaticMethod csm -> { expr.generate(generator, env, inTailPosition); return; }
+                case CallMethod cm -> { expr.generate(generator, env, inTailPosition); return; }
+                default -> {}
+            }
+        } else {
+            switch (expr) {
+                case CallTailCallMethod ctcm -> { expr.generate(generator, env, inTailPosition); return; }
+                case CallTailCallStaticMethod ctcsm -> { expr.generate(generator, env, inTailPosition); return; }
+                default -> {}
+            }
+        }
+        
         Type boxArgumentType = new ObjectType(boxName).getUnboxedType();
 
         if (boxName == null) return;

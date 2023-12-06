@@ -18,8 +18,8 @@ public class SymbolExpr extends Expr {
     }
 
     @Override
-    public void unify(TypeHolder other, Environment<TypeHolder> env) throws UnificationException {
-        TypeHolder symbolLookup = env.lookup(name);
+    public void unify(TypeHolder<Type> other, Environment<TypeHolder<Type>> env) throws UnificationException {
+        TypeHolder<Type> symbolLookup = env.lookup(name);
         if (symbolLookup == null) {
             throw createException(String.format("Invalid symbol %s", name));
         }

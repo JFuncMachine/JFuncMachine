@@ -13,7 +13,7 @@ import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 public class LambdaExpr extends Expr {
     public final String[] fields;
     public final Expr body;
-    protected Field[] paramFields;
+    protected ParamField[] paramParamFields;
 
     public LambdaExpr(String[] fields, Expr body, String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -22,24 +22,24 @@ public class LambdaExpr extends Expr {
     }
 
     @Override
-    public void unify(TypeHolder other, Environment<TypeHolder> env) throws UnificationException {
-        TypeHolder bodyType = new TypeHolder();
-        Environment<TypeHolder> newEnv = new Environment<TypeHolder>();
-        TypeHolder[] paramTypes = new TypeHolder[fields.length];
+    public void unify(TypeHolder<Type> other, Environment<TypeHolder<Type>> env) throws UnificationException {
+        TypeHolder<Type> bodyType = new TypeHolder<>();
+        Environment<TypeHolder<Type>> newEnv = new Environment<>();
+        TypeHolder<Type>[] paramTypes = new TypeHolder[fields.length];
 
-        paramFields = new Field[fields.length];
+        paramParamFields = new ParamField[fields.length];
         for (int i=0; i < fields.length; i++) {
-            paramFields[i] = new Field(fields[i]);
+            paramParamFields[i] = new ParamField(fields[i]);
         }
 
         for (int i=0; i < fields.length; i++) {
-            newEnv.define(fields[i], paramFields[i].type);
+            newEnv.define(fields[i], paramParamFields[i].type);
         }
         body.unify(bodyType, newEnv);
-        TypeHolder returnType = new TypeHolder();
+        TypeHolder<Type> returnType = new TypeHolder<>();
         body.unify(returnType, env);
         LambdaType lambdaType = new LambdaType(paramTypes, returnType, filename, lineNumber);
-        other.unify(new TypeHolder(lambdaType));
+        other.unify(new TypeHolder<>(lambdaType));
         type.unify(other);
 
     }
@@ -48,8 +48,8 @@ public class LambdaExpr extends Expr {
         org.jfuncmachine.jfuncmachine.compiler.model.types.Field[] jfmFields =
                 new org.jfuncmachine.jfuncmachine.compiler.model.types.Field[fields.length];
         for (int i=0; i < fields.length; i++) {
-            jfmFields[i] = new org.jfuncmachine.jfuncmachine.compiler.model.types.Field(paramFields[i].name,
-                    ((Type)paramFields[i].type.concreteType).toJFMType());
+            jfmFields[i] = new org.jfuncmachine.jfuncmachine.compiler.model.types.Field(paramParamFields[i].name,
+                    ((Type) paramParamFields[i].type.concreteType).toJFMType());
         }
         return new Lambda(jfmFields, ((Type)type.concreteType).toJFMType(),
                 body.generate());

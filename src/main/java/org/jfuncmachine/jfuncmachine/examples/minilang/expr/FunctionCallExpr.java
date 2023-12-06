@@ -5,6 +5,7 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.FunctionType;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.FuncType;
+import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
 import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
@@ -13,6 +14,7 @@ import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 public class FunctionCallExpr extends Expr {
     public final String name;
     public final Expr[] arguments;
+    protected FuncType targetType;
 
 
     public FunctionCallExpr(String name, Expr[] arguments, String filename, int lineNumber) {
@@ -22,8 +24,8 @@ public class FunctionCallExpr extends Expr {
     }
 
     @Override
-    public void unify(TypeHolder other, Environment<TypeHolder> env) throws UnificationException {
-        TypeHolder funcType = env.lookup(name);
+    public void unify(TypeHolder<Type> other, Environment<TypeHolder<Type>> env) throws UnificationException {
+        TypeHolder<Type> funcType = env.lookup(name);
         if (funcType == null) {
             throw createException(String.format("Unknown function %s", name));
         }
@@ -37,15 +39,16 @@ public class FunctionCallExpr extends Expr {
         }
 
         if (functionType.paramTypes.length != arguments.length) {
-            throw createException(String.format("Function takes %d parameters, %d arguments were given",
-                    functionType.paramTypes.length, arguments.length));
+            throw createException(String.format("Function %s takes %d parameters, %d arguments were given",
+                    name, functionType.paramTypes.length, arguments.length));
         }
 
         for (int i=0; i < arguments.length; i++) {
             arguments[i].unify(functionType.paramTypes[i], env);
         }
         other.unify(functionType.returnType);
-        type.unify(funcType);
+        type.unify(functionType.returnType);
+        targetType = functionType;
     }
 
     public Expression generate() {
@@ -54,7 +57,7 @@ public class FunctionCallExpr extends Expr {
             callArgs[i] = arguments[i].generate();
         }
 
-        FunctionType funcType = (FunctionType)((FuncType)type.concreteType).toJFMType();
+        FunctionType funcType = (FunctionType)(targetType.toJFMType());
         return new CallStaticMethod(name, funcType.parameterTypes, funcType.returnType,
                 callArgs, filename, lineNumber);
     }

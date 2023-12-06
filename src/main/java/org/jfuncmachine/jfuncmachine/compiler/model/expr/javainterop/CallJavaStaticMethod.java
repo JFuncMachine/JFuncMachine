@@ -115,7 +115,7 @@ public class CallJavaStaticMethod extends Expression {
             if (generator.options.autobox) {
                 expr = Autobox.autobox(expr, parameterTypes[i]);
             }
-            expr.generate(generator, env, false);
+            expr.generate(generator, env, inTailPosition && generator.currentMethod.isTailCallable);
         }
         generator.instGen.invokestatic(
                 generator.className(className),

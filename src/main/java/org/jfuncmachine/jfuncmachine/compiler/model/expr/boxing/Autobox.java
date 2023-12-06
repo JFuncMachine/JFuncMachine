@@ -1,6 +1,7 @@
 package org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing;
 
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.If;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
 
@@ -14,6 +15,10 @@ public class Autobox {
      * the expression as-is
      */
     public static Expression autobox(Expression expr, Type desiredType) {
+        if (expr instanceof If ifExpr) {
+            return new If(ifExpr.test, autobox(ifExpr.trueExpr, desiredType),
+                    autobox(ifExpr.falseExpr, desiredType), ifExpr.filename, ifExpr.lineNumber);
+        }
         if (expr.getType() instanceof ObjectType exprObj && !(desiredType instanceof ObjectType)) {
             if (expr.getType().isBoxType() && exprObj.isUnboxableTo(desiredType)) {
                 return new Unbox(expr);

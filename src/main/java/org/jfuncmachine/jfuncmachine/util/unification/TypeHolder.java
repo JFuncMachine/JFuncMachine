@@ -3,15 +3,15 @@ package org.jfuncmachine.jfuncmachine.util.unification;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TypeHolder {
-    public Unifiable concreteType;
-    public Set<TypeHolder> linked;
+public class TypeHolder<T extends Unifiable> {
+    public T concreteType;
+    public Set<TypeHolder<T>> linked;
 
     public TypeHolder() {
         linked = new HashSet<>();
     }
 
-    public TypeHolder(Unifiable concreteType) {
+    public TypeHolder(T concreteType) {
         this.concreteType = concreteType;
         linked = new HashSet<>();
     }
@@ -20,21 +20,24 @@ public class TypeHolder {
         return concreteType != null;
     }
 
-    public void setType(Unifiable concreteType) {
+    public void setType(T concreteType) {
         this.concreteType = concreteType;
-        for (TypeHolder link: linked) {
+        for (TypeHolder<T> link: linked) {
             link.concreteType = concreteType;
         }
     }
 
-    public void link(TypeHolder other) {
+    public void link(TypeHolder<T> other) {
+        linked.add(this);
+        linked.add(other);
         linked.addAll(other.linked);
-        for (TypeHolder link: linked) {
-            link.linked.addAll(linked);
+        for (TypeHolder<T> link: linked) {
+            link.linked = linked;
         }
     }
 
-    public void unify(TypeHolder other) throws UnificationException {
+    public void unify(TypeHolder<T> other) throws UnificationException {
+        this.link(other);
         if (isFull()) {
             if (other.isFull()) {
                 concreteType.unify(other.concreteType);
@@ -43,9 +46,6 @@ public class TypeHolder {
             }
         } else if (other.isFull()) {
             this.setType(other.concreteType);
-            this.link(other);
-        } else {
-            this.link(other);
         }
     }
 }

@@ -15,7 +15,8 @@ public class Parser {
         ReadingString,
         AwaitingSeparator,
         SkippingLineComment,
-        SkippingBlockComment
+        SkippingBlockComment,
+        GotMinus
     }
 
     public static SexprItem parseFile(String filename)
@@ -90,6 +91,8 @@ public class Parser {
                         arrayStack.peek().add(new SexprList(top, filename, listStartStack.pop()));
                     } else if (ch == 0xffff) {
                     } else if (Character.isWhitespace(ch)) {
+                    } else if (ch == '-') {
+                        state = State.GotMinus;
                     } else if (Character.isDigit(ch)) {
                         state = State.ReadingNumber;
                         gotDecimal = false;
@@ -178,6 +181,26 @@ public class Parser {
                                 String.format("Unexpected char %c (%02x) at column %d on line %d in %s",
                                         ch, (int) ch, column, lineNumber, filename));
 
+                    }
+                }
+                case State.GotMinus -> {
+                    builder = new StringBuilder();
+                    builder.append('-');
+                    if (Character.isDigit(ch)) {
+                        state = State.ReadingNumber;
+                        builder.append(ch);
+                        gotDecimal = false;
+
+                    } else if (!Character.isWhitespace(ch)) {
+                        builder.append(ch);
+                        state = State.ReadingSymbol;
+                    } else {
+                        arrayStack.peek().add(new SexprSymbol(builder.toString(), filename, lineNumber));
+                        pos--;
+                        if (ch == '\n') {
+                            lineNumber--;
+                        }
+                        state = State.AwaitingSeparator;
                     }
                 }
             }

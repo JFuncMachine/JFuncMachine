@@ -1,7 +1,6 @@
 package org.jfuncmachine.jfuncmachine.examples.minilang.expr;
 
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.StringType;
-import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
 
 public abstract class StringExpr extends Expr {
     public StringExpr(String filename, int lineNumber) {

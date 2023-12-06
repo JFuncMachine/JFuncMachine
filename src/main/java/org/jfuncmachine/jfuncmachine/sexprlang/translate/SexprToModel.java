@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SexprToModel {
-    public static Object[] sexprsToModel(SexprList sexprs, SexprMapper mapper)
+    public static Object[] sexprsToModel(SexprList sexprs, SexprMapper mapper, Class targetClass)
         throws MappingException {
         List<Object> objects = new ArrayList<>();
         for (SexprItem item: sexprs.value) {
-            objects.add(sexprToModel(item, mapper, null));
+            objects.add(sexprToModel(item, mapper, targetClass));
         }
         return objects.toArray();
     }
@@ -62,7 +62,40 @@ public class SexprToModel {
                 }
 
                 Object result = mapper.mapSymbol(s);
-                if (!(result instanceof Class)) return result;
+                if (result.getClass().isEnum()) {
+                    Class containingClass = mapper.mapSymbolToClass(s);
+                    if (containingClass == null) {
+                        return result;
+                    }
+                    try {
+                        Object[] params = new Object[]{result};
+                        for (Constructor cons : containingClass.getConstructors()) {
+                            if (matchesWithLocation(cons, params)) {
+                                Object[] paramsExt = new Object[params.length + 2];
+                                System.arraycopy(params, 0, paramsExt, 0, params.length);
+                                paramsExt[params.length] = item.filename;
+                                paramsExt[params.length + 1] = item.lineNumber;
+                                return cons.newInstance(paramsExt);
+                            }
+                        }
+                        for (Constructor cons : containingClass.getConstructors()) {
+                            if (matches(cons, params)) {
+                                return cons.newInstance(params);
+                            }
+                        }
+                    } catch (InvocationTargetException e) {
+                        throw new MappingException(e, item.filename, item.lineNumber);
+                    } catch (InstantiationException e) {
+                        throw new MappingException(e, item.filename, item.lineNumber);
+                    } catch (IllegalAccessException e) {
+                        throw new MappingException(e, item.filename, item.lineNumber);
+                    }
+                    throw new MappingException(
+                            String.format("Unable to find a constructor in class %s for symbol %s",
+                                    targetClass.getName(), s.value));
+                } else if (!(result instanceof Class)) {
+                    return result;
+                }
                 targetClass = (Class) result;
                 try {
                     Object[] params = new Object[]{s.value};
@@ -94,7 +127,7 @@ public class SexprToModel {
             case SexprList l ->  {
                 Object result = mapper.mapList(l, targetClass);
                 if (result == null) {
-                    if (targetClass.isArray() &&
+                    if (targetClass != null && targetClass.isArray() &&
                             targetClass.getComponentType().getAnnotation(ModelItem.class) != null) {
                         Object[] values = new Object[l.value.size()];
                         for (int i=0; i < l.value.size(); i++) {
@@ -144,16 +177,20 @@ public class SexprToModel {
 
         if (varargStart >= 0) {
             params = new Object[varargStart+1];
-            ArrayList<SexprItem> newItems = new ArrayList<SexprItem>();
+            ArrayList<SexprItem> itemsArray = new ArrayList<>();
             String filename = items.get(varargStart).filename;
             int lineNumber = items.get(varargStart).lineNumber;
             for (int i=varargStart; i < items.size(); i++) {
-                newItems.add(items.get(i));
+                itemsArray.add(items.get(i));
             }
+
+            ArrayList<SexprItem> newItems = new ArrayList<>(items);
+
             for (int i=items.size()-1; i >= varargStart; i--) {
-                items.remove(i);
+                newItems.remove(i);
             }
-            items.add(new SexprList(newItems, filename, lineNumber));
+            newItems.add(new SexprList(itemsArray, filename, lineNumber));
+            items = newItems;
         }
 
         try {

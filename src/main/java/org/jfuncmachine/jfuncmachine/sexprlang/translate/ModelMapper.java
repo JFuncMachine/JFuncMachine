@@ -121,6 +121,21 @@ public class ModelMapper implements SexprMapper {
     }
 
     @Override
+    public Class mapSymbolToClass(SexprSymbol symbol) throws MappingException {
+
+        Class symClass = symbolToClassMap.get(symbol.value);
+        if (symClass != null) {
+            return symClass;
+        } else {
+            if (symbolExprClass == null) {
+                throw new MappingException(
+                        String.format("No mapping for symbol %s and no symbol value class was found", symbol.value));
+            }
+            return symbolExprClass;
+        }
+    }
+
+    @Override
     public Object mapDouble(SexprDouble d) throws MappingException {
         if (doubleValueClass == null) {
             throw new MappingException(

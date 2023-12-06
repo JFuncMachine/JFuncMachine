@@ -570,9 +570,9 @@ public class ClassGenerator {
             }
             // If autoboxing is enabled, make sure the result of the method is autoboxed to match
             // its declared return type
-            if (options.autobox && !methodDef.isTailCallable) {
+            if (options.autobox) {
                 if (Autobox.autoboxNeeded(methodDef.body, returnType)) {
-                    Autobox.autobox(methodDef.body, returnType).generate(this, env, false);
+                    Autobox.autobox(methodDef.body, returnType).generate(this, env, methodDef.isTailCallable);
                 } else {
                     methodDef.body.generate(this, env, true);
                 }

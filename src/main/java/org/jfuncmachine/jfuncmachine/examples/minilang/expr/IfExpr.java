@@ -25,12 +25,17 @@ public class IfExpr extends Expr {
     }
 
     @Override
-    public void unify(TypeHolder other, Environment<TypeHolder> env) throws UnificationException {
-        TypeHolder boolType = new TypeHolder(new BoolType(filename, lineNumber));
+    public void unify(TypeHolder<Type> other, Environment<TypeHolder<Type>> env) throws UnificationException {
+        TypeHolder<Type> boolType = new TypeHolder<>(new BoolType(filename, lineNumber));
         test.unify(boolType, env);
 
+        TypeHolder<Type> truePathType = new TypeHolder<>();
+        truePath.unify(truePathType, env);
+        TypeHolder<Type> falsePathType = new TypeHolder<>();
+        falsePath.unify(falsePathType, env);
         truePath.type.unify(falsePath.type);
-        truePath.type.unify(other);
+        falsePath.type.unify(other);
+        type.unify(falsePath.type);
     }
 
     public Expression generate() {

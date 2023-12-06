@@ -3,7 +3,7 @@ package org.jfuncmachine.jfuncmachine.examples.minilang;
 import org.jfuncmachine.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
 import org.jfuncmachine.jfuncmachine.examples.minilang.expr.Expr;
-import org.jfuncmachine.jfuncmachine.examples.minilang.expr.Field;
+import org.jfuncmachine.jfuncmachine.examples.minilang.expr.ParamField;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.FuncType;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
 import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
@@ -13,27 +13,32 @@ import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 @ModelItem(symbol="define")
 public class Func {
     public final String name;
-    public final Field[] paramTypes;
+    public final ParamField[] paramTypes;
     public final Expr body;
     public final String filename;
     public final int lineNumber;
 
-    protected TypeHolder returnType;
+    protected TypeHolder<Type> returnType;
 
-    public Func(String name, Field[] paramTypes, Expr body, String filename, int lineNumber) {
+    public Func(String name, ParamField[] paramTypes, Expr body, String filename, int lineNumber) {
         this.name = name;
         this.paramTypes = paramTypes;
         this.body = body;
         this.filename = filename;
         this.lineNumber = lineNumber;
+        returnType = new TypeHolder<>();
     }
 
-    public void unify(Environment<TypeHolder> env) throws UnificationException {
+    public void unify(Environment<TypeHolder<Type>> env) throws UnificationException {
+        Environment<TypeHolder<Type>> newEnv = new Environment<>(env);
+        TypeHolder<Type>[] funcTypeParams = new TypeHolder[paramTypes.length];
         for (int i=0; i < paramTypes.length; i++) {
-            env.define(paramTypes[i].name, paramTypes[i].type);
+            newEnv.define(paramTypes[i].name, paramTypes[i].type);
+            funcTypeParams[i] = paramTypes[i].type;
         }
-        returnType = new TypeHolder();
-        body.unify(returnType, env);
+        newEnv.define(name, new TypeHolder<>(new FuncType(funcTypeParams, returnType, filename, lineNumber)));
+
+        body.unify(returnType, newEnv);
     }
 
     public MethodDef generate() {
@@ -47,17 +52,17 @@ public class Func {
         }
 
         for (int i=0; i < paramTypes.length; i++) {
-            Field paramType = paramTypes[i];
+            ParamField paramType = paramTypes[i];
             if (!paramType.type.isFull()) {
                 throw new MinilangException(
                         String.format("%s %d: Unable to determine type of func %s param %s",
                                 filename, lineNumber, name, paramType.name));
             }
             methodFields[i] = new org.jfuncmachine.jfuncmachine.compiler.model.types.Field(
-                    paramType.name, ((Type) paramType.type.concreteType).toJFMType());
+                    paramType.name, paramType.type.concreteType.toJFMType());
         }
         return new MethodDef(name, Access.PUBLIC + Access.STATIC,
-                methodFields, ((Type)returnType.concreteType).toJFMType(),
+                methodFields, returnType.concreteType.toJFMType(),
                 body.generate(), filename, lineNumber);
     }
 

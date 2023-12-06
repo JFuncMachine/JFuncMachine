@@ -9,6 +9,7 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.BoolType;
+import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
 import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
@@ -22,9 +23,10 @@ public class BoolNotExpr extends BoolExpr {
     }
 
     @Override
-    public void unify(TypeHolder other, Environment<TypeHolder> env) throws UnificationException {
-        TypeHolder boolType = new TypeHolder(new BoolType(filename, lineNumber));
+    public void unify(TypeHolder<Type> other, Environment<TypeHolder<Type>> env) throws UnificationException {
+        TypeHolder<Type> boolType = new TypeHolder<>(new BoolType(filename, lineNumber));
         other.unify(boolType);
+        this.type.unify(boolType);
     }
 
     public Expression generate() {

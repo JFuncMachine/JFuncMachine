@@ -16,11 +16,23 @@ import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 public class TestBoolean {
-    @Test
-    public void testIntEq() {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(ClassGeneratorProvider.class)
+    @Retention(RetentionPolicy.RUNTIME)
+    private @interface TestAllImplementations {}
+
+    @TestAllImplementations
+    public void testIntEq(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -29,7 +41,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -40,8 +51,8 @@ public class TestBoolean {
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
     }
 
-    @Test
-    public void testIntNe() {
+    @TestAllImplementations
+    public void testIntNe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -50,7 +61,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -62,8 +72,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIntLt() {
+    @TestAllImplementations
+    public void testIntLt(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -72,7 +82,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be < 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -84,8 +93,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIntLe() {
+    @TestAllImplementations
+    public void testIntLe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -94,7 +103,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be <= 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -106,8 +114,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIntGt() {
+    @TestAllImplementations
+    public void testIntGt(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -116,7 +124,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be > 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -128,8 +135,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIntGe() {
+    @TestAllImplementations
+    public void testIntGe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -138,7 +145,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be >= 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -150,8 +156,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIntegerEq() {
+    @TestAllImplementations
+    public void testIntegerEq(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
@@ -160,7 +166,6 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -172,8 +177,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIntegerNe() {
+    @TestAllImplementations
+    public void testIntegerNe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
@@ -182,7 +187,6 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -194,8 +198,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIntegerLt() {
+    @TestAllImplementations
+    public void testIntegerLt(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
@@ -204,7 +208,6 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be < 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -216,8 +219,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIntegerLe() {
+    @TestAllImplementations
+    public void testIntegerLe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
@@ -226,7 +229,6 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be <= 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -238,8 +240,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIntegerGt() {
+    @TestAllImplementations
+    public void testIntegerGt(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
@@ -248,7 +250,6 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be > 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -260,8 +261,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIntegerGe() {
+    @TestAllImplementations
+    public void testIntegerGe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))},
@@ -270,7 +271,6 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be >= 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -282,8 +282,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testDoubleEq() {
+    @TestAllImplementations
+    public void testDoubleEq(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.DOUBLE),
                 new Field("y", SimpleTypes.DOUBLE)},
@@ -292,7 +292,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5.0, 5.0);
@@ -304,8 +303,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testDoubleNe() {
+    @TestAllImplementations
+    public void testDoubleNe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.DOUBLE),
                 new Field("y", SimpleTypes.DOUBLE)},
@@ -314,7 +313,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0.0, 0.0);
         Assertions.assertFalse((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5.0, 5.0);
@@ -326,8 +324,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testDoubleLt() {
+    @TestAllImplementations
+    public void testDoubleLt(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.DOUBLE),
                 new Field("y", SimpleTypes.DOUBLE)},
@@ -336,7 +334,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0.0, 0.0);
         Assertions.assertFalse((Boolean) result, "0 should not be < 0");
         result = generator.invokeMethod(method, 5.0, 5.0);
@@ -348,8 +345,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testDoubleLe() {
+    @TestAllImplementations
+    public void testDoubleLe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.DOUBLE),
                 new Field("y", SimpleTypes.DOUBLE)},
@@ -358,7 +355,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should be <= 0");
         result = generator.invokeMethod(method, 5.0, 5.0);
@@ -370,8 +366,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testDoubleGt() {
+    @TestAllImplementations
+    public void testDoubleGt(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.DOUBLE),
                 new Field("y", SimpleTypes.DOUBLE)},
@@ -380,7 +376,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0.0, 0.0);
         Assertions.assertFalse((Boolean) result, "0 should not be > 0");
         result = generator.invokeMethod(method, 5.0, 5.0);
@@ -392,8 +387,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testDoubleGe() {
+    @TestAllImplementations
+    public void testDoubleGe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.DOUBLE),
                 new Field("y", SimpleTypes.DOUBLE)},
@@ -402,7 +397,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should be >= 0");
         result = generator.invokeMethod(method, 5.0, 5.0);
@@ -414,8 +408,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testLangDoubleEq() {
+    @TestAllImplementations
+    public void testLangDoubleEq(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName())),
                 new Field("y", SimpleTypes.DOUBLE)},
@@ -424,7 +418,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5.0, 5.0);
@@ -436,8 +429,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testFloatEq() {
+    @TestAllImplementations
+    public void testFloatEq(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.FLOAT),
                 new Field("y", SimpleTypes.FLOAT)},
@@ -446,7 +439,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.FLOAT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, (float) 0.0, (float) 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, (float) 5.0, (float) 5.0);
@@ -458,8 +450,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testLangFloatEq() {
+    @TestAllImplementations
+    public void testLangFloatEq(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", new ObjectType(SimpleTypes.FLOAT.getBoxTypeName())),
                 new Field("y", SimpleTypes.FLOAT)},
@@ -468,7 +460,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.FLOAT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, (float) 0.0, (float) 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, (float) 5.0, (float) 5.0);
@@ -480,8 +471,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testLongEq() {
+    @TestAllImplementations
+    public void testLongEq(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.LONG),
                 new Field("y", SimpleTypes.LONG)},
@@ -490,7 +481,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.LONG)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method,  0l, 0l);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method,  5l, 5l);
@@ -502,8 +492,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testLangLongEq() {
+    @TestAllImplementations
+    public void testLangLongEq(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", new ObjectType(SimpleTypes.LONG.getBoxTypeName())),
                 new Field("y", SimpleTypes.LONG)},
@@ -512,7 +502,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.LONG)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0l, 0l);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5l, 5l);
@@ -524,8 +513,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testAnd() {
+    @TestAllImplementations
+    public void testAnd(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -537,7 +526,6 @@ public class TestBoolean {
                         new GetValue("x", SimpleTypes.INT))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -549,8 +537,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testOr() {
+    @TestAllImplementations
+    public void testOr(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -562,7 +550,6 @@ public class TestBoolean {
                                 new GetValue("x", SimpleTypes.INT))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -573,8 +560,8 @@ public class TestBoolean {
         Assertions.assertTrue((Boolean) result, "5 should not equal 0");
     }
 
-    @Test
-    public void testNot() {
+    @TestAllImplementations
+    public void testNot(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -583,7 +570,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -595,8 +581,8 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testOrNot() {
+    @TestAllImplementations
+    public void testOrNot(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -608,7 +594,6 @@ public class TestBoolean {
                                 new GetValue("x", SimpleTypes.INT)))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -619,8 +604,8 @@ public class TestBoolean {
         Assertions.assertTrue((Boolean) result, "5 should not equal 0");
     }
 
-    @Test
-    public void testAndNot() {
+    @TestAllImplementations
+    public void testAndNot(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT),
                 new Field("y", SimpleTypes.INT)},
@@ -632,7 +617,6 @@ public class TestBoolean {
                                 new GetValue("x", SimpleTypes.INT)))),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
         result = generator.invokeMethod(method, 5, 5);
@@ -644,38 +628,36 @@ public class TestBoolean {
 
     }
 
-    @Test
-    public void testIsNull() {
+    @TestAllImplementations
+    public void testIsNull(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING)},
                 SimpleTypes.BOOLEAN,
                 new If(new UnaryComparison(Tests.IsNull, new GetValue("x", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "Foobar");
         Assertions.assertFalse((Boolean) result, "String is not null");
         result = generator.invokeMethod(method, (Object) null);
         Assertions.assertTrue((Boolean) result, "String is null");
     }
 
-    @Test
-    public void testIsNotNull() {
+    @TestAllImplementations
+    public void testIsNotNull(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING)},
                 SimpleTypes.BOOLEAN,
                 new If(new UnaryComparison(Tests.IsNotNull, new GetValue("x", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "Foobar");
         Assertions.assertTrue((Boolean) result, "String is not null");
         result = generator.invokeMethod(method, (Object) null);
         Assertions.assertFalse((Boolean) result, "String is null");
     }
 
-    @Test
-    public void testStringEq() {
+    @TestAllImplementations
+    public void testStringEq(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -684,7 +666,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "foo");
         Assertions.assertTrue((Boolean) result, "foo should equal foo");
         result = generator.invokeMethod(method, "bar", "bar");
@@ -695,8 +676,8 @@ public class TestBoolean {
         Assertions.assertFalse((Boolean) result, "bar should not equal foo");
     }
 
-    @Test
-    public void testStringNe() {
+    @TestAllImplementations
+    public void testStringNe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -705,7 +686,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "foo");
         Assertions.assertFalse((Boolean) result, "foo should equal foo");
         result = generator.invokeMethod(method, "bar", "bar");
@@ -716,8 +696,8 @@ public class TestBoolean {
         Assertions.assertTrue((Boolean) result, "bar should not equal foo");
     }
 
-    @Test
-    public void testStringLt() {
+    @TestAllImplementations
+    public void testStringLt(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -726,7 +706,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "foo");
         Assertions.assertFalse((Boolean) result, "foo should not be < foo");
         result = generator.invokeMethod(method, "bar", "bar");
@@ -737,8 +716,8 @@ public class TestBoolean {
         Assertions.assertTrue((Boolean) result, "bar should be < foo");
     }
 
-    @Test
-    public void testStringLe() {
+    @TestAllImplementations
+    public void testStringLe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -747,7 +726,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "foo");
         Assertions.assertTrue((Boolean) result, "foo should be <= foo");
         result = generator.invokeMethod(method, "bar", "bar");
@@ -758,8 +736,8 @@ public class TestBoolean {
         Assertions.assertTrue((Boolean) result, "bar should be <= foo");
     }
 
-    @Test
-    public void testStringGt() {
+    @TestAllImplementations
+    public void testStringGt(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -768,7 +746,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "foo");
         Assertions.assertFalse((Boolean) result, "foo should not be > foo");
         result = generator.invokeMethod(method, "bar", "bar");
@@ -779,8 +756,8 @@ public class TestBoolean {
         Assertions.assertFalse((Boolean) result, "bar should not be > foo");
     }
 
-    @Test
-    public void testStringGe() {
+    @TestAllImplementations
+    public void testStringGe(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -789,7 +766,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "foo");
         Assertions.assertTrue((Boolean) result, "foo should be >= foo");
         result = generator.invokeMethod(method, "bar", "bar");
@@ -800,8 +776,8 @@ public class TestBoolean {
         Assertions.assertFalse((Boolean) result, "bar should not be >= foo");
     }
 
-    @Test
-    public void testStringEqIgnoreCase() {
+    @TestAllImplementations
+    public void testStringEqIgnoreCase(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -810,7 +786,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "Foo");
         Assertions.assertTrue((Boolean) result, "foo should equal Foo");
         result = generator.invokeMethod(method, "bar", "Bar");
@@ -821,8 +796,8 @@ public class TestBoolean {
         Assertions.assertFalse((Boolean) result, "bar should not equal Foo");
     }
 
-    @Test
-    public void testStringNeIgnoreCase() {
+    @TestAllImplementations
+    public void testStringNeIgnoreCase(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -831,7 +806,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "Foo");
         Assertions.assertFalse((Boolean) result, "foo should equal Foo");
         result = generator.invokeMethod(method, "bar", "Bar");
@@ -842,8 +816,8 @@ public class TestBoolean {
         Assertions.assertTrue((Boolean) result, "bar should not equal Foo");
     }
 
-    @Test
-    public void testStringLtIgnoreCase() {
+    @TestAllImplementations
+    public void testStringLtIgnoreCase(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -852,7 +826,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "Foo");
         Assertions.assertFalse((Boolean) result, "foo should not be < Foo");
         result = generator.invokeMethod(method, "bar", "Bar");
@@ -863,8 +836,8 @@ public class TestBoolean {
         Assertions.assertTrue((Boolean) result, "bar should be < foo");
     }
 
-    @Test
-    public void testStringLeIgnoreCase() {
+    @TestAllImplementations
+    public void testStringLeIgnoreCase(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -873,7 +846,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "Foo");
         Assertions.assertTrue((Boolean) result, "foo should be <= Foo");
         result = generator.invokeMethod(method, "bar", "Bar");
@@ -884,8 +856,8 @@ public class TestBoolean {
         Assertions.assertTrue((Boolean) result, "bar should be <= Foo");
     }
 
-    @Test
-    public void testStringGtIgnoreCase() {
+    @TestAllImplementations
+    public void testStringGtIgnoreCase(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -894,7 +866,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "Foo");
         Assertions.assertFalse((Boolean) result, "foo should not be > Foo");
         result = generator.invokeMethod(method, "bar", "Bar");
@@ -905,8 +876,8 @@ public class TestBoolean {
         Assertions.assertFalse((Boolean) result, "bar should not be > Foo");
     }
 
-    @Test
-    public void testStringGeIgnoreCase() {
+    @TestAllImplementations
+    public void testStringGeIgnoreCase(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
                 new Field("y", SimpleTypes.STRING)},
@@ -915,7 +886,6 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "foo", "Foo");
         Assertions.assertTrue((Boolean) result, "foo should be >= Foo");
         result = generator.invokeMethod(method, "bar", "Bar");
@@ -926,38 +896,36 @@ public class TestBoolean {
         Assertions.assertFalse((Boolean) result, "bar should not be >= Foo");
     }
 
-    @Test
-    public void testIfTrue() {
+    @TestAllImplementations
+    public void testIfTrue(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
                 SimpleTypes.BOOLEAN,
                 new If(new UnaryComparison(Tests.IsTrue, new GetValue("x", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 1);
         Assertions.assertTrue((Boolean) result, "1 should be true");
         result = generator.invokeMethod(method, 0);
         Assertions.assertFalse((Boolean) result, "0 should be false");
     }
 
-    @Test
-    public void testIfFalse() {
+    @TestAllImplementations
+    public void testIfFalse(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
                 SimpleTypes.BOOLEAN,
                 new If(new UnaryComparison(Tests.IsFalse, new GetValue("x", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, 1);
         Assertions.assertFalse((Boolean) result, "1 should be true");
         result = generator.invokeMethod(method, 0);
         Assertions.assertTrue((Boolean) result, "0 should be false");
     }
 
-    @Test
-    public void testIsInstance() {
+    @TestAllImplementations
+    public void testIsInstance(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", new ObjectType())},
                 SimpleTypes.BOOLEAN,
@@ -965,15 +933,14 @@ public class TestBoolean {
                         "java.lang.String"),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "Foo");
         Assertions.assertTrue((Boolean) result, "Foo should be an instance of string");
         result = generator.invokeMethod(method, 1);
         Assertions.assertFalse((Boolean) result, "1 should not be an instance of java.lang.Integer");
     }
 
-    @Test
-    public void testIsNotInstance() {
+    @TestAllImplementations
+    public void testIsNotInstance(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("iftest", Access.PUBLIC, new Field[] {
                 new Field("x", new ObjectType())},
                 SimpleTypes.BOOLEAN,
@@ -981,7 +948,6 @@ public class TestBoolean {
                         "java.lang.String"),
                         new IntConstant(1), new IntConstant(0)));
 
-        ClassGenerator generator = new ClassGenerator();
         Object result = generator.invokeMethod(method, "Foo");
         Assertions.assertFalse((Boolean) result, "Foo should be an instance of string");
         result = generator.invokeMethod(method, 1);

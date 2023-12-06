@@ -4,7 +4,7 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Invoke;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.LambdaType;
-import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
+import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
@@ -19,8 +19,8 @@ public class LambdaCallExpr extends Expr {
     }
 
     @Override
-    public void unify(TypeHolder other, Environment<TypeHolder> env) throws UnificationException {
-        TypeHolder targetType = new TypeHolder();
+    public void unify(TypeHolder<Type> other, Environment<TypeHolder<Type>> env) throws UnificationException {
+        TypeHolder<Type> targetType = new TypeHolder<>();
         target.unify(targetType, env);
         if (targetType.concreteType == null) {
             throw createException("Unable to determine if target expression is a lambda");

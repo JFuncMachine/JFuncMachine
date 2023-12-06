@@ -2,20 +2,19 @@ package org.jfuncmachine.jfuncmachine.examples.minilang.expr;
 
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.If;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.And;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.BinaryComparison;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.BooleanExpr;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.Or;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.UnaryComparison;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Test;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.BoolType;
+import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
 import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
+@ModelItem(includeStartSymbol = true)
 public class BoolComparison extends BoolExpr {
     @ModelItem(isExprStart = true, exprLength=3)
     public enum CompType {
@@ -44,14 +43,15 @@ public class BoolComparison extends BoolExpr {
     }
 
     @Override
-    public void unify(TypeHolder other, Environment<TypeHolder> env) throws UnificationException {
-        TypeHolder leftType = new TypeHolder();
-        TypeHolder rightType = new TypeHolder();
+    public void unify(TypeHolder<Type> other, Environment<TypeHolder<Type>> env) throws UnificationException {
+        TypeHolder<Type> leftType = new TypeHolder<>();
+        TypeHolder<Type> rightType = new TypeHolder<>();
         left.unify(leftType, env);
         right.unify(rightType, env);
         leftType.unify(rightType);
-        TypeHolder boolType = new TypeHolder(new BoolType(filename, lineNumber));
+        TypeHolder<Type> boolType = new TypeHolder<>(new BoolType(filename, lineNumber));
         other.unify(boolType);
+        this.type.unify(boolType);
     }
 
 

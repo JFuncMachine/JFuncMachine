@@ -6,6 +6,7 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.InlineCall;
 import org.jfuncmachine.jfuncmachine.compiler.model.inline.Inlines;
 import org.jfuncmachine.jfuncmachine.examples.minilang.Environment;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.IntType;
+import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
 import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
@@ -42,11 +43,12 @@ public class IntBinaryExpr extends IntExpr {
     }
 
     @Override
-    public void unify(TypeHolder other, Environment<TypeHolder> env) throws UnificationException {
-        TypeHolder intType = new TypeHolder(new IntType(filename, lineNumber));
+    public void unify(TypeHolder<Type> other, Environment<TypeHolder<Type>> env) throws UnificationException {
+        TypeHolder<Type> intType = new TypeHolder<>(new IntType(filename, lineNumber));
         left.unify(intType, env);
         right.unify(intType, env);
         other.unify(intType);
+        type.unify(intType);
     }
 
     public Expression generate() {
