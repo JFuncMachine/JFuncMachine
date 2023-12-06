@@ -1,1 +1,3 @@
 (define foo (a b) (+ a b))
+
+(print (foo 20 22))

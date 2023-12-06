@@ -250,7 +250,10 @@ public class SexprToModel {
                 if (!paramTypes[i].getComponentType().isAssignableFrom(params[i].getClass().getComponentType())) {
                     return false;
                 }
-            } else if (!paramTypes[i].isAssignableFrom(params[i].getClass())) {
+            } else if (!paramTypes[i].equals(params[i].getClass()) &&
+                    !paramTypes[i].isAssignableFrom(params[i].getClass()) &&
+                !(paramTypes[i].getName().equals("int") && (params[i] instanceof Integer)) &&
+                !(paramTypes[i].getName().equals("double") && (params[i] instanceof Double))) {
                 return false;
             }
         }
