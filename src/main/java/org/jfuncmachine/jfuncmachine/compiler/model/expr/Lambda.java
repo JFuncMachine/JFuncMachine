@@ -301,8 +301,7 @@ public class Lambda extends Expression {
         if (interfaceMethodName != null) {
             inDyMethodName = interfaceMethodName;
         }
-        Handle handle = new Handle(Handle.INVOKESTATIC, generator.currentClass.packageName.replace('.', '/')+
-                    "/"+ generator.currentClass.name, lambdaInfo.name,
+        Handle handle = new Handle(Handle.INVOKESTATIC, generator.className(generator.currentClass), lambdaInfo.name,
                     generator.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false);
         // Call invokedynamic to generate a lambda method handle
         generator.instGen.invokedynamic(inDyMethodName,

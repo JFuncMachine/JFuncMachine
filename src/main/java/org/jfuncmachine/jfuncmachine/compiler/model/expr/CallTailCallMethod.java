@@ -280,8 +280,7 @@ public class CallTailCallMethod extends Expression {
 
         String methodName = "invoke";
 
-        Handle handle = new Handle(Handle.INVOKEVIRTUAL, generator.currentClass.packageName.replace('.', '/')+
-                    "/"+ generator.currentClass.name, lambdaInfo.name,
+        Handle handle = new Handle(Handle.INVOKEVIRTUAL, generator.className(generator.currentClass), lambdaInfo.name,
                     generator.lambdaMethodDescriptor(parameterTypes, new Type[0], new ObjectType()), false);
 
         Type[] dyParameterTypes = new Type[parameterTypes.length+1];

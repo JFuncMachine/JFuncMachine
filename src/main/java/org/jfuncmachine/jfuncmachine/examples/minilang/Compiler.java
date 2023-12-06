@@ -4,6 +4,7 @@ import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.jfuncmachine.compiler.model.ClassDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.ClassField;
+import org.jfuncmachine.jfuncmachine.compiler.model.ConstructorDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.conv.ToUnit;
@@ -99,6 +100,8 @@ public class Compiler {
                         }, SimpleTypes.UNIT, mainExpr);
                 methods.add(main);
             }
+
+            methods.add(ConstructorDef.generateWith(new Field[0], mainExpr.filename, 0));
 
             ClassDef classDef = new ClassDef("", className, Access.PUBLIC,
                     methods.toArray(new MethodDef[0]), new ClassField[0], new String[0]);

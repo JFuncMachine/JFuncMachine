@@ -429,6 +429,9 @@ public class ClassGenerator {
                 };
 
         newNode.access = classDef.access;
+        if ((newNode.access & Opcodes.ACC_SUPER) == 0) {
+            newNode.access = newNode.access | Opcodes.ACC_SUPER;
+        }
         newNode.name = className(classDef);
         newNode.signature = classSignature(classDef);
 

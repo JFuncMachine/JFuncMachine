@@ -102,6 +102,10 @@ public class ClassDef extends SourceElement {
     }
 
     public String getFullClassName() {
-        return packageName + "." + name;
+        if (packageName == null || packageName.isEmpty()) {
+            return name;
+        } else {
+            return packageName + "." + name;
+        }
     }
 }

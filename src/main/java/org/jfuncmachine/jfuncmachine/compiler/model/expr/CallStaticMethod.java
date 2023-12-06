@@ -277,8 +277,7 @@ public class CallStaticMethod extends Expression {
 
         String methodName = "invoke";
 
-        Handle handle = new Handle(Handle.INVOKESTATIC, generator.currentClass.packageName.replace('.', '/')+
-                "/"+ generator.currentClass.name, lambdaInfo.name,
+        Handle handle = new Handle(Handle.INVOKESTATIC, generator.className(generator.currentClass), lambdaInfo.name,
                 generator.lambdaMethodDescriptor(parameterTypes, new Type[0], new ObjectType()), false);
 
         // Call invokedynamic to generate a lambda method handle
