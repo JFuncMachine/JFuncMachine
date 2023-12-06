@@ -4,6 +4,7 @@ import org.jfuncmachine.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
 import org.jfuncmachine.jfuncmachine.examples.minilang.expr.Expr;
 import org.jfuncmachine.jfuncmachine.examples.minilang.expr.Field;
+import org.jfuncmachine.jfuncmachine.examples.minilang.types.FuncType;
 import org.jfuncmachine.jfuncmachine.examples.minilang.types.Type;
 import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
@@ -27,8 +28,7 @@ public class Func {
         this.lineNumber = lineNumber;
     }
 
-    public void unify() throws UnificationException {
-        Environment<TypeHolder> env = new Environment<>();
+    public void unify(Environment<TypeHolder> env) throws UnificationException {
         for (int i=0; i < paramTypes.length; i++) {
             env.define(paramTypes[i].name, paramTypes[i].type);
         }
@@ -59,5 +59,13 @@ public class Func {
         return new MethodDef(name, Access.PUBLIC + Access.STATIC,
                 methodFields, ((Type)returnType.concreteType).toJFMType(),
                 body.generate(), filename, lineNumber);
+    }
+
+    public FuncType getType() {
+        TypeHolder[] types = new TypeHolder[paramTypes.length];
+        for (int i=0; i < types.length; i++) {
+            types[i] = paramTypes[i].type;
+        }
+        return new FuncType(types, returnType, filename, lineNumber);
     }
 }

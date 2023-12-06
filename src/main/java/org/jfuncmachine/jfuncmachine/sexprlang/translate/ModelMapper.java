@@ -16,6 +16,7 @@ public class ModelMapper implements SexprMapper {
     protected Map<String, Class> symbolToClassMap;
     protected Map<String, Class> enumSymbolToClassMap;
     protected Map<String, Object> symbolToEnumMap;
+    protected Map<Class, Class> defaultClassForTarget;
     protected Class stringValueClass;
     protected Class intValueClass;
     protected Class doubleValueClass;
@@ -30,6 +31,7 @@ public class ModelMapper implements SexprMapper {
         symbolToClassMap = new HashMap<>();
         enumSymbolToClassMap = new HashMap<>();
         symbolToEnumMap = new HashMap<>();
+        defaultClassForTarget = new HashMap<>();
 
         try (ScanResult scanResult =
                      new ClassGraph()
@@ -53,6 +55,8 @@ public class ModelMapper implements SexprMapper {
                             doubleValueClass = modelItemClass;
                         } else if (modelItem.isSymbolExpr()) {
                             symbolExprClass = modelItemClass;
+                        } else if (!modelItem.defaultForClass().equals(Object.class)) {
+                            defaultClassForTarget.put(modelItem.defaultForClass(), modelItemClass);
                         }
                     }
                 }
@@ -195,7 +199,7 @@ public class ModelMapper implements SexprMapper {
     }
 
     @Override
-    public Object mapList(SexprList l) throws MappingException {
+    public Object mapList(SexprList l, Class targetClass) throws MappingException {
         ArrayList<SexprItem> list = l.value;
         if (list.size() < 1) {
             throw new MappingException("Can't map empty list", l.filename, l.lineNumber);
@@ -206,6 +210,15 @@ public class ModelMapper implements SexprMapper {
             return null;
         }
 
-        return symbolToClassMap.get(symbol.value);
+        Object result = symbolToClassMap.get(symbol.value);
+        if (result != null) {
+            return result;
+        }
+
+        return defaultClassForTarget.get(targetClass);
+    }
+
+    public Class getDefaultForTargetClass(Class clazz) {
+        return defaultClassForTarget.get(clazz);
     }
 }

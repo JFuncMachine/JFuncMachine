@@ -9,7 +9,7 @@ import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
-@ModelItem(isExprStart = true)
+@ModelItem(defaultForClass = Expr.class, includeStartSymbol = true, varargStart = 1)
 public class FunctionCallExpr extends Expr {
     public final String name;
     public final Expr[] arguments;

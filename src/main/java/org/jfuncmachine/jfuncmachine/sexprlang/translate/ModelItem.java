@@ -13,5 +13,7 @@ public @interface ModelItem {
     boolean isStringConstant() default false;
     boolean isSymbolExpr() default false;
     boolean isExprStart() default false;
+    Class defaultForClass() default Object.class;
     boolean includeStartSymbol() default false;
+    int varargStart() default -1;
 }

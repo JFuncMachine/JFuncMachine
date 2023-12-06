@@ -8,7 +8,6 @@ import org.jfuncmachine.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.jfuncmachine.util.unification.UnificationException;
 
-@ModelItem
 public class LambdaCallExpr extends Expr {
     public final Expr target;
     public final Expr[] arguments;

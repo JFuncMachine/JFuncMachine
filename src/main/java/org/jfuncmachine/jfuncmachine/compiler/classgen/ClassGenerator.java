@@ -727,7 +727,11 @@ public class ClassGenerator {
      * @return A slash-separated class name
      */
     public String className(ClassDef classDef) {
-        return className(classDef.packageName, classDef.name);
+        if ((classDef.packageName == null) || classDef.packageName.isEmpty()) {
+            return className(classDef.name);
+        } else {
+            return className(classDef.packageName, classDef.name);
+        }
     }
 
     /**

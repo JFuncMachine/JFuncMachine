@@ -92,7 +92,7 @@ public class SexprToModel {
                                 targetClass.getName(), s.value));
             }
             case SexprList l ->  {
-                Object result = mapper.mapList(l);
+                Object result = mapper.mapList(l, targetClass);
                 if (result == null) {
                     if (targetClass.isArray() &&
                             targetClass.getComponentType().getAnnotation(ModelItem.class) != null) {
@@ -135,6 +135,26 @@ public class SexprToModel {
         throws MappingException {
         ArrayList<SexprItem> items = list.value;
         Object[] params = new Object[items.size()];
+
+        int varargStart = -1;
+        ModelItem modelItem = (ModelItem) clazz.getAnnotation(ModelItem.class);
+        if (modelItem != null) {
+            varargStart = modelItem.varargStart();
+        }
+
+        if (varargStart >= 0) {
+            params = new Object[varargStart+1];
+            ArrayList<SexprItem> newItems = new ArrayList<SexprItem>();
+            String filename = items.get(varargStart).filename;
+            int lineNumber = items.get(varargStart).lineNumber;
+            for (int i=varargStart; i < items.size(); i++) {
+                newItems.add(items.get(i));
+            }
+            for (int i=items.size()-1; i >= varargStart; i--) {
+                items.remove(i);
+            }
+            items.add(new SexprList(newItems, filename, lineNumber));
+        }
 
         try {
             for (Constructor cons: clazz.getConstructors()) {

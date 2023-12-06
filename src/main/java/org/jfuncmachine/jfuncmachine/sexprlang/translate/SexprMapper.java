@@ -7,5 +7,5 @@ public interface SexprMapper {
     Object mapDouble(SexprDouble d) throws MappingException;
     Object mapInt(SexprInt i) throws MappingException;
     Object mapString(SexprString s) throws MappingException;
-    Object mapList(SexprList l) throws MappingException;
+    Object mapList(SexprList l, Class targetClass) throws MappingException;
 }
