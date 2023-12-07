@@ -149,10 +149,14 @@ public class Box extends Expression {
                 default -> {}
             }
         }
-        
+
+        if (boxName == null) {
+            expr.generate(generator, env, inTailPosition);
+            return;
+        }
+
         Type boxArgumentType = new ObjectType(boxName).getUnboxedType();
 
-        if (boxName == null) return;
 
         CallJavaStaticMethod method = new CallJavaStaticMethod(boxName, "valueOf",
                 new Type[] { boxArgumentType }, new Expression[] { expr },

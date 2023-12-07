@@ -145,38 +145,38 @@ public class TestBoxing {
     @TestAllImplementations
     public void testAutoboxBoolean(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", SimpleTypes.INT)},
+                new Field("x", SimpleTypes.BOOLEAN)},
                 new ObjectType(SimpleTypes.BOOLEAN.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.INT));
-        Object result = generator.invokeMethod("TestBoxing",method, 0);
-        Assertions.assertFalse((Boolean) result, "0 should be false");
-        result = generator.invokeMethod("TestBoxing",method, 1);
-        Assertions.assertTrue((Boolean) result, "1 should be true");
+                new GetValue("x", SimpleTypes.BOOLEAN));
+        Object result = generator.invokeMethod("TestBoxing",method, false);
+        Assertions.assertFalse((Boolean) result, "false should be false");
+        result = generator.invokeMethod("TestBoxing",method, true);
+        Assertions.assertTrue((Boolean) result, "true should be true");
     }
 
     @TestAllImplementations
     public void testAutoboxByte(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", SimpleTypes.INT)},
+                new Field("x", SimpleTypes.BYTE)},
                 new ObjectType(SimpleTypes.BYTE.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.INT));
+                new GetValue("x", SimpleTypes.BYTE));
 
-        Object result = generator.invokeMethod("TestBoxing",method, 127);
+        Object result = generator.invokeMethod("TestBoxing",method, (byte) 127);
         Assertions.assertEquals((Byte) result, Byte.valueOf((byte)127), "Box value should be 127");
-        result = generator.invokeMethod("TestBoxing",method, 0);
+        result = generator.invokeMethod("TestBoxing",method, (byte) 0);
         Assertions.assertEquals((Byte) result, Byte.valueOf((byte)0), "Box value should be 0");
     }
 
     @TestAllImplementations
     public void testAutoboxChar(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", SimpleTypes.INT)},
+                new Field("x", SimpleTypes.CHAR)},
                 new ObjectType(SimpleTypes.CHAR.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.INT));
+                new GetValue("x", SimpleTypes.CHAR));
 
-        Object result = generator.invokeMethod("TestBoxing",method, 127);
+        Object result = generator.invokeMethod("TestBoxing",method, (char) 127);
         Assertions.assertEquals((Character) result, Character.valueOf((char)127), "Box value should be 127");
-        result = generator.invokeMethod("TestBoxing",method, 0);
+        result = generator.invokeMethod("TestBoxing",method, (char) 0);
         Assertions.assertEquals((Character) result, Character.valueOf((char)0), "Box value should be 0");
     }
 
@@ -235,13 +235,13 @@ public class TestBoxing {
     @TestAllImplementations
     public void testAutoboxShort(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
-                new Field("x", SimpleTypes.INT)},
+                new Field("x", SimpleTypes.SHORT)},
                 new ObjectType(SimpleTypes.SHORT.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.INT));
+                new GetValue("x", SimpleTypes.SHORT));
 
-        Object result = generator.invokeMethod("TestBoxing",method, 127);
+        Object result = generator.invokeMethod("TestBoxing",method, (short) 127);
         Assertions.assertEquals((Short) result, Short.valueOf((short)127), "Box value should be 127");
-        result = generator.invokeMethod("TestBoxing",method, 0);
+        result = generator.invokeMethod("TestBoxing",method, (short) 0);
         Assertions.assertEquals((Short) result, Short.valueOf((short)0), "Box value should be 0");
     }
 

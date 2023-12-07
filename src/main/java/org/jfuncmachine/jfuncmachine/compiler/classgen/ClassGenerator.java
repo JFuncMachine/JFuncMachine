@@ -248,6 +248,30 @@ public class ClassGenerator {
 
     }
 
+    /**
+     * Generates all the classes resulting from the given ClassDef object and loads them
+     * into the current Java VM.
+     *
+     * Keep in mind that if a ClassDef file contains a lambda expression, it can result in more
+     * than one class definition being generated, since lambdas require an interface definition.
+     *
+     * @param classDef The class definitions of the classes to be generated.
+     * @param outputDirectory The name of the directory where the &period;class files should be written.
+     */
+    public synchronized void generateAndLoad(ClassDef classDef, String outputDirectory) throws IOException {
+        GeneratedClass[] classes = generateClassBytes(classDef);
+        writeClasses(classes, outputDirectory);
+
+        for (GeneratedClass genClass: classes) {
+            genClass.loadedClass = classLoader.defineClass(genClass.className, genClass.classBytes);
+            loadedClasses.put(genClass.className, genClass.loadedClass);
+        }
+        for (GeneratedClass genClass: classes) {
+            classLoader.resolve(genClass.loadedClass);
+        }
+
+    }
+
     public Object invokeMethod(MethodDef methodDef, Object... args) {
         Random random = new Random();
         String className = "TempClass_"+new BigInteger(128, new Random()).toString(16);
@@ -269,9 +293,13 @@ public class ClassGenerator {
         try {
             generateAndLoad(classDef);
 
+            String targetMethodName = methodDef.name;
+            if (options.fullTailCalls) {
+                targetMethodName = methodDef.name + "$$TC$$";
+            }
             Class classObj = getLoadedClass(packageName + "." + className);
             for (Method method : classObj.getMethods()) {
-                if (method.getName().equals(methodDef.name)) {
+                if (method.getName().equals(targetMethodName)) {
                     if ((methodDef.access & Access.STATIC) != 0) {
                         Object result = method.invoke(null, args);
                         while (result instanceof TailCall) {
@@ -314,11 +342,15 @@ public class ClassGenerator {
 
             Class classObj = getLoadedClass(packageName + "." + className);
             if (classObj == null) {
-                generateAndLoad(classDef);
+                generateAndLoad(classDef, "test");
                 classObj = getLoadedClass(packageName + "." + className);
             }
+            String targetMethodName = methodDef.name;
+            if (options.fullTailCalls) {
+                targetMethodName = methodDef.name + "$$TC$$";
+            }
             for (Method method : classObj.getMethods()) {
-                if (method.getName().equals(methodDef.name)) {
+                if (method.getName().equals(targetMethodName)) {
                     if ((methodDef.access & Access.STATIC) != 0) {
                         Object result = method.invoke(null, args);
                         while (result instanceof TailCall) {

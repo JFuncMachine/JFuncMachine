@@ -5,6 +5,7 @@ import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
@@ -53,6 +54,7 @@ public class ToByte extends Expression {
         switch (exprType) {
             case BooleanType b -> generator.instGen.i2b();
             case ByteType b -> { }
+            case CharType c -> generator.instGen.i2b();
             case DoubleType d -> generator.instGen.d2i().i2b();
             case FloatType f -> generator.instGen.f2i().i2b();
             case IntType i -> generator.instGen.i2b();

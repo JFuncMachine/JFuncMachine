@@ -11,16 +11,13 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.Not;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.Or;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.UnaryComparison;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.IntConstant;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.BooleanConstant;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -39,7 +36,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", SimpleTypes.INT)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -59,7 +56,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.NE, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", SimpleTypes.INT)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should equal 0");
@@ -80,7 +77,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LT, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", SimpleTypes.INT)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be < 0");
@@ -101,7 +98,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LE, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", SimpleTypes.INT)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be <= 0");
@@ -122,7 +119,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GT, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", SimpleTypes.INT)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be > 0");
@@ -143,7 +140,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GE, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", SimpleTypes.INT)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be >= 0");
@@ -164,7 +161,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -185,7 +182,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.NE, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should equal 0");
@@ -206,7 +203,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LT, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be < 0");
@@ -227,7 +224,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LE, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be <= 0");
@@ -248,7 +245,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GT, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be > 0");
@@ -269,7 +266,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GE, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be >= 0");
@@ -290,7 +287,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ, new GetValue("x", SimpleTypes.DOUBLE),
                         new GetValue("y", SimpleTypes.DOUBLE)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -311,7 +308,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.NE, new GetValue("x", SimpleTypes.DOUBLE),
                         new GetValue("y", SimpleTypes.DOUBLE)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertFalse((Boolean) result, "0 should equal 0");
@@ -332,7 +329,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LT, new GetValue("x", SimpleTypes.DOUBLE),
                         new GetValue("y", SimpleTypes.DOUBLE)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertFalse((Boolean) result, "0 should not be < 0");
@@ -353,7 +350,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LE, new GetValue("x", SimpleTypes.DOUBLE),
                         new GetValue("y", SimpleTypes.DOUBLE)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should be <= 0");
@@ -374,7 +371,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GT, new GetValue("x", SimpleTypes.DOUBLE),
                         new GetValue("y", SimpleTypes.DOUBLE)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertFalse((Boolean) result, "0 should not be > 0");
@@ -395,7 +392,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GE, new GetValue("x", SimpleTypes.DOUBLE),
                         new GetValue("y", SimpleTypes.DOUBLE)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should be >= 0");
@@ -416,7 +413,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ, new GetValue("x", new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName())),
                         new GetValue("y", SimpleTypes.DOUBLE)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -437,7 +434,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ, new GetValue("x", SimpleTypes.FLOAT),
                         new GetValue("y", SimpleTypes.FLOAT)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, (float) 0.0, (float) 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -458,7 +455,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ, new GetValue("x", new ObjectType(SimpleTypes.FLOAT.getBoxTypeName())),
                         new GetValue("y", SimpleTypes.FLOAT)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, (float) 0.0, (float) 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -479,7 +476,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ, new GetValue("x", SimpleTypes.LONG),
                         new GetValue("y", SimpleTypes.LONG)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method,  0l, 0l);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -500,7 +497,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ, new GetValue("x", new ObjectType(SimpleTypes.LONG.getBoxTypeName())),
                         new GetValue("y", SimpleTypes.LONG)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0l, 0l);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -524,7 +521,7 @@ public class TestBoolean {
                             new GetValue("y", SimpleTypes.INT)),
                         new BinaryComparison(Tests.EQ, new GetValue("y", SimpleTypes.INT),
                         new GetValue("x", SimpleTypes.INT))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -548,7 +545,7 @@ public class TestBoolean {
                                 new GetValue("y", SimpleTypes.INT)),
                         new BinaryComparison(Tests.NE, new GetValue("y", SimpleTypes.INT),
                                 new GetValue("x", SimpleTypes.INT))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -568,7 +565,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new Not(new BinaryComparison(Tests.NE, new GetValue("x", SimpleTypes.INT),
                         new GetValue("y", SimpleTypes.INT))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -592,7 +589,7 @@ public class TestBoolean {
                                 new GetValue("y", SimpleTypes.INT)),
                         new Not(new BinaryComparison(Tests.EQ, new GetValue("y", SimpleTypes.INT),
                                 new GetValue("x", SimpleTypes.INT)))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -615,7 +612,7 @@ public class TestBoolean {
                                 new GetValue("y", SimpleTypes.INT)),
                         new Not(new BinaryComparison(Tests.NE, new GetValue("y", SimpleTypes.INT),
                                 new GetValue("x", SimpleTypes.INT)))),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
@@ -634,7 +631,7 @@ public class TestBoolean {
                 new Field("x", SimpleTypes.STRING)},
                 SimpleTypes.BOOLEAN,
                 new If(new UnaryComparison(Tests.IsNull, new GetValue("x", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "Foobar");
         Assertions.assertFalse((Boolean) result, "String is not null");
@@ -648,7 +645,7 @@ public class TestBoolean {
                 new Field("x", SimpleTypes.STRING)},
                 SimpleTypes.BOOLEAN,
                 new If(new UnaryComparison(Tests.IsNotNull, new GetValue("x", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "Foobar");
         Assertions.assertTrue((Boolean) result, "String is not null");
@@ -664,7 +661,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertTrue((Boolean) result, "foo should equal foo");
@@ -684,7 +681,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.NE, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertFalse((Boolean) result, "foo should equal foo");
@@ -704,7 +701,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LT, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertFalse((Boolean) result, "foo should not be < foo");
@@ -724,7 +721,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LE, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertTrue((Boolean) result, "foo should be <= foo");
@@ -744,7 +741,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GT, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertFalse((Boolean) result, "foo should not be > foo");
@@ -764,7 +761,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GE, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertTrue((Boolean) result, "foo should be >= foo");
@@ -784,7 +781,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.EQ_IgnoreCase, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertTrue((Boolean) result, "foo should equal Foo");
@@ -804,7 +801,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.NE_IgnoreCase, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertFalse((Boolean) result, "foo should equal Foo");
@@ -824,7 +821,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LT_IgnoreCase, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertFalse((Boolean) result, "foo should not be < Foo");
@@ -844,7 +841,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.LE_IgnoreCase, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertTrue((Boolean) result, "foo should be <= Foo");
@@ -864,7 +861,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GT_IgnoreCase, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertFalse((Boolean) result, "foo should not be > Foo");
@@ -884,7 +881,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new BinaryComparison(Tests.GE_IgnoreCase, new GetValue("x", SimpleTypes.STRING),
                         new GetValue("y", SimpleTypes.STRING)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertTrue((Boolean) result, "foo should be >= Foo");
@@ -902,7 +899,7 @@ public class TestBoolean {
                 new Field("x", SimpleTypes.INT)},
                 SimpleTypes.BOOLEAN,
                 new If(new UnaryComparison(Tests.IsTrue, new GetValue("x", SimpleTypes.INT)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 1);
         Assertions.assertTrue((Boolean) result, "1 should be true");
@@ -916,7 +913,7 @@ public class TestBoolean {
                 new Field("x", SimpleTypes.INT)},
                 SimpleTypes.BOOLEAN,
                 new If(new UnaryComparison(Tests.IsFalse, new GetValue("x", SimpleTypes.INT)),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, 1);
         Assertions.assertFalse((Boolean) result, "1 should be true");
@@ -931,7 +928,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new InstanceofComparison(Tests.IsTrue, new GetValue("x", new ObjectType()),
                         "java.lang.String"),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "Foo");
         Assertions.assertTrue((Boolean) result, "Foo should be an instance of string");
@@ -946,7 +943,7 @@ public class TestBoolean {
                 SimpleTypes.BOOLEAN,
                 new If(new InstanceofComparison(Tests.IsFalse, new GetValue("x", new ObjectType()),
                         "java.lang.String"),
-                        new IntConstant(1), new IntConstant(0)));
+                        new BooleanConstant(true), new BooleanConstant(false)));
 
         Object result = generator.invokeMethod("TestBoolean",method, "Foo");
         Assertions.assertFalse((Boolean) result, "Foo should be an instance of string");
