@@ -267,7 +267,6 @@ public class ClassGenerator {
         }
 
         try {
-            generate(classDef, "test");
             generateAndLoad(classDef);
 
             Class classObj = getLoadedClass(packageName + "." + className);
@@ -312,10 +311,12 @@ public class ClassGenerator {
         }
 
         try {
-            generate(classDef, "test");
-            generateAndLoad(classDef);
 
             Class classObj = getLoadedClass(packageName + "." + className);
+            if (classObj == null) {
+                generateAndLoad(classDef);
+                classObj = getLoadedClass(packageName + "." + className);
+            }
             for (Method method : classObj.getMethods()) {
                 if (method.getName().equals(methodDef.name)) {
                     if ((methodDef.access & Access.STATIC) != 0) {

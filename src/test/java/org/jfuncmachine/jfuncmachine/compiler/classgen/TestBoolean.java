@@ -41,13 +41,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
     }
 
@@ -61,13 +61,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertFalse((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertTrue((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertTrue((Boolean) result, "5 should not equal 0");
 
     }
@@ -82,13 +82,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be < 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertFalse((Boolean) result, "5 should not be < 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertTrue((Boolean) result, "0 should be < 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertFalse((Boolean) result, "5 should not be < 0");
 
     }
@@ -103,13 +103,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be <= 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should be <= 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertTrue((Boolean) result, "0 should be <= 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertFalse((Boolean) result, "5 should not be <= 0");
 
     }
@@ -124,13 +124,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be > 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertFalse((Boolean) result, "5 should not be > 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertFalse((Boolean) result, "0 should not be > 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertTrue((Boolean) result, "5 should be > 0");
 
     }
@@ -145,13 +145,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be >= 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should be >= 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertFalse((Boolean) result, "0 should not be >= 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertTrue((Boolean) result, "5 should be >= 0");
 
     }
@@ -166,13 +166,13 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
 
     }
@@ -187,13 +187,13 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertFalse((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertTrue((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertTrue((Boolean) result, "5 should not equal 0");
 
     }
@@ -208,13 +208,13 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be < 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertFalse((Boolean) result, "5 should not be < 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertTrue((Boolean) result, "0 should be < 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertFalse((Boolean) result, "5 should not be < 0");
 
     }
@@ -229,13 +229,13 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be <= 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should be <= 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertTrue((Boolean) result, "0 should be <= 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertFalse((Boolean) result, "5 should not be <= 0");
 
     }
@@ -250,13 +250,13 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertFalse((Boolean) result, "0 should not be > 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertFalse((Boolean) result, "5 should not be > 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertFalse((Boolean) result, "0 should not be > 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertTrue((Boolean) result, "5 should be > 0");
 
     }
@@ -271,13 +271,13 @@ public class TestBoolean {
                         new GetValue("y", new ObjectType(SimpleTypes.INT.getBoxTypeName()))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should be >= 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should be >= 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertFalse((Boolean) result, "0 should not be >= 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertTrue((Boolean) result, "5 should be >= 0");
 
     }
@@ -292,13 +292,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0.0, 0.0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 5.0);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 0.0, 5.0);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5.0, 0.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 0.0);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
 
     }
@@ -313,13 +313,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0.0, 0.0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertFalse((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 5.0);
         Assertions.assertFalse((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 0.0, 5.0);
         Assertions.assertTrue((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5.0, 0.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 0.0);
         Assertions.assertTrue((Boolean) result, "5 should not equal 0");
 
     }
@@ -334,13 +334,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0.0, 0.0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertFalse((Boolean) result, "0 should not be < 0");
-        result = generator.invokeMethod(method, 5.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 5.0);
         Assertions.assertFalse((Boolean) result, "5 should not be < 5");
-        result = generator.invokeMethod(method, 0.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 0.0, 5.0);
         Assertions.assertTrue((Boolean) result, "0 should be < 5");
-        result = generator.invokeMethod(method, 5.0, 0.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 0.0);
         Assertions.assertFalse((Boolean) result, "5 should not be < 0");
 
     }
@@ -355,13 +355,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0.0, 0.0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should be <= 0");
-        result = generator.invokeMethod(method, 5.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 5.0);
         Assertions.assertTrue((Boolean) result, "5 should be <= 5");
-        result = generator.invokeMethod(method, 0.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 0.0, 5.0);
         Assertions.assertTrue((Boolean) result, "0 should be <= 5");
-        result = generator.invokeMethod(method, 5.0, 0.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 0.0);
         Assertions.assertFalse((Boolean) result, "5 should not be <= 0");
 
     }
@@ -376,13 +376,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0.0, 0.0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertFalse((Boolean) result, "0 should not be > 0");
-        result = generator.invokeMethod(method, 5.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 5.0);
         Assertions.assertFalse((Boolean) result, "5 should not be > 5");
-        result = generator.invokeMethod(method, 0.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 0.0, 5.0);
         Assertions.assertFalse((Boolean) result, "0 should not be > 5");
-        result = generator.invokeMethod(method, 5.0, 0.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 0.0);
         Assertions.assertTrue((Boolean) result, "5 should be > 0");
 
     }
@@ -397,13 +397,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0.0, 0.0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should be >= 0");
-        result = generator.invokeMethod(method, 5.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 5.0);
         Assertions.assertTrue((Boolean) result, "5 should be >= 5");
-        result = generator.invokeMethod(method, 0.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 0.0, 5.0);
         Assertions.assertFalse((Boolean) result, "0 should not be >= 5");
-        result = generator.invokeMethod(method, 5.0, 0.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 0.0);
         Assertions.assertTrue((Boolean) result, "5 should be >= 0");
 
     }
@@ -418,13 +418,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.DOUBLE)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0.0, 0.0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0.0, 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 5.0);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0.0, 5.0);
+        result = generator.invokeMethod("TestBoolean",method, 0.0, 5.0);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5.0, 0.0);
+        result = generator.invokeMethod("TestBoolean",method, 5.0, 0.0);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
 
     }
@@ -439,13 +439,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.FLOAT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, (float) 0.0, (float) 0.0);
+        Object result = generator.invokeMethod("TestBoolean",method, (float) 0.0, (float) 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, (float) 5.0, (float) 5.0);
+        result = generator.invokeMethod("TestBoolean",method, (float) 5.0, (float) 5.0);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, (float) 0.0, (float) 5.0);
+        result = generator.invokeMethod("TestBoolean",method, (float) 0.0, (float) 5.0);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, (float) 5.0, (float) 0.0);
+        result = generator.invokeMethod("TestBoolean",method, (float) 5.0, (float) 0.0);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
 
     }
@@ -460,13 +460,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.FLOAT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, (float) 0.0, (float) 0.0);
+        Object result = generator.invokeMethod("TestBoolean",method, (float) 0.0, (float) 0.0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, (float) 5.0, (float) 5.0);
+        result = generator.invokeMethod("TestBoolean",method, (float) 5.0, (float) 5.0);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, (float) 0.0, (float) 5.0);
+        result = generator.invokeMethod("TestBoolean",method, (float) 0.0, (float) 5.0);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, (float) 5.0, (float) 0.0);
+        result = generator.invokeMethod("TestBoolean",method, (float) 5.0, (float) 0.0);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
 
     }
@@ -481,13 +481,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.LONG)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method,  0l, 0l);
+        Object result = generator.invokeMethod("TestBoolean",method,  0l, 0l);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method,  5l, 5l);
+        result = generator.invokeMethod("TestBoolean",method,  5l, 5l);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0l, 5l);
+        result = generator.invokeMethod("TestBoolean",method, 0l, 5l);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5l, 0l);
+        result = generator.invokeMethod("TestBoolean",method, 5l, 0l);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
 
     }
@@ -502,13 +502,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.LONG)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0l, 0l);
+        Object result = generator.invokeMethod("TestBoolean",method, 0l, 0l);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5l, 5l);
+        result = generator.invokeMethod("TestBoolean",method, 5l, 5l);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0l, 5l);
+        result = generator.invokeMethod("TestBoolean",method, 0l, 5l);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5l, 0l);
+        result = generator.invokeMethod("TestBoolean",method, 5l, 0l);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
 
     }
@@ -526,13 +526,13 @@ public class TestBoolean {
                         new GetValue("x", SimpleTypes.INT))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
 
     }
@@ -550,13 +550,13 @@ public class TestBoolean {
                                 new GetValue("x", SimpleTypes.INT))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertTrue((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertTrue((Boolean) result, "5 should not equal 0");
     }
 
@@ -570,13 +570,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.INT))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
 
     }
@@ -594,13 +594,13 @@ public class TestBoolean {
                                 new GetValue("x", SimpleTypes.INT)))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertTrue((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertTrue((Boolean) result, "5 should not equal 0");
     }
 
@@ -617,13 +617,13 @@ public class TestBoolean {
                                 new GetValue("x", SimpleTypes.INT)))),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 0, 0);
+        Object result = generator.invokeMethod("TestBoolean",method, 0, 0);
         Assertions.assertTrue((Boolean) result, "0 should equal 0");
-        result = generator.invokeMethod(method, 5, 5);
+        result = generator.invokeMethod("TestBoolean",method, 5, 5);
         Assertions.assertTrue((Boolean) result, "5 should equal 5");
-        result = generator.invokeMethod(method, 0, 5);
+        result = generator.invokeMethod("TestBoolean",method, 0, 5);
         Assertions.assertFalse((Boolean) result, "0 should not equal 5");
-        result = generator.invokeMethod(method, 5, 0);
+        result = generator.invokeMethod("TestBoolean",method, 5, 0);
         Assertions.assertFalse((Boolean) result, "5 should not equal 0");
 
     }
@@ -636,9 +636,9 @@ public class TestBoolean {
                 new If(new UnaryComparison(Tests.IsNull, new GetValue("x", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "Foobar");
+        Object result = generator.invokeMethod("TestBoolean",method, "Foobar");
         Assertions.assertFalse((Boolean) result, "String is not null");
-        result = generator.invokeMethod(method, (Object) null);
+        result = generator.invokeMethod("TestBoolean",method, (Object) null);
         Assertions.assertTrue((Boolean) result, "String is null");
     }
 
@@ -650,9 +650,9 @@ public class TestBoolean {
                 new If(new UnaryComparison(Tests.IsNotNull, new GetValue("x", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "Foobar");
+        Object result = generator.invokeMethod("TestBoolean",method, "Foobar");
         Assertions.assertTrue((Boolean) result, "String is not null");
-        result = generator.invokeMethod(method, (Object) null);
+        result = generator.invokeMethod("TestBoolean",method, (Object) null);
         Assertions.assertFalse((Boolean) result, "String is null");
     }
 
@@ -666,13 +666,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertTrue((Boolean) result, "foo should equal foo");
-        result = generator.invokeMethod(method, "bar", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "bar");
         Assertions.assertTrue((Boolean) result, "bar should equal bar");
-        result = generator.invokeMethod(method, "foo", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "foo", "bar");
         Assertions.assertFalse((Boolean) result, "foo should not equal bar");
-        result = generator.invokeMethod(method, "bar", "foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "foo");
         Assertions.assertFalse((Boolean) result, "bar should not equal foo");
     }
 
@@ -686,13 +686,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertFalse((Boolean) result, "foo should equal foo");
-        result = generator.invokeMethod(method, "bar", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "bar");
         Assertions.assertFalse((Boolean) result, "bar should equal bar");
-        result = generator.invokeMethod(method, "foo", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "foo", "bar");
         Assertions.assertTrue((Boolean) result, "foo should not equal bar");
-        result = generator.invokeMethod(method, "bar", "foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "foo");
         Assertions.assertTrue((Boolean) result, "bar should not equal foo");
     }
 
@@ -706,13 +706,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertFalse((Boolean) result, "foo should not be < foo");
-        result = generator.invokeMethod(method, "bar", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "bar");
         Assertions.assertFalse((Boolean) result, "bar should not be < bar");
-        result = generator.invokeMethod(method, "foo", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "foo", "bar");
         Assertions.assertFalse((Boolean) result, "foo should not be < bar");
-        result = generator.invokeMethod(method, "bar", "foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "foo");
         Assertions.assertTrue((Boolean) result, "bar should be < foo");
     }
 
@@ -726,13 +726,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertTrue((Boolean) result, "foo should be <= foo");
-        result = generator.invokeMethod(method, "bar", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "bar");
         Assertions.assertTrue((Boolean) result, "bar should be <= bar");
-        result = generator.invokeMethod(method, "foo", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "foo", "bar");
         Assertions.assertFalse((Boolean) result, "foo should not be <= bar");
-        result = generator.invokeMethod(method, "bar", "foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "foo");
         Assertions.assertTrue((Boolean) result, "bar should be <= foo");
     }
 
@@ -746,13 +746,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertFalse((Boolean) result, "foo should not be > foo");
-        result = generator.invokeMethod(method, "bar", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "bar");
         Assertions.assertFalse((Boolean) result, "bar should not be > bar");
-        result = generator.invokeMethod(method, "foo", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "foo", "bar");
         Assertions.assertTrue((Boolean) result, "foo should be > bar");
-        result = generator.invokeMethod(method, "bar", "foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "foo");
         Assertions.assertFalse((Boolean) result, "bar should not be > foo");
     }
 
@@ -766,13 +766,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "foo");
         Assertions.assertTrue((Boolean) result, "foo should be >= foo");
-        result = generator.invokeMethod(method, "bar", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "bar");
         Assertions.assertTrue((Boolean) result, "bar should be >= bar");
-        result = generator.invokeMethod(method, "foo", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "foo", "bar");
         Assertions.assertTrue((Boolean) result, "foo should be >= bar");
-        result = generator.invokeMethod(method, "bar", "foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "foo");
         Assertions.assertFalse((Boolean) result, "bar should not be >= foo");
     }
 
@@ -786,13 +786,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "Foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertTrue((Boolean) result, "foo should equal Foo");
-        result = generator.invokeMethod(method, "bar", "Bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Bar");
         Assertions.assertTrue((Boolean) result, "bar should equal Bar");
-        result = generator.invokeMethod(method, "foo", "Bar");
+        result = generator.invokeMethod("TestBoolean",method, "foo", "Bar");
         Assertions.assertFalse((Boolean) result, "foo should not equal Bar");
-        result = generator.invokeMethod(method, "bar", "Foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Foo");
         Assertions.assertFalse((Boolean) result, "bar should not equal Foo");
     }
 
@@ -806,13 +806,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "Foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertFalse((Boolean) result, "foo should equal Foo");
-        result = generator.invokeMethod(method, "bar", "Bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Bar");
         Assertions.assertFalse((Boolean) result, "bar should equal Bar");
-        result = generator.invokeMethod(method, "foo", "Bar");
+        result = generator.invokeMethod("TestBoolean",method, "foo", "Bar");
         Assertions.assertTrue((Boolean) result, "foo should not equal Bar");
-        result = generator.invokeMethod(method, "bar", "Foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Foo");
         Assertions.assertTrue((Boolean) result, "bar should not equal Foo");
     }
 
@@ -826,13 +826,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "Foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertFalse((Boolean) result, "foo should not be < Foo");
-        result = generator.invokeMethod(method, "bar", "Bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Bar");
         Assertions.assertFalse((Boolean) result, "bar should not be < Bar");
-        result = generator.invokeMethod(method, "Foo", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "Foo", "bar");
         Assertions.assertFalse((Boolean) result, "Foo should not be < bar");
-        result = generator.invokeMethod(method, "bar", "Foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Foo");
         Assertions.assertTrue((Boolean) result, "bar should be < foo");
     }
 
@@ -846,13 +846,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "Foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertTrue((Boolean) result, "foo should be <= Foo");
-        result = generator.invokeMethod(method, "bar", "Bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Bar");
         Assertions.assertTrue((Boolean) result, "bar should be <= Bar");
-        result = generator.invokeMethod(method, "Foo", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "Foo", "bar");
         Assertions.assertFalse((Boolean) result, "Foo should not be <= bar");
-        result = generator.invokeMethod(method, "bar", "Foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Foo");
         Assertions.assertTrue((Boolean) result, "bar should be <= Foo");
     }
 
@@ -866,13 +866,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "Foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertFalse((Boolean) result, "foo should not be > Foo");
-        result = generator.invokeMethod(method, "bar", "Bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Bar");
         Assertions.assertFalse((Boolean) result, "bar should not be > Bar");
-        result = generator.invokeMethod(method, "Foo", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "Foo", "bar");
         Assertions.assertTrue((Boolean) result, "Foo should be > bar");
-        result = generator.invokeMethod(method, "bar", "Foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Foo");
         Assertions.assertFalse((Boolean) result, "bar should not be > Foo");
     }
 
@@ -886,13 +886,13 @@ public class TestBoolean {
                         new GetValue("y", SimpleTypes.STRING)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "foo", "Foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "foo", "Foo");
         Assertions.assertTrue((Boolean) result, "foo should be >= Foo");
-        result = generator.invokeMethod(method, "bar", "Bar");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Bar");
         Assertions.assertTrue((Boolean) result, "bar should be >= Bar");
-        result = generator.invokeMethod(method, "Foo", "bar");
+        result = generator.invokeMethod("TestBoolean",method, "Foo", "bar");
         Assertions.assertTrue((Boolean) result, "Foo should be >= bar");
-        result = generator.invokeMethod(method, "bar", "Foo");
+        result = generator.invokeMethod("TestBoolean",method, "bar", "Foo");
         Assertions.assertFalse((Boolean) result, "bar should not be >= Foo");
     }
 
@@ -904,9 +904,9 @@ public class TestBoolean {
                 new If(new UnaryComparison(Tests.IsTrue, new GetValue("x", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 1);
+        Object result = generator.invokeMethod("TestBoolean",method, 1);
         Assertions.assertTrue((Boolean) result, "1 should be true");
-        result = generator.invokeMethod(method, 0);
+        result = generator.invokeMethod("TestBoolean",method, 0);
         Assertions.assertFalse((Boolean) result, "0 should be false");
     }
 
@@ -918,9 +918,9 @@ public class TestBoolean {
                 new If(new UnaryComparison(Tests.IsFalse, new GetValue("x", SimpleTypes.INT)),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, 1);
+        Object result = generator.invokeMethod("TestBoolean",method, 1);
         Assertions.assertFalse((Boolean) result, "1 should be true");
-        result = generator.invokeMethod(method, 0);
+        result = generator.invokeMethod("TestBoolean",method, 0);
         Assertions.assertTrue((Boolean) result, "0 should be false");
     }
 
@@ -933,9 +933,9 @@ public class TestBoolean {
                         "java.lang.String"),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "Foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "Foo");
         Assertions.assertTrue((Boolean) result, "Foo should be an instance of string");
-        result = generator.invokeMethod(method, 1);
+        result = generator.invokeMethod("TestBoolean",method, 1);
         Assertions.assertFalse((Boolean) result, "1 should not be an instance of java.lang.Integer");
     }
 
@@ -948,9 +948,9 @@ public class TestBoolean {
                         "java.lang.String"),
                         new IntConstant(1), new IntConstant(0)));
 
-        Object result = generator.invokeMethod(method, "Foo");
+        Object result = generator.invokeMethod("TestBoolean",method, "Foo");
         Assertions.assertFalse((Boolean) result, "Foo should be an instance of string");
-        result = generator.invokeMethod(method, 1);
+        result = generator.invokeMethod("TestBoolean",method, 1);
         Assertions.assertTrue((Boolean) result, "1 should not be an instance of java.lang.Integer");
     }
 }
