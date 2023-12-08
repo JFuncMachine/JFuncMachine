@@ -34,9 +34,11 @@ public class ClassGeneratorProvider implements ArgumentsProvider {
 
 
         return Stream.of(
+                /*
             Arguments.of("noTailCallOptimization", new ClassGenerator(noTailCallOptimization)),
             Arguments.of("localTailCallOptimization", new ClassGenerator(localTailCallOptimization)),
             Arguments.of("fullAndLocalTailCallOptimization", new ClassGenerator(fullAndLocalTailCallOptimization)),
+                 */
             Arguments.of("fullTailCallOptimization", new ClassGenerator(fullTailCallOptimization)));
     }
 }

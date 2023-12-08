@@ -176,7 +176,7 @@ public class CallTailCallMethod extends Expression {
         } else{
             generator.instGen.invokevirtual(
                     generator.className(invokeClassName),
-                    name+"$$TC$$", generator.methodDescriptor(parameterTypes, new ObjectType()));
+                    name, generator.methodDescriptor(parameterTypes, new ObjectType()));
             Label loopStart = new Label();
             Label loopEnd = new Label();
             generator.instGen.label(loopStart);

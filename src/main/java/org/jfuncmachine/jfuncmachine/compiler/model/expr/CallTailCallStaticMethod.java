@@ -158,8 +158,8 @@ public class CallTailCallStaticMethod extends Expression {
             generateTailLambda(invokeClassName, name, parameterTypes, arguments, generator, env);
         } else{
             generator.instGen.invokestatic(
-                    generator.className(invokeClassName+"$$TC$$"),
-                    name, generator.methodDescriptor(parameterTypes, returnType));
+                    generator.className(invokeClassName),
+                    name, generator.methodDescriptor(parameterTypes, new ObjectType()));
 
             Label loopStart = new Label();
             Label loopEnd = new Label();

@@ -1,5 +1,7 @@
 package org.jfuncmachine.jfuncmachine.compiler.classgen;
 
+import org.jfuncmachine.jfuncmachine.runtime.TailCall;
+
 public class ToyClass implements ToyInterface {
     public static String staticString = "Foo";
     public int memberInt;
