@@ -165,5 +165,6 @@ public class TestJavaInterop {
 
         Object result = generator.invokeMethod("TestJava", method, "Quux");
         Assertions.assertEquals(ToyClass.staticString, "Quux");
+        ToyClass.staticString = "Foo";
     }
 }
