@@ -59,7 +59,7 @@ public class Binding extends Expression {
     /** An optional name that can be used to loop back to the beginning of the binding */
     public final String name;
     /** A label used by the recurse expression to loop back to the top of the binding */
-    protected final Label label;
+    protected Label label;
 
     /** Create a new binding
      *
@@ -147,11 +147,9 @@ public class Binding extends Expression {
 
     @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
-
         Environment newEnv = new Environment(env);
 
-        Label label = null;
-
+        label = new Label();
         Label bindingEnd = new Label();
 
         for (BindingPair pair: bindings) {
@@ -194,6 +192,7 @@ public class Binding extends Expression {
         }
         if (name != null) {
             generator.instGen.label(label);
+            newEnv.putBinding(name, this);
         }
         expr.generate(generator, newEnv, true);
         generator.instGen.label(bindingEnd);
