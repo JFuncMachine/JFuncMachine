@@ -2,10 +2,7 @@ package org.jfuncmachine.jfuncmachine.compiler.classgen;
 
 import org.jfuncmachine.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.ArrayGet;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.ArraySet;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.GetValue;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.If;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.*;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.*;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.BooleanConstant;
@@ -324,5 +321,335 @@ public class TestArrays {
         String[] strings = new String[] { "moe", "larry", "curly" };
         Object result = generator.invokeMethod("TestArray",method, strings, 2, "shemp");
         Assertions.assertEquals("shemp", strings[2]);
+    }
+
+    @TestAllImplementations
+     public void testNewBoolArray(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("n", SimpleTypes.INT)},
+                new ArrayType(SimpleTypes.BOOLEAN),
+                new NewArray(SimpleTypes.BOOLEAN, new GetValue("n", SimpleTypes.INT)));
+
+        Object result = generator.invokeMethod("TestArray",method, 42);
+        Assertions.assertInstanceOf(boolean[].class, result);
+        Assertions.assertEquals(42, ((boolean[])result).length);
+    }
+
+    @TestAllImplementations
+    public void testNewByteArray(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("n", SimpleTypes.INT)},
+                new ArrayType(SimpleTypes.BYTE),
+                new NewArray(SimpleTypes.BYTE, new GetValue("n", SimpleTypes.INT)));
+
+        Object result = generator.invokeMethod("TestArray",method, 42);
+        Assertions.assertInstanceOf(byte[].class, result);
+        Assertions.assertEquals(42, ((byte[])result).length);
+    }
+
+    @TestAllImplementations
+    public void testNewCharArray(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("n", SimpleTypes.INT)},
+                new ArrayType(SimpleTypes.CHAR),
+                new NewArray(SimpleTypes.CHAR, new GetValue("n", SimpleTypes.INT)));
+
+        Object result = generator.invokeMethod("TestArray",method, 42);
+        Assertions.assertInstanceOf(char[].class, result);
+        Assertions.assertEquals(42, ((char[])result).length);
+    }
+
+    @TestAllImplementations
+    public void testNewDoubleArray(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("n", SimpleTypes.INT)},
+                new ArrayType(SimpleTypes.DOUBLE),
+                new NewArray(SimpleTypes.DOUBLE, new GetValue("n", SimpleTypes.INT)));
+
+        Object result = generator.invokeMethod("TestArray",method, 42);
+        Assertions.assertInstanceOf(double[].class, result);
+        Assertions.assertEquals(42, ((double[])result).length);
+    }
+
+    @TestAllImplementations
+    public void testNewFloatArray(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("n", SimpleTypes.INT)},
+                new ArrayType(SimpleTypes.FLOAT),
+                new NewArray(SimpleTypes.FLOAT, new GetValue("n", SimpleTypes.INT)));
+
+        Object result = generator.invokeMethod("TestArray",method, 42);
+        Assertions.assertInstanceOf(float[].class, result);
+        Assertions.assertEquals(42, ((float[])result).length);
+    }
+
+    @TestAllImplementations
+    public void testNewIntArray(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("n", SimpleTypes.INT)},
+                new ArrayType(SimpleTypes.INT),
+                new NewArray(SimpleTypes.INT, new GetValue("n", SimpleTypes.INT)));
+
+        Object result = generator.invokeMethod("TestArray",method, 42);
+        Assertions.assertInstanceOf(int[].class, result);
+        Assertions.assertEquals(42, ((int[])result).length);
+    }
+
+    @TestAllImplementations
+    public void testNewLongArray(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("n", SimpleTypes.INT)},
+                new ArrayType(SimpleTypes.LONG),
+                new NewArray(SimpleTypes.LONG, new GetValue("n", SimpleTypes.INT)));
+
+        Object result = generator.invokeMethod("TestArray",method, 42);
+        Assertions.assertInstanceOf(long[].class, result);
+        Assertions.assertEquals(42, ((long[])result).length);
+    }
+
+    @TestAllImplementations
+    public void testNewShortArray(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("n", SimpleTypes.INT)},
+                new ArrayType(SimpleTypes.SHORT),
+                new NewArray(SimpleTypes.SHORT, new GetValue("n", SimpleTypes.INT)));
+
+        Object result = generator.invokeMethod("TestArray",method, 42);
+        Assertions.assertInstanceOf(short[].class, result);
+        Assertions.assertEquals(42, ((short[])result).length);
+    }
+
+    @TestAllImplementations
+    public void testNewStringArray(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("n", SimpleTypes.INT)},
+                new ArrayType(SimpleTypes.STRING),
+                new NewArray(SimpleTypes.STRING, new GetValue("n", SimpleTypes.INT)));
+
+        Object result = generator.invokeMethod("TestArray",method, 42);
+        Assertions.assertInstanceOf(String[].class, result);
+        Assertions.assertEquals(42, ((String[])result).length);
+    }
+
+    @TestAllImplementations
+    public void testNewObjectArray(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("n", SimpleTypes.INT)},
+                new ArrayType(new ObjectType()),
+                new NewArray(new ObjectType(), new GetValue("n", SimpleTypes.INT)));
+
+        Object result = generator.invokeMethod("TestArray",method, 42);
+        Assertions.assertInstanceOf(Object[].class, result);
+        Assertions.assertEquals(42, ((Object[])result).length);
+    }
+
+
+    @TestAllImplementations
+    public void testNewBoolArrayWithValues(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("v1", SimpleTypes.BOOLEAN),
+                new Field("v2", SimpleTypes.BOOLEAN),
+                new Field("v3", SimpleTypes.BOOLEAN),
+        },
+                new ArrayType(SimpleTypes.BOOLEAN),
+                new NewArrayWithValues(SimpleTypes.BOOLEAN,
+                        new Expression[] {
+                                new GetValue("v1", SimpleTypes.BOOLEAN),
+                                new GetValue("v2", SimpleTypes.BOOLEAN),
+                                new GetValue("v3", SimpleTypes.BOOLEAN)
+                        }));
+
+        Object result = generator.invokeMethod("TestArray",method, false, false, true);
+        Assertions.assertInstanceOf(boolean[].class, result);
+        Assertions.assertEquals(3, ((boolean[])result).length);
+        Assertions.assertTrue(((boolean[])result)[2]);
+    }
+    @TestAllImplementations
+    public void testNewByteArrayWithValues(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                    new Field("v1", SimpleTypes.BYTE),
+                    new Field("v2", SimpleTypes.BYTE),
+                    new Field("v3", SimpleTypes.BYTE),
+                },
+                new ArrayType(SimpleTypes.BYTE),
+                new NewArrayWithValues(SimpleTypes.BYTE,
+                        new Expression[] {
+                                new GetValue("v1", SimpleTypes.BYTE),
+                                new GetValue("v2", SimpleTypes.BYTE),
+                                new GetValue("v3", SimpleTypes.BYTE)
+                        }));
+
+        Object result = generator.invokeMethod("TestArray",method, (byte) 5, (byte) 10, (byte) 42);
+        Assertions.assertInstanceOf(byte[].class, result);
+        Assertions.assertEquals(3, ((byte[])result).length);
+        Assertions.assertEquals(42, ((byte[])result)[2]);
+    }
+
+    @TestAllImplementations
+    public void testNewCharArrayWithValues(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("v1", SimpleTypes.CHAR),
+                new Field("v2", SimpleTypes.CHAR),
+                new Field("v3", SimpleTypes.CHAR),
+        },
+                new ArrayType(SimpleTypes.CHAR),
+                new NewArrayWithValues(SimpleTypes.CHAR,
+                        new Expression[] {
+                                new GetValue("v1", SimpleTypes.CHAR),
+                                new GetValue("v2", SimpleTypes.CHAR),
+                                new GetValue("v3", SimpleTypes.CHAR)
+                        }));
+
+        Object result = generator.invokeMethod("TestArray",method, (char) 5, (char) 10, (char) 42);
+        Assertions.assertInstanceOf(char[].class, result);
+        Assertions.assertEquals(3, ((char[])result).length);
+        Assertions.assertEquals(42, ((char[])result)[2]);
+    }
+
+    @TestAllImplementations
+    public void testNewDoubleArrayWithValues(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("v1", SimpleTypes.DOUBLE),
+                new Field("v2", SimpleTypes.DOUBLE),
+                new Field("v3", SimpleTypes.DOUBLE),
+        },
+                new ArrayType(SimpleTypes.DOUBLE),
+                new NewArrayWithValues(SimpleTypes.DOUBLE,
+                        new Expression[] {
+                                new GetValue("v1", SimpleTypes.DOUBLE),
+                                new GetValue("v2", SimpleTypes.DOUBLE),
+                                new GetValue("v3", SimpleTypes.DOUBLE)
+                        }));
+
+        Object result = generator.invokeMethod("TestArray",method, (double) 5, (double) 10, (double) 42);
+        Assertions.assertInstanceOf(double[].class, result);
+        Assertions.assertEquals(3, ((double[])result).length);
+        Assertions.assertEquals(42, ((double[])result)[2]);
+    }
+
+    @TestAllImplementations
+    public void testNewFloatArrayWithValues(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("v1", SimpleTypes.FLOAT),
+                new Field("v2", SimpleTypes.FLOAT),
+                new Field("v3", SimpleTypes.FLOAT),
+        },
+                new ArrayType(SimpleTypes.FLOAT),
+                new NewArrayWithValues(SimpleTypes.FLOAT,
+                        new Expression[] {
+                                new GetValue("v1", SimpleTypes.FLOAT),
+                                new GetValue("v2", SimpleTypes.FLOAT),
+                                new GetValue("v3", SimpleTypes.FLOAT)
+                        }));
+
+        Object result = generator.invokeMethod("TestArray",method, (float) 5, (float) 10, (float) 42);
+        Assertions.assertInstanceOf(float[].class, result);
+        Assertions.assertEquals(3, ((float[])result).length);
+        Assertions.assertEquals(42, ((float[])result)[2]);
+    }
+
+    @TestAllImplementations
+    public void testNewIntArrayWithValues(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("v1", SimpleTypes.INT),
+                new Field("v2", SimpleTypes.INT),
+                new Field("v3", SimpleTypes.INT),
+        },
+                new ArrayType(SimpleTypes.INT),
+                new NewArrayWithValues(SimpleTypes.INT,
+                        new Expression[] {
+                                new GetValue("v1", SimpleTypes.INT),
+                                new GetValue("v2", SimpleTypes.INT),
+                                new GetValue("v3", SimpleTypes.INT)
+                        }));
+
+        Object result = generator.invokeMethod("TestArray",method, (int) 5, (int) 10, (int) 42);
+        Assertions.assertInstanceOf(int[].class, result);
+        Assertions.assertEquals(3, ((int[])result).length);
+        Assertions.assertEquals(42, ((int[])result)[2]);
+    }
+
+    @TestAllImplementations
+    public void testNewLongArrayWithValues(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("v1", SimpleTypes.LONG),
+                new Field("v2", SimpleTypes.LONG),
+                new Field("v3", SimpleTypes.LONG),
+        },
+                new ArrayType(SimpleTypes.LONG),
+                new NewArrayWithValues(SimpleTypes.LONG,
+                        new Expression[] {
+                                new GetValue("v1", SimpleTypes.LONG),
+                                new GetValue("v2", SimpleTypes.LONG),
+                                new GetValue("v3", SimpleTypes.LONG)
+                        }));
+
+        Object result = generator.invokeMethod("TestArray",method, (long) 5, (long) 10, (long) 42);
+        Assertions.assertInstanceOf(long[].class, result);
+        Assertions.assertEquals(3, ((long[])result).length);
+        Assertions.assertEquals(42, ((long[])result)[2]);
+    }
+
+    @TestAllImplementations
+    public void testNewShortArrayWithValues(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("v1", SimpleTypes.SHORT),
+                new Field("v2", SimpleTypes.SHORT),
+                new Field("v3", SimpleTypes.SHORT),
+        },
+                new ArrayType(SimpleTypes.SHORT),
+                new NewArrayWithValues(SimpleTypes.SHORT,
+                        new Expression[] {
+                                new GetValue("v1", SimpleTypes.SHORT),
+                                new GetValue("v2", SimpleTypes.SHORT),
+                                new GetValue("v3", SimpleTypes.SHORT)
+                        }));
+
+        Object result = generator.invokeMethod("TestArray",method, (short) 5, (short) 10, (short) 42);
+        Assertions.assertInstanceOf(short[].class, result);
+        Assertions.assertEquals(3, ((short[])result).length);
+        Assertions.assertEquals(42, ((short[])result)[2]);
+    }
+
+    @TestAllImplementations
+    public void testNewStringArrayWithValues(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("v1", SimpleTypes.STRING),
+                new Field("v2", SimpleTypes.STRING),
+                new Field("v3", SimpleTypes.STRING),
+        },
+                new ArrayType(SimpleTypes.STRING),
+                new NewArrayWithValues(SimpleTypes.STRING,
+                        new Expression[] {
+                                new GetValue("v1", SimpleTypes.STRING),
+                                new GetValue("v2", SimpleTypes.STRING),
+                                new GetValue("v3", SimpleTypes.STRING)
+                        }));
+
+        Object result = generator.invokeMethod("TestArray",method, "moe", "larry", "curly");
+        Assertions.assertInstanceOf(String[].class, result);
+        Assertions.assertEquals(3, ((String[])result).length);
+        Assertions.assertEquals("curly", ((String[])result)[2]);
+    }
+
+    @TestAllImplementations
+    public void testNewObjectArrayWithValues(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("arraytest", Access.PUBLIC, new Field[] {
+                new Field("v1", new ObjectType()),
+                new Field("v2", new ObjectType()),
+                new Field("v3", new ObjectType()),
+        },
+                new ArrayType(new ObjectType()),
+                new NewArrayWithValues(new ObjectType(),
+                        new Expression[] {
+                                new GetValue("v1", new ObjectType()),
+                                new GetValue("v2", new ObjectType()),
+                                new GetValue("v3", new ObjectType())
+                        }));
+
+        Object result = generator.invokeMethod("TestArray",method, "moe", "larry", "curly");
+        Assertions.assertInstanceOf(Object[].class, result);
+        Assertions.assertEquals(3, ((Object[])result).length);
+        Assertions.assertEquals("curly", ((Object[])result)[2]);
     }
 }
