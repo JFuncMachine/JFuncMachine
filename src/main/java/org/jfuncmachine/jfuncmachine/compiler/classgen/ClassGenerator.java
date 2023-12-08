@@ -37,6 +37,7 @@ import org.objectweb.asm.tree.TryCatchBlockNode;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -368,6 +369,41 @@ public class ClassGenerator {
                 }
             }
             throw new JFuncMachineException("Error locating method "+methodDef.name);
+        } catch (Exception exc) {
+            throw new JFuncMachineException(exc);
+        }
+    }
+
+    public Object invokeMethod(ClassDef classDef, String methodName, Object... args) {
+        try {
+
+            Class classObj = getLoadedClass(classDef.getFullClassName());
+            if (classObj == null) {
+                generateAndLoad(classDef, "test");
+                classObj = getLoadedClass(classDef.getFullClassName());
+            }
+            if (options.fullTailCalls) {
+                methodName = methodName + "$$TC$$";
+            }
+            for (Method method : classObj.getMethods()) {
+                if (method.getName().equals(methodName)) {
+                    if (Modifier.isStatic(method.getModifiers())) {
+                        Object result = method.invoke(null, args);
+                        while (result instanceof TailCall) {
+                            result = ((TailCall)result).invoke();
+                        }
+                        return result;
+                    } else {
+                        Object obj = classObj.getDeclaredConstructor().newInstance();
+                        Object result = method.invoke(obj, args);
+                        while (result instanceof TailCall) {
+                            result = ((TailCall)result).invoke();
+                        }
+                        return result;
+                    }
+                }
+            }
+            throw new JFuncMachineException("Error locating method "+methodName);
         } catch (Exception exc) {
             throw new JFuncMachineException(exc);
         }
