@@ -147,10 +147,10 @@ public class Switch extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        expr.resetLabels();
+    public void reset() {
+        expr.reset();
         for (SwitchCase switchCase: cases) {
-            switchCase.expr.resetLabels();
+            switchCase.expr.reset();
         }
     }
 

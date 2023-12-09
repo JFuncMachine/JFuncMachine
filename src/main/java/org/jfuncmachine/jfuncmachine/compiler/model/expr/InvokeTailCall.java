@@ -154,11 +154,11 @@ public class InvokeTailCall extends Expression {
     }
 
     @Override
-    public void resetLabels() {
+    public void reset() {
         for (Expression expr: arguments) {
-            expr.resetLabels();
+            expr.reset();
         }
-        target.resetLabels();
+        target.reset();
     }
 
     public void findCaptured(Environment env) {

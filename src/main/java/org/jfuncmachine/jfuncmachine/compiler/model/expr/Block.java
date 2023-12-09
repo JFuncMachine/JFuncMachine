@@ -42,9 +42,9 @@ public class Block extends Expression {
     }
 
     @Override
-    public void resetLabels() {
+    public void reset() {
         for (Expression expr: expressions) {
-            expr.resetLabels();
+            expr.reset();
         }
     }
 

@@ -59,10 +59,11 @@ public class InstanceofComparison extends BooleanExpr {
     }
 
     @Override
-    public void resetLabels() {
-        falsePath.resetLabels();
-        truePath.resetLabels();
-        expr.resetLabels();
+    public void reset() {
+        super.reset();
+        falsePath = null;
+        truePath = null;
+        expr.reset();
     }
 
     public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests) {

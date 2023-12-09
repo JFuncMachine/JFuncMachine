@@ -9,7 +9,6 @@ import org.jfuncmachine.jfuncmachine.compiler.classgen.LambdaIntInfo;
 import org.jfuncmachine.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
-import org.jfuncmachine.jfuncmachine.runtime.FunctionRefHolder;
 import org.objectweb.asm.Opcodes;
 
 import java.util.Set;
@@ -199,8 +198,8 @@ public class Lambda extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        body.resetLabels();
+    public void reset() {
+        body.reset();
     }
 
     public void findCaptured(Environment env) {}
@@ -218,10 +217,6 @@ public class Lambda extends Expression {
         for (int i=0; i < capturedParameterTypes.length; i++) {
             capturedParameterTypes[i] = envVars[i].type;
             capturedFields[i] = new Field(envVars[i].name, envVars[i].type);
-            if (envVars[i].type instanceof IndirectFunctionType) {
-                capturedParameterTypes[i] = new ObjectType(FunctionRefHolder.class.getName());
-                capturedFields[i] = new Field(envVars[i].name, new ObjectType(FunctionRefHolder.class.getName()));
-            }
         }
 
         // The lambda's actual type will be a combination of the captured variables
@@ -255,22 +250,20 @@ public class Lambda extends Expression {
         }
 
         String methodName;
-        // Create a declaration for the lambda method
-        MethodDef lambdaMethod = new MethodDef(lambdaInfo.name,
+        MethodDef lambdaMethod;
+        if (!generator.options.fullTailCalls) {
+            // Create a declaration for the lambda method
+            lambdaMethod = new MethodDef(lambdaInfo.name,
                     Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
                     allFields, returnType, body);
+        } else {
+            lambdaMethod = new MethodDef(lambdaInfo.name + "$$TC$$",
+                    Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
+                    allFields, new ObjectType(), true, body);
+        }
 
         // Schedule the generation of the lambda method
         generator.addMethodToGenerate(lambdaMethod);
-
-        if (generator.options.fullTailCalls) {
-            MethodDef tcLambdaMethod = new MethodDef(lambdaInfo.name + "$$TC$$",
-                    Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
-                    allFields, new ObjectType(), true, body);
-            tcLambdaMethod.reset();
-
-            generator.addMethodToGenerate(tcLambdaMethod);
-        }
 
         for (EnvVar envVar: capturedValues) {
             int opcode = switch (envVar.type) {
@@ -309,6 +302,11 @@ public class Lambda extends Expression {
         if (interfaceMethodName != null) {
             inDyMethodName = interfaceMethodName;
         }
+
+        Type lambdaReturnType = returnType;
+        if (generator.options.fullTailCalls) {
+            lambdaReturnType = new ObjectType();
+        }
         Handle handle = new Handle(Handle.INVOKESTATIC, generator.className(generator.currentClass), lambdaInfo.name,
                     generator.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false);
         // Call invokedynamic to generate a lambda method handle
@@ -323,6 +321,6 @@ public class Lambda extends Expression {
                 // Create a handle for the generated lambda method
                 handle,
                 // Create an another ASM Type descriptor for this descriptor
-                org.objectweb.asm.Type.getType(generator.methodDescriptor(parameterTypes, returnType)));
+                org.objectweb.asm.Type.getType(generator.methodDescriptor(parameterTypes, lambdaReturnType)));
     }
 }

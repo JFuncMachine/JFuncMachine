@@ -45,9 +45,10 @@ public class And extends BooleanExpr {
     }
 
     @Override
-    public void resetLabels() {
-        this.left.resetLabels();
-        this.right.resetLabels();
+    public void reset() {
+        super.reset();
+        this.left.reset();
+        this.right.reset();
     }
 
     public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests) {

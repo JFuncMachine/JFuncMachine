@@ -58,9 +58,9 @@ public class ArrayGet extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        array.resetLabels();
-        index.resetLabels();
+    public void reset() {
+        array.reset();
+        index.reset();
     }
 
     public void findCaptured(Environment env) {

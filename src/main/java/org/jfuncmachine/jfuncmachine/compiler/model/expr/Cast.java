@@ -41,8 +41,8 @@ public class Cast extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        body.resetLabels();
+    public void reset() {
+        body.reset();
     }
 
     @Override

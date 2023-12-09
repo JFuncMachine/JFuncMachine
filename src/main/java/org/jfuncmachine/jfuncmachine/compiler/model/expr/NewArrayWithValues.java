@@ -53,9 +53,9 @@ public class NewArrayWithValues extends Expression {
     }
 
     @Override
-    public void resetLabels() {
+    public void reset() {
         for (Expression expr: arrayValues) {
-            expr.resetLabels();
+            expr.reset();
         }
     }
 

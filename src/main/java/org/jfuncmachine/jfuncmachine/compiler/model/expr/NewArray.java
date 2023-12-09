@@ -45,8 +45,8 @@ public class NewArray extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        arraySize.resetLabels();
+    public void reset() {
+        arraySize.reset();
     }
 
     public void findCaptured(Environment env) {

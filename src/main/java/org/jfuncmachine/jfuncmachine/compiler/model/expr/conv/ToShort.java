@@ -42,8 +42,8 @@ public class ToShort extends Expression {
     public Type getType() { return SimpleTypes.SHORT; }
 
     @Override
-    public void resetLabels() {
-        expr.resetLabels();
+    public void reset() {
+        expr.reset();
     }
 
     public void findCaptured(Environment env) {

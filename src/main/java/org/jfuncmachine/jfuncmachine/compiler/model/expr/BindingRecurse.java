@@ -84,10 +84,10 @@ public class BindingRecurse extends Expression {
     }
 
     @Override
-    public void resetLabels() {
+    public void reset() {
         if (nextValues != null) {
             for (Expression expr : nextValues) {
-                expr.resetLabels();
+                expr.reset();
             }
         }
     }

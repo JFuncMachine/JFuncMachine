@@ -2,9 +2,7 @@ package org.jfuncmachine.jfuncmachine.compiler.model.expr;
 
 import org.jfuncmachine.jfuncmachine.compiler.classgen.*;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaConstructor;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.SetJavaField;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
-import org.jfuncmachine.jfuncmachine.runtime.FunctionRefHolder;
 import org.objectweb.asm.Opcodes;
 
 /** Bind expressions to variable names, and then execute an expression with those variables available.
@@ -122,14 +120,15 @@ public class Binding extends Expression {
         return expr.getType();
     }
 
-    public void resetLabels() {
-        if (label != null) {
-            label.reset();
+    public void reset() {
+        label = null;
+        if (name != null) {
+            label = new Label();
         }
         for (BindingPair pair: bindings) {
-            pair.value.resetLabels();
+            pair.value.reset();
         }
-        expr.resetLabels();
+        expr.reset();
     }
 
     public void findCaptured(Environment env) {
@@ -172,35 +171,18 @@ public class Binding extends Expression {
                     bindingVarStart, bindingEnd, envVar.index);
             generator.instGen.label(bindingVarStart);
 
-            if (pair.value instanceof Lambda && envVar.type instanceof FunctionType funcType) {
-                new CallJavaConstructor(FunctionRefHolder.class.getName(), new Expression[0]).generate(
-                        generator, env, false);
-                generator.instGen.dup();
-                generator.instGen.astore(envVar.index);
-                envVar.type = new IndirectFunctionType(funcType);
-                pair.value.generate(generator, newEnv, false);
-                LambdaIntInfo intInfo = generator.allocateLambdaInt(funcType);
-                if (intInfo.packageName != null && !intInfo.packageName.isEmpty()) {
-                    generator.instGen.putfield(generator.className(FunctionRefHolder.class.getName()),
-                            "ref", generator.getTypeDescriptor(new ObjectType()));
-                } else {
-                    generator.instGen.putfield(generator.className(FunctionRefHolder.class.getName()),
-                            "ref", generator.getTypeDescriptor(new ObjectType()));
-                }
-            } else {
-                int opcode = switch (pair.value.getType()) {
-                    case BooleanType b -> Opcodes.ISTORE;
-                    case ByteType b -> Opcodes.ISTORE;
-                    case CharType c -> Opcodes.ISTORE;
-                    case DoubleType d -> Opcodes.DSTORE;
-                    case FloatType f -> Opcodes.FSTORE;
-                    case IntType i -> Opcodes.ISTORE;
-                    case LongType l -> Opcodes.LSTORE;
-                    case ShortType s -> Opcodes.ISTORE;
-                    default -> Opcodes.ASTORE;
-                };
-                generator.instGen.rawIntOpcode(opcode, envVar.index);
-            }
+            int opcode = switch (pair.value.getType()) {
+                case BooleanType b -> Opcodes.ISTORE;
+                case ByteType b -> Opcodes.ISTORE;
+                case CharType c -> Opcodes.ISTORE;
+                case DoubleType d -> Opcodes.DSTORE;
+                case FloatType f -> Opcodes.FSTORE;
+                case IntType i -> Opcodes.ISTORE;
+                case LongType l -> Opcodes.LSTORE;
+                case ShortType s -> Opcodes.ISTORE;
+                default -> Opcodes.ASTORE;
+            };
+            generator.instGen.rawIntOpcode(opcode, envVar.index);
         }
         if (name != null) {
             generator.instGen.label(label);

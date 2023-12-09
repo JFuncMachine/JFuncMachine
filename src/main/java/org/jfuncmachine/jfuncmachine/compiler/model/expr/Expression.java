@@ -32,7 +32,7 @@ public abstract class Expression extends SourceElement {
     /**
      * Resets any labels in expressions so that the method can be regenerated
      */
-    public void resetLabels() {
+    public void reset() {
 
     }
 

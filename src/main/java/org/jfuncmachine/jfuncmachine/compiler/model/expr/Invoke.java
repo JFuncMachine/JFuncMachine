@@ -154,11 +154,11 @@ public class Invoke extends Expression {
     }
 
     @Override
-    public void resetLabels() {
+    public void reset() {
         for (Expression expr: arguments) {
-            expr.resetLabels();
+            expr.reset();
         }
-        target.resetLabels();
+        target.reset();
     }
 
     public void findCaptured(Environment env) {
@@ -171,6 +171,10 @@ public class Invoke extends Expression {
     @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String intMethodName = intMethod;
+
+        boolean tailCallReturn = inTailPosition && generator.currentMethod.isTailCallable;
+        boolean makeTailCall = inTailPosition &&
+                generator.options.fullTailCalls;
 
         if (intMethod == null) {
             intMethodName = generator.options.lambdaMethodName;
@@ -196,7 +200,7 @@ public class Invoke extends Expression {
             throw generateException(String.format("Invalid target type for invoke: %s", targetType));
         }
 
-        if (!generator.options.fullTailCalls) {
+        if (!makeTailCall) {
             generator.instGen.invokeinterface(
                     generator.className(className),
                     intMethodName, generator.methodDescriptor(parameterTypes, returnType));
@@ -205,7 +209,7 @@ public class Invoke extends Expression {
                     generator.className(className),
                     intMethodName + "$$TC$$", generator.methodDescriptor(parameterTypes, new ObjectType()));
 
-            if (inTailPosition) {
+            if (tailCallReturn) {
                 generator.instGen.areturn();
             } else {
                 Label loopStart = new Label();

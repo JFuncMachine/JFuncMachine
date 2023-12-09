@@ -65,10 +65,10 @@ public class ArraySet extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        array.resetLabels();
-        index.resetLabels();
-        value.resetLabels();
+    public void reset() {
+        array.reset();
+        index.reset();
+        value.reset();
     }
 
     public void findCaptured(Environment env) {

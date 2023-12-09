@@ -113,10 +113,11 @@ public class If extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        test.resetLabels();
-        trueExpr.resetLabels();
-        falseExpr.resetLabels();
+    public void reset() {
+        test.reset();
+        trueExpr.reset();
+        falseExpr.reset();
+        computeTestSequence();
     }
 
     public void findCaptured(Environment env) {

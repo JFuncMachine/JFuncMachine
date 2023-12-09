@@ -123,8 +123,8 @@ public class Box extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        expr.resetLabels();
+    public void reset() {
+        expr.reset();
     }
 
     @Override

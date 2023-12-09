@@ -38,8 +38,8 @@ public class Throw extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        expr.resetLabels();
+    public void reset() {
+        expr.reset();
     }
 
     public void findCaptured(Environment env) {

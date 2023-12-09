@@ -23,8 +23,8 @@ public abstract class BooleanExpr extends SourceElement {
      */
     public abstract BooleanExpr invert();
 
-    public void resetLabels() {
-        label.reset();
+    public void reset() {
+        label = null;
     }
 
     /** Remove any not expressions from a tree of boolean expressions by inverting the expression under the not */

@@ -571,6 +571,9 @@ public class ClassGenerator {
     protected synchronized MethodNode generateMethod(MethodDef methodDef, ClassDef classDef) {
         String methodSignature;
 
+        // Reset any labels in case expressions in this method have been generated
+        methodDef.reset();
+
         // Reset the array containing any generated local variables
         localVariables = new ArrayList<>();
 

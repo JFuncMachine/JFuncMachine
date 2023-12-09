@@ -22,8 +22,9 @@ public class BoolTrue extends BooleanExpr {
     }
 
     @Override
-    public void resetLabels() {
-        truePath.resetLabels();
+    public void reset() {
+        super.reset();
+        truePath = null;
     }
 
     @Override

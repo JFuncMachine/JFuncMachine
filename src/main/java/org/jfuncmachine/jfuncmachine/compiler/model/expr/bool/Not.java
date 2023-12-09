@@ -35,8 +35,9 @@ public class Not extends BooleanExpr {
     }
 
     @Override
-    public void resetLabels() {
-        expr.resetLabels();
+    public void reset() {
+        super.reset();
+        expr.reset();
     }
 
     @Override

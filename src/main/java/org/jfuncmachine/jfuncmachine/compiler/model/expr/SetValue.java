@@ -49,8 +49,8 @@ public class SetValue extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        expression.resetLabels();
+    public void reset() {
+        expression.reset();
     }
 
     public void findCaptured(Environment env) {

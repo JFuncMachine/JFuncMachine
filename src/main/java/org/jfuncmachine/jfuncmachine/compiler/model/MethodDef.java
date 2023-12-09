@@ -71,6 +71,8 @@ public class MethodDef extends SourceElement {
 
     public void reset() {
         startLabel.reset();
-        body.resetLabels();
+        if (body != null) {
+            body.reset();
+        }
     }
 }

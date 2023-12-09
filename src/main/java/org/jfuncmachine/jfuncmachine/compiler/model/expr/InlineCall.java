@@ -43,9 +43,9 @@ public class InlineCall extends Expression {
     }
 
     @Override
-    public void resetLabels() {
+    public void reset() {
         for (Expression expr: arguments) {
-            expr.resetLabels();
+            expr.reset();
         }
     }
 

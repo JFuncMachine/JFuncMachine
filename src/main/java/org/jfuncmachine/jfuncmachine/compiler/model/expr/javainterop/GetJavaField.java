@@ -56,8 +56,8 @@ public class GetJavaField extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        target.resetLabels();
+    public void reset() {
+        target.reset();
     }
 
     public void findCaptured(Environment env) {

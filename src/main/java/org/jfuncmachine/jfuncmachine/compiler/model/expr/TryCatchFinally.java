@@ -58,13 +58,13 @@ public class TryCatchFinally extends Expression {
     }
 
     @Override
-    public void resetLabels() {
-        tryBody.resetLabels();
+    public void reset() {
+        tryBody.reset();
         for (Catch catchExpr : catchExprs) {
-            catchExpr.body.resetLabels();
+            catchExpr.body.reset();
         }
         if (finallyBody != null) {
-            finallyBody.resetLabels();
+            finallyBody.reset();
         }
     }
 

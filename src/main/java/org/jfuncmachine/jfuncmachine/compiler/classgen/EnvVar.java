@@ -1,7 +1,6 @@
 package org.jfuncmachine.jfuncmachine.compiler.classgen;
 
 import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
-import org.jfuncmachine.jfuncmachine.runtime.FunctionRefHolder;
 import org.objectweb.asm.Opcodes;
 
 import java.util.Objects;
@@ -54,14 +53,6 @@ public class EnvVar {
     public void generateGet(ClassGenerator generator) {
         int opcode = getOpcode(type);
         generator.instGen.rawIntOpcode(opcode, index);
-        if (type instanceof IndirectFunctionType indirectFunctionType) {
-            LambdaIntInfo intInfo = generator.allocateLambdaInt(indirectFunctionType.containedType());
-            generator.instGen.getfield(generator.className(FunctionRefHolder.class.getName()),
-                    "ref", generator.getTypeDescriptor(new ObjectType()));
-        } else if (type.equals(new ObjectType(FunctionRefHolder.class.getName()))) {
-            generator.instGen.getfield(generator.className(FunctionRefHolder.class.getName()),
-                    "ref", generator.getTypeDescriptor(new ObjectType()));
-        }
     }
 
     public static int getOpcode(Type t) {
