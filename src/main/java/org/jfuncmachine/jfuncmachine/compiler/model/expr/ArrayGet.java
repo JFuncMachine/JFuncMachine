@@ -57,6 +57,12 @@ public class ArrayGet extends Expression {
         return array.getType();
     }
 
+    @Override
+    public void resetLabels() {
+        array.resetLabels();
+        index.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         array.findCaptured(env);
         index.findCaptured(env);

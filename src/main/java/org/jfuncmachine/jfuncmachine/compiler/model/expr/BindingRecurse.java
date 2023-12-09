@@ -83,6 +83,15 @@ public class BindingRecurse extends Expression {
         return SimpleTypes.UNIT;  // The recurse is not a function, so it shouldn't have a value
     }
 
+    @Override
+    public void resetLabels() {
+        if (nextValues != null) {
+            for (Expression expr : nextValues) {
+                expr.resetLabels();
+            }
+        }
+    }
+
     public void findCaptured(Environment env) {
         if (nextValues != null) {
             for (Expression expr : nextValues) {

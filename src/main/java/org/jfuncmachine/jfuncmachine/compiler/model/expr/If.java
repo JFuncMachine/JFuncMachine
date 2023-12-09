@@ -112,6 +112,13 @@ public class If extends Expression {
         return trueExpr.getType();
     }
 
+    @Override
+    public void resetLabels() {
+        test.resetLabels();
+        trueExpr.resetLabels();
+        falseExpr.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         for (BooleanExpr booleanExpr: testSequence) {
             if (booleanExpr instanceof UnaryComparison unary) {

@@ -1,18 +1,10 @@
 package org.jfuncmachine.jfuncmachine.compiler.model.expr;
 
-import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
-import org.jfuncmachine.jfuncmachine.compiler.classgen.EnvVar;
-import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
-import org.jfuncmachine.jfuncmachine.compiler.classgen.Label;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
+import org.jfuncmachine.jfuncmachine.compiler.classgen.*;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaConstructor;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.SetJavaField;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.runtime.FunctionRefHolder;
 import org.objectweb.asm.Opcodes;
 
 /** Bind expressions to variable names, and then execute an expression with those variables available.
@@ -41,13 +33,10 @@ public class Binding extends Expression {
      * <pre>Previous</pre> means that each binding pair can see the variables in the binding pairs that came before
      * it in the current binding (as well as any variables defined in a parent binding).
      * <p>
-     * <pre>Recursive</pre> means that each binding pair can reference its own value in the expression. This can be
-     * useful if the variable being bound is a lambda that calls itself.
      */
     public enum Visibility {
         Separate,
-        Previous,
-        Recursive
+        Previous
     }
 
     /** The pairs of variables and expressions in this binding */
@@ -133,10 +122,20 @@ public class Binding extends Expression {
         return expr.getType();
     }
 
+    public void resetLabels() {
+        if (label != null) {
+            label.reset();
+        }
+        for (BindingPair pair: bindings) {
+            pair.value.resetLabels();
+        }
+        expr.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         Environment newEnv = new Environment(env);
         for (BindingPair pair: bindings) {
-            if (visibility == Visibility.Recursive || visibility == Visibility.Previous) {
+            if (visibility == Visibility.Previous) {
                 pair.value.findCaptured(newEnv);
             } else {
                 pair.value.findCaptured(env);
@@ -155,21 +154,17 @@ public class Binding extends Expression {
         for (BindingPair pair: bindings) {
             EnvVar envVar = null;
 
-            if (visibility == Visibility.Recursive) {
-                envVar = newEnv.allocate(pair.name, pair.value.getType());
-                env.putBinding(envVar.name, this);
-            }
-
             if (visibility == Visibility.Separate) {
                 pair.value.generate(generator, env, false);
             } else {
-                pair.value.generate(generator, newEnv, false);
+                if (!(pair.value instanceof Lambda)) {
+                    pair.value.generate(generator, newEnv, false);
+                }
             }
 
-            if (visibility != Visibility.Recursive) {
-                envVar = newEnv.allocate(pair.name, pair.value.getType());
-                env.putBinding(envVar.name, this);
-            }
+            envVar = newEnv.allocate(pair.name, pair.value.getType());
+
+            env.putBinding(envVar.name, this);
 
             Label bindingVarStart = new Label();
 
@@ -177,18 +172,35 @@ public class Binding extends Expression {
                     bindingVarStart, bindingEnd, envVar.index);
             generator.instGen.label(bindingVarStart);
 
-            int opcode = switch (pair.value.getType()) {
-                case BooleanType b -> Opcodes.ISTORE;
-                case ByteType b -> Opcodes.ISTORE;
-                case CharType c -> Opcodes.ISTORE;
-                case DoubleType d -> Opcodes.DSTORE;
-                case FloatType f -> Opcodes.FSTORE;
-                case IntType i -> Opcodes.ISTORE;
-                case LongType l -> Opcodes.LSTORE;
-                case ShortType s -> Opcodes.ISTORE;
-                default -> Opcodes.ASTORE;
-            };
-            generator.instGen.rawIntOpcode(opcode, envVar.index);
+            if (pair.value instanceof Lambda && envVar.type instanceof FunctionType funcType) {
+                new CallJavaConstructor(FunctionRefHolder.class.getName(), new Expression[0]).generate(
+                        generator, env, false);
+                generator.instGen.dup();
+                generator.instGen.astore(envVar.index);
+                envVar.type = new IndirectFunctionType(funcType);
+                pair.value.generate(generator, newEnv, false);
+                LambdaIntInfo intInfo = generator.allocateLambdaInt(funcType);
+                if (intInfo.packageName != null && !intInfo.packageName.isEmpty()) {
+                    generator.instGen.putfield(generator.className(FunctionRefHolder.class.getName()),
+                            "ref", generator.getTypeDescriptor(new ObjectType()));
+                } else {
+                    generator.instGen.putfield(generator.className(FunctionRefHolder.class.getName()),
+                            "ref", generator.getTypeDescriptor(new ObjectType()));
+                }
+            } else {
+                int opcode = switch (pair.value.getType()) {
+                    case BooleanType b -> Opcodes.ISTORE;
+                    case ByteType b -> Opcodes.ISTORE;
+                    case CharType c -> Opcodes.ISTORE;
+                    case DoubleType d -> Opcodes.DSTORE;
+                    case FloatType f -> Opcodes.FSTORE;
+                    case IntType i -> Opcodes.ISTORE;
+                    case LongType l -> Opcodes.LSTORE;
+                    case ShortType s -> Opcodes.ISTORE;
+                    default -> Opcodes.ASTORE;
+                };
+                generator.instGen.rawIntOpcode(opcode, envVar.index);
+            }
         }
         if (name != null) {
             generator.instGen.label(label);

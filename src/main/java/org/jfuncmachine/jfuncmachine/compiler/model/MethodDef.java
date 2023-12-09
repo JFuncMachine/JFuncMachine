@@ -68,4 +68,9 @@ public class MethodDef extends SourceElement {
     public Type getReturnType() {
         return returnType;
     }
+
+    public void reset() {
+        startLabel.reset();
+        body.resetLabels();
+    }
 }

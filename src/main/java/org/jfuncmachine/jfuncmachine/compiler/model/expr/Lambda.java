@@ -8,18 +8,8 @@ import org.jfuncmachine.jfuncmachine.compiler.classgen.LambdaInfo;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.LambdaIntInfo;
 import org.jfuncmachine.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.FunctionType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.runtime.FunctionRefHolder;
 import org.objectweb.asm.Opcodes;
 
 import java.util.Set;
@@ -208,6 +198,11 @@ public class Lambda extends Expression {
         }
     }
 
+    @Override
+    public void resetLabels() {
+        body.resetLabels();
+    }
+
     public void findCaptured(Environment env) {}
 
     @Override
@@ -223,6 +218,10 @@ public class Lambda extends Expression {
         for (int i=0; i < capturedParameterTypes.length; i++) {
             capturedParameterTypes[i] = envVars[i].type;
             capturedFields[i] = new Field(envVars[i].name, envVars[i].type);
+            if (envVars[i].type instanceof IndirectFunctionType) {
+                capturedParameterTypes[i] = new ObjectType(FunctionRefHolder.class.getName());
+                capturedFields[i] = new Field(envVars[i].name, new ObjectType(FunctionRefHolder.class.getName()));
+            }
         }
 
         // The lambda's actual type will be a combination of the captured variables
@@ -263,6 +262,15 @@ public class Lambda extends Expression {
 
         // Schedule the generation of the lambda method
         generator.addMethodToGenerate(lambdaMethod);
+
+        if (generator.options.fullTailCalls) {
+            MethodDef tcLambdaMethod = new MethodDef(lambdaInfo.name + "$$TC$$",
+                    Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
+                    allFields, new ObjectType(), true, body);
+            tcLambdaMethod.reset();
+
+            generator.addMethodToGenerate(tcLambdaMethod);
+        }
 
         for (EnvVar envVar: capturedValues) {
             int opcode = switch (envVar.type) {

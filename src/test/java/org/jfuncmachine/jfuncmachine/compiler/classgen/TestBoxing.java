@@ -3,6 +3,7 @@ package org.jfuncmachine.jfuncmachine.compiler.classgen;
 import org.jfuncmachine.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.jfuncmachine.compiler.model.MethodDef;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.GetValue;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Box;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Unbox;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
@@ -18,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public class TestBoxing {
     @ParameterizedTest(name = "{0}")
-    @ArgumentsSource(ClassGeneratorProvider.class)
+    @ArgumentsSource(ClassGeneratorNoAutoboxProvider.class)
     @Retention(RetentionPolicy.RUNTIME)
     private @interface TestAllImplementations {}
 
@@ -147,7 +148,8 @@ public class TestBoxing {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.BOOLEAN)},
                 new ObjectType(SimpleTypes.BOOLEAN.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.BOOLEAN));
+                Autobox.autobox(new GetValue("x", SimpleTypes.BOOLEAN),
+                        new ObjectType(SimpleTypes.BOOLEAN.getBoxTypeName())));
         Object result = generator.invokeMethod("TestBoxing",method, false);
         Assertions.assertFalse((Boolean) result, "false should be false");
         result = generator.invokeMethod("TestBoxing",method, true);
@@ -159,7 +161,8 @@ public class TestBoxing {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.BYTE)},
                 new ObjectType(SimpleTypes.BYTE.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.BYTE));
+                Autobox.autobox(new GetValue("x", SimpleTypes.BYTE),
+                        new ObjectType(SimpleTypes.BYTE.getBoxTypeName())));
 
         Object result = generator.invokeMethod("TestBoxing",method, (byte) 127);
         Assertions.assertEquals((Byte) result, Byte.valueOf((byte)127), "Box value should be 127");
@@ -172,7 +175,8 @@ public class TestBoxing {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.CHAR)},
                 new ObjectType(SimpleTypes.CHAR.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.CHAR));
+                Autobox.autobox(new GetValue("x", SimpleTypes.CHAR),
+                        new ObjectType(SimpleTypes.CHAR.getBoxTypeName())));
 
         Object result = generator.invokeMethod("TestBoxing",method, (char) 127);
         Assertions.assertEquals((Character) result, Character.valueOf((char)127), "Box value should be 127");
@@ -185,7 +189,8 @@ public class TestBoxing {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.DOUBLE)},
                 new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.DOUBLE));
+                Autobox.autobox(new GetValue("x", SimpleTypes.DOUBLE),
+                        new ObjectType(SimpleTypes.DOUBLE.getBoxTypeName())));
 
         Object result = generator.invokeMethod("TestBoxing",method, 3.14);
         Assertions.assertEquals((Double) result, Double.valueOf(3.14), "Box value should be 127");
@@ -198,7 +203,8 @@ public class TestBoxing {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.FLOAT)},
                 new ObjectType(SimpleTypes.FLOAT.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.FLOAT));
+                Autobox.autobox(new GetValue("x", SimpleTypes.FLOAT),
+                        new ObjectType(SimpleTypes.FLOAT.getBoxTypeName())));
 
         Object result = generator.invokeMethod("TestBoxing",method, 3.14f);
         Assertions.assertEquals((Float) result, Float.valueOf(3.14f), "Box value should be 127");
@@ -211,7 +217,8 @@ public class TestBoxing {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.INT)},
                 new ObjectType(SimpleTypes.INT.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.INT));
+                Autobox.autobox(new GetValue("x", SimpleTypes.INT),
+                        new ObjectType(SimpleTypes.INT.getBoxTypeName())));
 
         Object result = generator.invokeMethod("TestBoxing",method, 127);
         Assertions.assertEquals((Integer) result, Integer.valueOf(127), "Box value should be 127");
@@ -224,7 +231,8 @@ public class TestBoxing {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.LONG)},
                 new ObjectType(SimpleTypes.LONG.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.LONG));
+                Autobox.autobox(new GetValue("x", SimpleTypes.LONG),
+                        new ObjectType(SimpleTypes.LONG.getBoxTypeName())));
 
         Object result = generator.invokeMethod("TestBoxing",method, 127l);
         Assertions.assertEquals((Long) result, Long.valueOf(127l), "Box value should be 127");
@@ -237,7 +245,8 @@ public class TestBoxing {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.SHORT)},
                 new ObjectType(SimpleTypes.SHORT.getBoxTypeName()),
-                new GetValue("x", SimpleTypes.SHORT));
+                Autobox.autobox(new GetValue("x", SimpleTypes.SHORT),
+                        new ObjectType(SimpleTypes.SHORT.getBoxTypeName())));
 
         Object result = generator.invokeMethod("TestBoxing",method, (short) 127);
         Assertions.assertEquals((Short) result, Short.valueOf((short)127), "Box value should be 127");
@@ -251,7 +260,7 @@ public class TestBoxing {
         MethodDef method = new MethodDef("boxtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING)},
                 SimpleTypes.STRING,
-                new GetValue("x", SimpleTypes.STRING));
+                Autobox.autobox(new GetValue("x", SimpleTypes.STRING), SimpleTypes.STRING));
         Object result = generator.invokeMethod("TestBoxing",method, "foo");
         Assertions.assertEquals((String) result, "foo", "foo shouldn't be boxed");
         result = generator.invokeMethod("TestBoxing",method, "bar");

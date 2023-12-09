@@ -44,6 +44,11 @@ public class NewArray extends Expression {
         return new ArrayType(arrayType);
     }
 
+    @Override
+    public void resetLabels() {
+        arraySize.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         arraySize.findCaptured(env);
     }

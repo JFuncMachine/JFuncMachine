@@ -64,6 +64,13 @@ public class ArraySet extends Expression {
         return SimpleTypes.UNIT;
     }
 
+    @Override
+    public void resetLabels() {
+        array.resetLabels();
+        index.resetLabels();
+        value.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         array.findCaptured(env);
         index.findCaptured(env);

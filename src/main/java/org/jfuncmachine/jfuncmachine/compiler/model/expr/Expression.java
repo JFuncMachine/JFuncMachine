@@ -30,6 +30,13 @@ public abstract class Expression extends SourceElement {
     public abstract void findCaptured(Environment env);
 
     /**
+     * Resets any labels in expressions so that the method can be regenerated
+     */
+    public void resetLabels() {
+
+    }
+
+    /**
      * Generate the bytecode for this expression
      * @param generator The generator for generating instructions and additional declarations
      * @param env The environment containing the local variables currently visible to this expression

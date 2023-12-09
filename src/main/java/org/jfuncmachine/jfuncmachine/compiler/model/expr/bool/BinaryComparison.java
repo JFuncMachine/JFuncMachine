@@ -74,6 +74,14 @@ public class BinaryComparison extends BooleanExpr {
         return this;
     }
 
+    @Override
+    public void resetLabels() {
+        left.resetLabels();
+        right.resetLabels();
+        truePath.resetLabels();
+        falsePath.resetLabels();
+    }
+
     public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests) {
         this.falsePath = falseNext;
         this.truePath = trueNext;

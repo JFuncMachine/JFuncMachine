@@ -42,6 +42,13 @@ public class InlineCall extends Expression {
         return func.getReturnType();
     }
 
+    @Override
+    public void resetLabels() {
+        for (Expression expr: arguments) {
+            expr.resetLabels();
+        }
+    }
+
     public void findCaptured(Environment env) {
         for (Expression expr: arguments) {
             expr.findCaptured(env);

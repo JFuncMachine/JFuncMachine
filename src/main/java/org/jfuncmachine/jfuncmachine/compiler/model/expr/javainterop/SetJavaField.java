@@ -63,6 +63,12 @@ public class SetJavaField extends Expression {
         return SimpleTypes.UNIT;
     }
 
+    @Override
+    public void resetLabels() {
+        expr.resetLabels();
+        target.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         target.findCaptured(env);
         expr.findCaptured(env);

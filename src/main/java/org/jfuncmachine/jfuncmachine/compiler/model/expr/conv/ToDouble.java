@@ -41,6 +41,11 @@ public class ToDouble extends Expression {
 
     public Type getType() { return SimpleTypes.DOUBLE; }
 
+    @Override
+    public void resetLabels() {
+        expr.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         expr.findCaptured(env);
     }

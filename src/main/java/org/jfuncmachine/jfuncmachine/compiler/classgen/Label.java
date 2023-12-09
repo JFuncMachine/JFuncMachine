@@ -6,10 +6,14 @@ package org.jfuncmachine.jfuncmachine.compiler.classgen;
  * code where a local variable is valid.
  */
 public class Label {
-    protected final org.objectweb.asm.Label label;
+    protected org.objectweb.asm.Label label;
 
     /** Create a new label */
     public Label() {
+        this.label = new org.objectweb.asm.Label();
+    }
+
+    public void reset() {
         this.label = new org.objectweb.asm.Label();
     }
 }

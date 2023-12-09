@@ -41,6 +41,11 @@ public class ToByte extends Expression {
 
     public Type getType() { return SimpleTypes.BYTE; }
 
+    @Override
+    public void resetLabels() {
+        expr.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         expr.findCaptured(env);
     }

@@ -10,21 +10,7 @@ import org.jfuncmachine.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.GetValue;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.javainterop.CallJavaSuperConstructor;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ArrayType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.Field;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.FunctionType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ObjectType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.StringType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.UnitType;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
 import org.jfuncmachine.jfuncmachine.runtime.TailCall;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -498,7 +484,7 @@ public class ClassGenerator {
                 };
 
         newNode.access = classDef.access;
-        if ((newNode.access & Opcodes.ACC_SUPER) == 0) {
+        if ((newNode.access & Opcodes.ACC_INTERFACE) == 0 && (newNode.access & Opcodes.ACC_SUPER) == 0) {
             newNode.access = newNode.access | Opcodes.ACC_SUPER;
         }
         newNode.name = className(classDef);
@@ -972,6 +958,7 @@ public class ClassGenerator {
             case DoubleType d -> "D";
             case FloatType f -> "F";
             case FunctionType f -> getTypeDescriptor(allocateLambdaInt(f).getObjectType());
+            case IndirectFunctionType f -> getTypeDescriptor(allocateLambdaInt(f.containedType()).getObjectType());
             case IntType i -> "I";
             case LongType l -> "J";
             case ObjectType o -> "L" + o.className.replace('.', '/') + ";";

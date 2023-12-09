@@ -122,6 +122,13 @@ public class CallTailCallStaticMethod extends Expression {
         return returnType;
     }
 
+    @Override
+    public void resetLabels() {
+        for (Expression expr: arguments) {
+            expr.resetLabels();
+        }
+    }
+
     public void findCaptured(Environment env) {
         for (Expression expr: arguments) {
             expr.findCaptured(env);

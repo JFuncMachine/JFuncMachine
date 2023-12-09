@@ -41,6 +41,11 @@ public class Cast extends Expression {
     }
 
     @Override
+    public void resetLabels() {
+        body.resetLabels();
+    }
+
+    @Override
     public void findCaptured(Environment env) {
         body.findCaptured(env);
     }

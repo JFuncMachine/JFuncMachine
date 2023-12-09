@@ -48,6 +48,11 @@ public class SetValue extends Expression {
         return SimpleTypes.UNIT;
     }
 
+    @Override
+    public void resetLabels() {
+        expression.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         expression.findCaptured(env);
     }

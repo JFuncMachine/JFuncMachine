@@ -1,14 +1,7 @@
 package org.jfuncmachine.jfuncmachine.compiler.classgen;
 
-import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ByteType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.DoubleType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.FloatType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.LongType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.ShortType;
-import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.jfuncmachine.runtime.FunctionRefHolder;
 import org.objectweb.asm.Opcodes;
 
 import java.util.Objects;
@@ -21,7 +14,7 @@ public class EnvVar {
     /** The name of the variable */
     public final String name;
     /** The type of the variable */
-    public final Type type;
+    public Type type;
     /** The index of the variable */
     public final int index;
 
@@ -61,6 +54,14 @@ public class EnvVar {
     public void generateGet(ClassGenerator generator) {
         int opcode = getOpcode(type);
         generator.instGen.rawIntOpcode(opcode, index);
+        if (type instanceof IndirectFunctionType indirectFunctionType) {
+            LambdaIntInfo intInfo = generator.allocateLambdaInt(indirectFunctionType.containedType());
+            generator.instGen.getfield(generator.className(FunctionRefHolder.class.getName()),
+                    "ref", generator.getTypeDescriptor(new ObjectType()));
+        } else if (type.equals(new ObjectType(FunctionRefHolder.class.getName()))) {
+            generator.instGen.getfield(generator.className(FunctionRefHolder.class.getName()),
+                    "ref", generator.getTypeDescriptor(new ObjectType()));
+        }
     }
 
     public static int getOpcode(Type t) {

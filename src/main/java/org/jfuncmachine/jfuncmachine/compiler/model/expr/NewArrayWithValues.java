@@ -52,6 +52,13 @@ public class NewArrayWithValues extends Expression {
         return new ArrayType(arrayType);
     }
 
+    @Override
+    public void resetLabels() {
+        for (Expression expr: arrayValues) {
+            expr.resetLabels();
+        }
+    }
+
     public void findCaptured(Environment env) {
         for (Expression expr: arrayValues) {
             expr.findCaptured(env);

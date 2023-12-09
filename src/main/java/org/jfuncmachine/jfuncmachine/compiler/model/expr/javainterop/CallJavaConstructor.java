@@ -88,7 +88,15 @@ public class CallJavaConstructor extends Expression {
     }
 
     public Type getType() {
+
         return new ObjectType(className);
+    }
+
+    @Override
+    public void resetLabels() {
+        for (Expression expr: arguments) {
+            expr.resetLabels();
+        }
     }
 
     public void findCaptured(Environment env) {

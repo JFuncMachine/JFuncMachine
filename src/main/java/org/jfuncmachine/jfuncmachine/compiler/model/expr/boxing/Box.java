@@ -123,6 +123,11 @@ public class Box extends Expression {
     }
 
     @Override
+    public void resetLabels() {
+        expr.resetLabels();
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String boxName;
 

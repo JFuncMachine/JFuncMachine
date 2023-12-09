@@ -153,8 +153,7 @@ public class SexprToJFuncMachineModel {
 
     public static Map<String, Binding.Visibility> visibilityMap = Stream.of(new Object[][] {
         { "Visibility.Separate", Binding.Visibility.Separate },
-        { "Visibility.Next", Binding.Visibility.Previous},
-        { "Visibility.Recursive", Binding.Visibility.Recursive }
+        { "Visibility.Next", Binding.Visibility.Previous}
     }).collect(Collectors.toMap(data-> (String)data[0], data->(Binding.Visibility) data[1]));
 
     public static Set<String> comparisonSet = Stream.of(new String[] {

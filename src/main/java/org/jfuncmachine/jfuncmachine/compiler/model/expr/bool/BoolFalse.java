@@ -22,6 +22,11 @@ public class BoolFalse extends BooleanExpr {
     }
 
     @Override
+    public void resetLabels() {
+        falsePath.resetLabels();
+    }
+
+    @Override
     public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests) {
         this.falsePath = trueNext;
         tests.add(this);

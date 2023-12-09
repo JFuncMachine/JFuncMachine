@@ -146,6 +146,14 @@ public class Switch extends Expression {
         return cases[0].expr.getType();
     }
 
+    @Override
+    public void resetLabels() {
+        expr.resetLabels();
+        for (SwitchCase switchCase: cases) {
+            switchCase.expr.resetLabels();
+        }
+    }
+
     public void findCaptured(Environment env) {
         expr.findCaptured(env);
         for (SwitchCase switchCase: cases) {

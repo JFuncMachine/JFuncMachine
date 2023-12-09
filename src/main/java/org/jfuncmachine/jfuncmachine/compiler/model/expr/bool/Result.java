@@ -35,6 +35,11 @@ public class Result extends BooleanExpr {
     public BooleanExpr removeNot() { return this; }
 
     @Override
+    public void resetLabels() {
+        expr.resetLabels();
+    }
+
+    @Override
     public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests) {
         return this;
     }

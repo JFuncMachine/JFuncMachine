@@ -55,6 +55,11 @@ public class GetJavaField extends Expression {
         return this.fieldType;
     }
 
+    @Override
+    public void resetLabels() {
+        target.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         target.findCaptured(env);
     }

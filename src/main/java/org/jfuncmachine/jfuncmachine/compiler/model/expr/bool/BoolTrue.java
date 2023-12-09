@@ -3,9 +3,6 @@ package org.jfuncmachine.jfuncmachine.compiler.model.expr.bool;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Label;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Test;
-import org.jfuncmachine.jfuncmachine.compiler.model.expr.bool.tests.Tests;
-import org.objectweb.asm.Opcodes;
 
 import java.util.List;
 
@@ -22,6 +19,11 @@ public class BoolTrue extends BooleanExpr {
 
     public BooleanExpr removeNot() {
         return this;
+    }
+
+    @Override
+    public void resetLabels() {
+        truePath.resetLabels();
     }
 
     @Override

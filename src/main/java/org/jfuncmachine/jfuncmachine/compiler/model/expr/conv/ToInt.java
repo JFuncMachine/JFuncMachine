@@ -41,6 +41,11 @@ public class ToInt extends Expression {
 
     public Type getType() { return SimpleTypes.INT; }
 
+    @Override
+    public void resetLabels() {
+        expr.resetLabels();
+    }
+
     public void findCaptured(Environment env) {
         expr.findCaptured(env);
     }

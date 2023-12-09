@@ -41,6 +41,12 @@ public class Or extends BooleanExpr {
         return this;
     }
 
+    @Override
+    public void resetLabels() {
+        left.resetLabels();
+        right.resetLabels();
+    }
+
     public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests) {
         BooleanExpr rightPath = right.computeSequence(trueNext, falseNext, tests);
         return left.computeSequence(trueNext, rightPath, tests);

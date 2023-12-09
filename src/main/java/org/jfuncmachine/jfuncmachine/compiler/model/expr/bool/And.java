@@ -44,6 +44,12 @@ public class And extends BooleanExpr {
         return this;
     }
 
+    @Override
+    public void resetLabels() {
+        this.left.resetLabels();
+        this.right.resetLabels();
+    }
+
     public BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests) {
         BooleanExpr rightPath = right.computeSequence(trueNext, falseNext, tests);
         return left.computeSequence(rightPath, falseNext, tests);

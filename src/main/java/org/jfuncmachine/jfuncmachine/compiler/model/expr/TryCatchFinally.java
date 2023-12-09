@@ -57,6 +57,17 @@ public class TryCatchFinally extends Expression {
         return tryBody.getType();
     }
 
+    @Override
+    public void resetLabels() {
+        tryBody.resetLabels();
+        for (Catch catchExpr : catchExprs) {
+            catchExpr.body.resetLabels();
+        }
+        if (finallyBody != null) {
+            finallyBody.resetLabels();
+        }
+    }
+
     public void findCaptured(Environment env) {
         tryBody.findCaptured(env);
 

@@ -72,6 +72,11 @@ public class Unbox extends Expression {
     public Type getType() { return expr.getType().getUnboxedType(); }
 
     @Override
+    public void resetLabels() {
+        expr.resetLabels();
+    }
+
+    @Override
     public void findCaptured(Environment env) {
         expr.findCaptured(env);
     }
@@ -94,6 +99,7 @@ public class Unbox extends Expression {
         // Don't unbox if this value is in the tail position and full-tail calls are enabled,
         // because the value must remain an object
         if (inTailPosition && generator.currentMethod.isTailCallable) {
+            expr.generate(generator, env, inTailPosition);
             return;
         }
 

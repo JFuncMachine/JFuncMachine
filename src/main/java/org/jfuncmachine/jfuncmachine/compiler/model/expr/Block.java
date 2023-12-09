@@ -41,6 +41,13 @@ public class Block extends Expression {
         }
     }
 
+    @Override
+    public void resetLabels() {
+        for (Expression expr: expressions) {
+            expr.resetLabels();
+        }
+    }
+
     public void findCaptured(Environment env) {
         for (Expression expr: expressions) {
             expr.findCaptured(env);
