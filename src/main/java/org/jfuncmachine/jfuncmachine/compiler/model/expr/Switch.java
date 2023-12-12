@@ -4,6 +4,7 @@ import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Label;
 import org.jfuncmachine.jfuncmachine.compiler.model.expr.boxing.Unbox;
+import org.jfuncmachine.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.BooleanType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.CharType;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.IntType;
@@ -120,7 +121,7 @@ public class Switch extends Expression {
 
     protected void computeSwitchType() {
         for (int i=0; i < cases.length; i++) {
-            caseMap.put(i, cases[i]);
+            caseMap.put(cases[i].value, cases[i]);
         }
         int gapSum = 0;
         int last = 0;
@@ -138,7 +139,6 @@ public class Switch extends Expression {
                     useTableSwitch = false;
                 }
             }
-
         }
     }
 
@@ -208,6 +208,8 @@ public class Switch extends Expression {
         Label defaultLabel = switchEndLabel;
         if (defaultCase != null) {
             defaultLabel = new Label();
+        } else {
+            defaultLabel = switchEndLabel;
         }
 
         if (useTableSwitch) {
@@ -221,7 +223,7 @@ public class Switch extends Expression {
                     switchLabels.toArray(new Label[0]));
 
             for (int i=minValue; i <= maxValue; i++) {
-                generator.instGen.label(switchLabels.get(i));
+                generator.instGen.label(switchLabels.get(i-minValue));
 
                 if (caseMap.containsKey(i)) {
                     SwitchCase switchCase = caseMap.get(i);
@@ -247,12 +249,14 @@ public class Switch extends Expression {
             for (SwitchCase switchCase : cases) {
                 generator.instGen.label(switchLabels.get(pos++));
                 switchCase.expr.generate(generator, env, inTailPosition);
+                generator.instGen.gotolabel(switchEndLabel);
             }
         }
 
+        generator.instGen.label(defaultLabel);
         if (defaultCase != null) {
-            generator.instGen.label(defaultLabel);
             defaultCase.generate(generator, env, inTailPosition);
+
         }
 
         generator.instGen.label(switchEndLabel);
