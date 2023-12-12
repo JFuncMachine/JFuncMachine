@@ -1,31 +1,18 @@
-![](images/jfuncmachine2.gif)
-
-# JFuncMachine
-
-JFuncMachine is a library for creating functional languages that
-compile to Java byte codes.
-
-There will be more detailed information soon, but here
-is an example HelloWorld that creates a "Hello World" program,
-loads it, and runs it.
-
-```java
-
 package org.jfuncmachine.examples;
 
-import classgen.org.jfuncmachine.compiler.ClassGenerator;
-import model.org.jfuncmachine.compiler.Access;
-import model.org.jfuncmachine.compiler.ClassDef;
-import model.org.jfuncmachine.compiler.ClassField;
-import model.org.jfuncmachine.compiler.MethodDef;
-import expr.model.org.jfuncmachine.compiler.Expression;
-import constants.expr.model.org.jfuncmachine.compiler.StringConstant;
-import javainterop.expr.model.org.jfuncmachine.compiler.CallJavaMethod;
-import javainterop.expr.model.org.jfuncmachine.compiler.GetJavaStaticField;
-import types.model.org.jfuncmachine.compiler.ArrayType;
-import types.model.org.jfuncmachine.compiler.Field;
-import types.model.org.jfuncmachine.compiler.ObjectType;
-import types.model.org.jfuncmachine.compiler.SimpleTypes;
+import org.jfuncmachine.compiler.classgen.ClassGenerator;
+import org.jfuncmachine.compiler.model.Access;
+import org.jfuncmachine.compiler.model.ClassDef;
+import org.jfuncmachine.compiler.model.ClassField;
+import org.jfuncmachine.compiler.model.MethodDef;
+import org.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.compiler.model.expr.constants.StringConstant;
+import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
+import org.jfuncmachine.compiler.model.expr.javainterop.GetJavaStaticField;
+import org.jfuncmachine.compiler.model.types.ArrayType;
+import org.jfuncmachine.compiler.model.types.Field;
+import org.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.compiler.model.types.SimpleTypes;
 
 import java.lang.reflect.Method;
 
@@ -78,22 +65,3 @@ public class HelloWorld {
         }
     }
 }
-```
-
-There is a shortcut, rather than creating the ClassDef, generating
-it and loading it, you can use the invokeMethod method on the
-ClassGenerator to directly execute a MethodDef (the ClassGenerator
-creates a temporary class, loads it, locates the method, and invokes it).
-
-After the MethodDef in the above Hello World program you could just do:
-
-```java
-            // Create a class generator to generate the class
-            ClassGenerator generator = new ClassGenerator();
-
-            // Generate and load the class
-            generator.invokeMethod(main, (Object) new String[0]);
-
-```
-
-[Javadoc](http://www.jfuncmachine.org/javadoc/)
