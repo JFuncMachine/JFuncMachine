@@ -136,8 +136,10 @@ public class Environment {
      */
     public void free(int loc) {
         boolean found = false;
-        for (String key: vars.keySet()) {
+        Set<String> removeKeys = new HashSet<>();
+        for (String key: new HashSet<>(vars.keySet())) {
             if (vars.get(key).index == loc) {
+                removeKeys.add(key);
                 EnvVar removeVar = vars.remove(key);
 
                 // If the loc being freed is adjacent to nextVar, move nextVar back

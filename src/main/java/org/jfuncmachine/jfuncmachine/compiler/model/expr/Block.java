@@ -4,6 +4,7 @@ import org.jfuncmachine.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.jfuncmachine.compiler.model.types.Type;
+import org.jfuncmachine.jfuncmachine.compiler.model.types.UnitType;
 
 /** A sequence of expressions. The return value of the block is the value of the last expression.
  * If any of the expressions before the last one leave a value on the stack, that value is popped off
@@ -58,7 +59,7 @@ public class Block extends Expression {
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         for (int i=0; i < expressions.length; i++) {
             expressions[i].generate(generator, env, i == expressions.length-1);
-            if (i < expressions.length-1) {
+            if (i < expressions.length-1 && !(expressions[i].getType() instanceof UnitType)) {
                 if (expressions[i].getType().getStackSize() == 2) {
                     generator.instGen.pop2();
                 } else {
