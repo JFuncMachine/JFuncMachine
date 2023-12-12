@@ -27,36 +27,48 @@ public class TestLambdaInvoke {
                 new Field("x", SimpleTypes.INT) },
                 SimpleTypes.INT,
                 new Binding(new Binding.BindingPair[]{
-                        new Binding.BindingPair("fact",
+                        new Binding.BindingPair("double",
                                 new Lambda(new Field[]{
-                                        new Field("n", SimpleTypes.INT),
-                                        new Field("acc", SimpleTypes.INT)
+                                        new Field("n", SimpleTypes.INT)
                                 }, SimpleTypes.INT,
-                                        new If(new BinaryComparison(Tests.LT, new GetValue("n", SimpleTypes.INT),
-                                                new IntConstant(2)),
-                                                new GetValue("acc", SimpleTypes.INT),
-                                                new Invoke(new FunctionType(new Type[]{SimpleTypes.INT, SimpleTypes.INT},
-                                                        SimpleTypes.INT),
-                                                        new GetValue("fact", new ObjectType()),
-                                                        new Expression[]{
-                                                                new InlineCall(Inlines.IntSub, new Expression[]{
-                                                                        new GetValue("n", SimpleTypes.INT),
-                                                                        new IntConstant(1)
-                                                                }),
-                                                                new InlineCall(Inlines.IntMul, new Expression[]{
-                                                                        new GetValue("n", SimpleTypes.INT),
-                                                                        new GetValue("acc", SimpleTypes.INT),
-                                                                })
-                                                        })))),
+                                        new InlineCall(Inlines.IntAdd, new Expression[] {
+                                                new GetValue("n", SimpleTypes.INT),
+                                                new GetValue("n", SimpleTypes.INT)
+                                        })))
                 }, Binding.Visibility.Previous,
-                        new Invoke(new FunctionType(new Type[] { SimpleTypes.INT, SimpleTypes.INT}, SimpleTypes.INT),
-                        new GetValue("fact", new ObjectType()), new Expression[] {
-                                new GetValue("x", SimpleTypes.INT), new IntConstant(1)
+                        new Invoke(new FunctionType(new Type[] { SimpleTypes.INT }, SimpleTypes.INT),
+                        new GetValue("double", new ObjectType()), new Expression[] {
+                                new GetValue("x", SimpleTypes.INT)
                 })));
 
 
-        Object result = generator.invokeMethod("TestLambda",method, 10);
-        Assertions.assertEquals(3628800, result);
+        Object result = generator.invokeMethod("TestLambda",method, 21);
+        Assertions.assertEquals(42, result);
+    }
 
+    @TestAllImplementations
+    public void testLambdaInvokeInBindingWithCapture(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("lambainvoketest", Access.PUBLIC, new Field[] {
+                new Field("x", SimpleTypes.INT) },
+                SimpleTypes.INT,
+                new Binding(new Binding.BindingPair[]{
+                        new Binding.BindingPair("q", new IntConstant(5)),
+                        new Binding.BindingPair("addq",
+                                new Lambda(new Field[]{
+                                        new Field("n", SimpleTypes.INT)
+                                }, SimpleTypes.INT,
+                                        new InlineCall(Inlines.IntAdd, new Expression[] {
+                                                new GetValue("q", SimpleTypes.INT),
+                                                new GetValue("n", SimpleTypes.INT)
+                                        })))
+                }, Binding.Visibility.Previous,
+                        new Invoke(new FunctionType(new Type[] { SimpleTypes.INT }, SimpleTypes.INT),
+                                new GetValue("addq", new ObjectType()), new Expression[] {
+                                new GetValue("x", SimpleTypes.INT)
+                        })));
+
+
+        Object result = generator.invokeMethod("TestLambda",method, 37);
+        Assertions.assertEquals(42, result);
     }
 }

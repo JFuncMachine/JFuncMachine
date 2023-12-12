@@ -187,8 +187,9 @@ public class InvokeTailCall extends Expression {
 
         String className;
 
-        if (targetType instanceof FunctionType) {
-            LambdaIntInfo intInfo = generator.allocateLambdaInt((FunctionType) targetType);
+        if (targetType instanceof FunctionType funcType) {
+            LambdaIntInfo intInfo = generator.allocateLambdaInt(
+                    new FunctionType(funcType.parameterTypes, new ObjectType()));
             className = intInfo.packageName + "." + intInfo.name;
         } else if (targetType instanceof ObjectType) {
             className = ((ObjectType) targetType).className;

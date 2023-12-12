@@ -173,8 +173,7 @@ public class Invoke extends Expression {
         String intMethodName = intMethod;
 
         boolean tailCallReturn = inTailPosition && generator.currentMethod.isTailCallable;
-        boolean makeTailCall = inTailPosition &&
-                generator.options.fullTailCalls;
+        boolean makeTailCall = generator.options.fullTailCalls;
 
         if (intMethod == null) {
             intMethodName = generator.options.lambdaMethodName;
@@ -191,8 +190,14 @@ public class Invoke extends Expression {
 
         String className;
 
-        if (targetType instanceof FunctionType) {
-            LambdaIntInfo intInfo = generator.allocateLambdaInt((FunctionType) targetType);
+        LambdaIntInfo intInfo;
+        if (targetType instanceof FunctionType funcType) {
+            if (generator.options.fullTailCalls) {
+                intInfo = generator.allocateLambdaInt(
+                        new FunctionType(funcType.parameterTypes, new ObjectType()));
+            } else {
+                intInfo = generator.allocateLambdaInt((FunctionType) targetType);
+            }
             className = intInfo.packageName + "." + intInfo.name;
         } else if (targetType instanceof ObjectType) {
             className = ((ObjectType) targetType).className;
@@ -207,7 +212,7 @@ public class Invoke extends Expression {
         } else {
             generator.instGen.invokeinterface(
                     generator.className(className),
-                    intMethodName + "$$TC$$", generator.methodDescriptor(parameterTypes, new ObjectType()));
+                    intMethodName, generator.methodDescriptor(parameterTypes, new ObjectType()));
 
             if (tailCallReturn) {
                 generator.instGen.areturn();

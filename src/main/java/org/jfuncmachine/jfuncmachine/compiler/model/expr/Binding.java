@@ -156,9 +156,7 @@ public class Binding extends Expression {
             if (visibility == Visibility.Separate) {
                 pair.value.generate(generator, env, false);
             } else {
-                if (!(pair.value instanceof Lambda)) {
-                    pair.value.generate(generator, newEnv, false);
-                }
+                pair.value.generate(generator, newEnv, false);
             }
 
             envVar = newEnv.allocate(pair.name, pair.value.getType());

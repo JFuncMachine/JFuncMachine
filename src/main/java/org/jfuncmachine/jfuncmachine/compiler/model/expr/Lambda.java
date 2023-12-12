@@ -234,9 +234,15 @@ public class Lambda extends Expression {
             allParameterTypes[i+capturedParameterTypes.length] = parameters[i].type;
         }
 
+        Type lambdaReturnType = returnType;
+        if (generator.options.fullTailCalls) {
+            lambdaReturnType = new ObjectType();
+        }
+
         // extendedType is the type of the lambda with the captured parameters included
-        FunctionType extendedType = new FunctionType(
-                allParameterTypes, returnType);
+        FunctionType extendedType;
+
+        extendedType = new FunctionType(allParameterTypes, lambdaReturnType);
 
 
         LambdaIntInfo intInfo = null;
@@ -245,22 +251,15 @@ public class Lambda extends Expression {
         if (interfaceType == null) {
             // If there was no interface specified to indicate the return type, create one (if necessary)
             intInfo = generator.allocateLambdaInt(new FunctionType(
-                    parameterTypes, returnType));
-            // Allocate a method name for this lambda
+                    parameterTypes, lambdaReturnType));
         }
 
         String methodName;
         MethodDef lambdaMethod;
-        if (!generator.options.fullTailCalls) {
-            // Create a declaration for the lambda method
-            lambdaMethod = new MethodDef(lambdaInfo.name,
-                    Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
-                    allFields, returnType, body);
-        } else {
-            lambdaMethod = new MethodDef(lambdaInfo.name + "$$TC$$",
-                    Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
-                    allFields, new ObjectType(), true, body);
-        }
+        // Create a declaration for the lambda method
+        lambdaMethod = new MethodDef(lambdaInfo.name,
+                Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
+                allFields, lambdaReturnType, body);
 
         // Schedule the generation of the lambda method
         generator.addMethodToGenerate(lambdaMethod);
@@ -295,7 +294,8 @@ public class Lambda extends Expression {
             for (int i = 0; i < objectParams.length; i++) objectParams[i] = new ObjectType();
             signatureType = org.objectweb.asm.Type.getType(generator.methodDescriptor(objectParams, new ObjectType()));
         } else {
-            signatureType = org.objectweb.asm.Type.getType(generator.methodDescriptor(parameterTypes, returnType));
+            signatureType = org.objectweb.asm.Type.getType(generator.methodDescriptor(parameterTypes,
+                    lambdaReturnType));
         }
 
         String inDyMethodName = generator.options.lambdaMethodName;
@@ -303,12 +303,10 @@ public class Lambda extends Expression {
             inDyMethodName = interfaceMethodName;
         }
 
-        Type lambdaReturnType = returnType;
-        if (generator.options.fullTailCalls) {
-            lambdaReturnType = new ObjectType();
-        }
         Handle handle = new Handle(Handle.INVOKESTATIC, generator.className(generator.currentClass), lambdaInfo.name,
-                    generator.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, returnType), false);
+                    generator.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, lambdaReturnType),
+                    false);
+
         // Call invokedynamic to generate a lambda method handle
         generator.instGen.invokedynamic(inDyMethodName,
                 generator.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
