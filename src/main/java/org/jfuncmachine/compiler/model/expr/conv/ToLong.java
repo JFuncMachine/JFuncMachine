@@ -43,6 +43,7 @@ public class ToLong extends Expression {
 
     @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
+        generator.instGen.lineNumber(lineNumber);
         Type exprType = expr.getType();
 
         expr.generate(generator, env, false);

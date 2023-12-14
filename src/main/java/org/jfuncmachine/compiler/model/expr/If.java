@@ -135,6 +135,7 @@ public class If extends Expression {
 
     @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
+        generator.instGen.lineNumber(lineNumber);
         Label endLabel = new Label();
         for (int i=testSequence.size()-1; i >= 0; i--) {
             BooleanExpr booleanExpr = testSequence.get(i);

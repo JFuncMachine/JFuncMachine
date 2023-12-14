@@ -59,6 +59,7 @@ public class NullConstant extends Expression {
 
     @Override
     public void generate(ClassGenerator gen, Environment env, boolean inTailPosition) {
+        gen.instGen.lineNumber(lineNumber);
         gen.instGen.aconst_null();
     }
 }

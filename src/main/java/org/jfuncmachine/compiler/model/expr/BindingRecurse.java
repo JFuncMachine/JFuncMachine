@@ -149,6 +149,7 @@ public class BindingRecurse extends Expression {
                 envVar.generateSet(generator);
             }
         }
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.gotolabel(binding.label);
     }
 }

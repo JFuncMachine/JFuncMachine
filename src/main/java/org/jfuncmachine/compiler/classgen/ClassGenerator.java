@@ -470,6 +470,10 @@ public class ClassGenerator {
                     default -> Opcodes.V21;
                 };
 
+        if (classDef.filename != null) {
+            newNode.sourceFile = classDef.filename;
+        }
+
         newNode.access = classDef.access;
         if ((newNode.access & Opcodes.ACC_INTERFACE) == 0 && (newNode.access & Opcodes.ACC_SUPER) == 0) {
             newNode.access = newNode.access | Opcodes.ACC_SUPER;
@@ -505,7 +509,7 @@ public class ClassGenerator {
             // Add the method to the current class
             newNode.methods.add(methodNode);
 
-            if (!methodDef.name.equals("<init>") &&options.fullTailCalls) {
+            if (!methodDef.name.equals("<init>") && options.fullTailCalls && !methodDef.isTailCallable) {
                 // Update the currentMethod field to indicate what method we are currently working on
                 currentMethod = methodDef.getTailCallVersion();
 
@@ -608,6 +612,7 @@ public class ClassGenerator {
             // Create a label to mark the beginning of the method, this is used for recursion where a
             // method calling itself can be replaced with a jump back to the beginning of the method
             instGen.label(methodDef.startLabel);
+            instGen.lineNumber(methodDef.lineNumber);
 
             Type returnType = methodDef.returnType;
             if (methodDef.isTailCallable && !methodDef.name.equals("<init>")) {

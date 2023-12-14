@@ -83,6 +83,7 @@ public class SetJavaField extends Expression {
             expr.generate(generator, env, false);
         }
 
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.putfield(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));
 

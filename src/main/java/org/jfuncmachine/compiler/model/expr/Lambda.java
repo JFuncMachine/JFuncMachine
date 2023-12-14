@@ -302,6 +302,7 @@ public class Lambda extends Expression {
                     generator.lambdaMethodDescriptor(capturedParameterTypes, parameterTypes, lambdaReturnType),
                     false);
 
+        generator.instGen.lineNumber(lineNumber);
         // Call invokedynamic to generate a lambda method handle
         generator.instGen.invokedynamic(inDyMethodName,
                 generator.lambdaInDyDescriptor(capturedParameterTypes, indyClass),

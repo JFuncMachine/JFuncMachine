@@ -118,7 +118,7 @@ public class TestCallMethods {
         Assertions.assertEquals(3628800, result);
     }
 
-    @Test
+    @TestAllImplementations
     public void testTailCallMethod() {
         ClassGenerator generator = new ClassGenerator();
         MethodDef method = new MethodDef("fact", Access.PUBLIC, new Field[] {
@@ -167,7 +167,7 @@ public class TestCallMethods {
         Assertions.assertEquals(3628800, result);
     }
 
-    @Test
+    @TestAllImplementations
     public void testTailCallStaticMethod() {
         ClassGenerator generator = new ClassGenerator();
         MethodDef method = new MethodDef("fact", Access.PUBLIC + Access.STATIC, new Field[] {

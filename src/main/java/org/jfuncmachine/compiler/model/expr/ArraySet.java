@@ -97,6 +97,7 @@ public class ArraySet extends Expression {
                 default -> Opcodes.AASTORE;
             };
 
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.rawOpcode(opcode);
 
             if (inTailPosition && generator.currentMethod.isTailCallable) {

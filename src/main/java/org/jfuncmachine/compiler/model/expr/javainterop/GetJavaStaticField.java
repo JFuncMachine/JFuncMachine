@@ -49,6 +49,7 @@ public class GetJavaStaticField extends Expression {
     public void findCaptured(Environment env) {}
 
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.getstatic(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));
 

@@ -56,6 +56,10 @@ public final class ObjectType implements Type {
         this.className = className;
     }
 
+    public ObjectType(Class clazz) {
+        this.className = clazz.getName();
+    }
+
     public boolean equals(Object other) {
         if (other instanceof ObjectType jOther) {
             return className.equals(jOther.className);

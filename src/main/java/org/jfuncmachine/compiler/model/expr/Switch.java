@@ -11,14 +11,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/** A switch expression whose cases are all integers
+ *
+ * This class maps directly to either Java's tableswitch or lookupswitch instructions,
+ * meaning that the switch items must be integers. Other switches must currently be
+ * implemented with if statements, although switches on classes and enumerations will
+ * be supported by JFuncMachine eventually.
+ *
+ * A table switch is a simple jump table that is good when the case values are roughly
+ * consecutive. A lookup switch performs a binary search on a sorted array of case values
+ * to determine which case value to execute.
+ */
 public class Switch extends Expression {
+    /** The expression generating the value to be switched on */
     public final Expression expr;
+    /** A case containing a numeric value and an expression to be executed if the switch expression
+     * equals the case value
+     */
     public final SwitchCase[] cases;
+    /** The expression to be executed if none of the cases match the switch value */
     public final Expression defaultCase;
+    /** The maximum number of empty spaces between switch values allowed before the switch
+     * is converted to a lookup switch.
+     */
     public final int gapThreshold;
+    /** If true, this switch is using the tableswitch instruction */
     protected boolean useTableSwitch;
-    protected final Map<Integer,SwitchCase> caseMap;
+    /** A sorted map containing the cases sorted by value */
+    protected final TreeMap<Integer,SwitchCase> caseMap;
 
+    /** Create a Switch expression
+     * @param expr The expression generating the value to be switched on
+     * @param cases A case containing a numeric value and an expression to be executed if the switch expression
+     *              equals the case value
+     * @param defaultCase The expression to be executed if none of the cases match the switch value
+     */
     public Switch(Expression expr, SwitchCase[] cases, Expression defaultCase) {
         super(null, 0);
         this.expr = expr;
@@ -42,6 +69,14 @@ public class Switch extends Expression {
     }
 
 
+    /** Create a Switch expression
+     * @param expr The expression generating the value to be switched on
+     * @param cases A case containing a numeric value and an expression to be executed if the switch expression
+     *              equals the case value
+     * @param defaultCase The expression to be executed if none of the cases match the switch value
+     * @param filename The name of the source file where this switch is defined
+     * @param lineNumber The line number in the source file where this switch starts
+     */
     public Switch(Expression expr, SwitchCase[] cases, Expression defaultCase,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -65,6 +100,14 @@ public class Switch extends Expression {
         computeSwitchType();
     }
 
+    /** Create a Switch expression
+     * @param expr The expression generating the value to be switched on
+     * @param cases A case containing a numeric value and an expression to be executed if the switch expression
+     *              equals the case value
+     * @param defaultCase The expression to be executed if none of the cases match the switch value
+     * @param gapThreshold The maximum number of empty spaces between switch values allowed before the switch
+     *                     is converted to a lookup switch.
+     */
     public Switch(Expression expr, SwitchCase[] cases, Expression defaultCase, int gapThreshold) {
         super(null, 0);
         this.expr = expr;
@@ -87,7 +130,16 @@ public class Switch extends Expression {
         computeSwitchType();
     }
 
-
+    /** Create a Switch expression
+     * @param expr The expression generating the value to be switched on
+     * @param cases A case containing a numeric value and an expression to be executed if the switch expression
+     *              equals the case value
+     * @param defaultCase The expression to be executed if none of the cases match the switch value
+     * @param gapThreshold The maximum number of empty spaces between switch values allowed before the switch
+     *                     is converted to a lookup switch.
+     * @param filename The name of the source file where this switch is defined
+     * @param lineNumber The line number in the source file where this switch starts
+     */
     public Switch(Expression expr, SwitchCase[] cases, Expression defaultCase, int gapThreshold,
                   String filename, int lineNumber) {
         super(filename, lineNumber);
@@ -211,6 +263,7 @@ public class Switch extends Expression {
                 switchLabels.add(new Label());
             }
 
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.tableswitch(minValue, maxValue, defaultLabel,
                     switchLabels.toArray(new Label[0]));
 
@@ -235,6 +288,7 @@ public class Switch extends Expression {
                 labelKeys[pos++] = key;
             }
 
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.lookupswitch(defaultLabel, labelKeys, switchLabels.toArray(new Label[0]));
 
             pos = 0;

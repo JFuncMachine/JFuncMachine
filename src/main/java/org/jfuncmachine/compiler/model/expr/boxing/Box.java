@@ -159,7 +159,6 @@ public class Box extends Expression {
 
         Type boxArgumentType = new ObjectType(boxName).getUnboxedType();
 
-
         CallJavaStaticMethod method = new CallJavaStaticMethod(boxName, "valueOf",
                 new Type[] { boxArgumentType }, new Expression[] { expr },
                 new ObjectType(boxName), filename, lineNumber);

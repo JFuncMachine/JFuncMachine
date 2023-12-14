@@ -53,6 +53,7 @@ public class Cast extends Expression {
     @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         body.generate(generator, env, false);
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.checkcast(generator.className(castClass));
 
     }

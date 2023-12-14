@@ -196,10 +196,12 @@ public class Invoke extends Expression {
         }
 
         if (!makeTailCall) {
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.invokeinterface(
                     generator.className(className),
                     intMethodName, generator.methodDescriptor(parameterTypes, returnType));
         } else {
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.invokeinterface(
                     generator.className(className),
                     intMethodName, generator.methodDescriptor(parameterTypes, new ObjectType()));

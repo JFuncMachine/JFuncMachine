@@ -67,6 +67,7 @@ public class NewArrayWithValues extends Expression {
         }
 
         for (int i=0; i < arrayValues.length; i++) {
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.dup();
             new IntConstant(i, filename, lineNumber).generate(generator, env, false);
             if (generator.options.autobox) {
@@ -74,6 +75,7 @@ public class NewArrayWithValues extends Expression {
             } else {
                 arrayValues[i].generate(generator, env, false);
             }
+            generator.instGen.lineNumber(lineNumber);
             switch (arrayType) {
                 case BooleanType b -> generator.instGen.bastore();
                 case ByteType b -> generator.instGen.bastore();

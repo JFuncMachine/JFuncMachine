@@ -64,6 +64,7 @@ public class InlineCall extends Expression {
             }
             expr.generate(generator, env, false);
         }
+        generator.instGen.lineNumber(lineNumber);
         func.generate(generator, env);
     }
 }

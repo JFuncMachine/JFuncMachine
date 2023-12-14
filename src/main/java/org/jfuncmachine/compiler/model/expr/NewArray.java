@@ -55,6 +55,7 @@ public class NewArray extends Expression {
         } else {
             arraySize.generate(generator, env, false);
         }
+        generator.instGen.lineNumber(lineNumber);
         switch (arrayType) {
             case ObjectType o -> generator.instGen.anewarray(generator.className(o.className));
             case StringType s -> generator.instGen.anewarray("java/lang/String");

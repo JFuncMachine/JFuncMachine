@@ -138,6 +138,7 @@ public class CallJavaMethod extends Expression {
             }
             expr.generate(generator, env, false);
         }
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.invokevirtual(
                 generator.className(className),
                 methodName, generator.methodDescriptor(parameterTypes, returnType));

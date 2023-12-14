@@ -152,15 +152,18 @@ public class CallStaticMethod extends Expression {
             for (int i=arguments.length-1; i >= 0; i--) {
                 generator.instGen.rawIntOpcode(EnvVar.setOpcode(arguments[i].getType()), argumentLocations[i]);
             }
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.gotolabel(generator.currentMethod.startLabel);
         } else if (tailCallReturn) {
             generateTailLambda(invokeClassName, name, parameterTypes, arguments, generator, env);
         } else {
             if (!makeTailCall) {
+                generator.instGen.lineNumber(lineNumber);
                 generator.instGen.invokestatic(
                         generator.className(invokeClassName),
                         name, generator.methodDescriptor(parameterTypes, returnType));
             } else {
+                generator.instGen.lineNumber(lineNumber);
                 generator.instGen.invokestatic(
                         generator.className(invokeClassName),
                         name+"$$TC$$", generator.methodDescriptor(parameterTypes, new ObjectType()));

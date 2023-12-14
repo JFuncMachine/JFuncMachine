@@ -85,6 +85,7 @@ public class ArrayGet extends Expression {
                 default -> Opcodes.AALOAD;
             };
 
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.rawOpcode(opcode);
 
             if (inTailPosition && generator.currentMethod.isTailCallable) {

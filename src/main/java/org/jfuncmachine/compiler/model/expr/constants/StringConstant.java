@@ -39,6 +39,7 @@ public class StringConstant extends Expression {
 
     @Override
     public void generate(ClassGenerator gen, Environment env, boolean inTailPosition) {
+        gen.instGen.lineNumber(lineNumber);
         gen.instGen.ldc(value);
     }
 }

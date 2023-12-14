@@ -2,6 +2,12 @@ package org.jfuncmachine.compiler.model;
 
 import org.objectweb.asm.Opcodes;
 
+/**
+ * Values describing the various access options for Java classes, interfaces, and methods.
+ *
+ * The values in this class can be combined by addition, so "public static"
+ * is represented as Access.PUBLIC + Access.STATIC.
+ */
 public class Access {
     public static final int ABSTRACT = Opcodes.ACC_ABSTRACT;
     public static final int FINAL = Opcodes.ACC_FINAL;

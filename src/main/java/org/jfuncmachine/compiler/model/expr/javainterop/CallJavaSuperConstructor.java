@@ -107,6 +107,7 @@ public class CallJavaSuperConstructor extends Expression {
             }
             expr.generate(generator, env, false);
         }
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.invokespecial(
                 generator.className(generator.currentClass.superPackageName+"."+generator.currentClass.superName),
                 "<init>", generator.methodDescriptor(parameterTypes, SimpleTypes.UNIT));

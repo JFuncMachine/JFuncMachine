@@ -144,10 +144,12 @@ public class CallTailCallStaticMethod extends Expression {
             for (int i=arguments.length-1; i >= 0; i--) {
                 generator.instGen.rawIntOpcode(EnvVar.setOpcode(arguments[i].getType()), argumentLocations[i]);
             }
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.gotolabel(generator.currentMethod.startLabel);
         } else if (inTailPosition) {
             generateTailLambda(invokeClassName, name, parameterTypes, arguments, generator, env);
         } else{
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.invokestatic(
                     generator.className(invokeClassName),
                     name, generator.methodDescriptor(parameterTypes, new ObjectType()));
@@ -241,7 +243,7 @@ public class CallTailCallStaticMethod extends Expression {
         MethodDef lambdaMethod = new MethodDef(lambdaInfo.name,
                 Access.PRIVATE + Access.SYNTHETIC + Access.STATIC,
                 lambdaFields, new ObjectType(),
-                new CallJavaStaticMethod(invokeClassName, name+"$$TC$$", parameterTypes, new ObjectType(),
+                new CallJavaStaticMethod(invokeClassName, name, parameterTypes, new ObjectType(),
                         lambdaArguments));
 
         // Schedule the generation of the lambda method
@@ -256,6 +258,7 @@ public class CallTailCallStaticMethod extends Expression {
         Handle handle = new Handle(Handle.INVOKESTATIC, generator.className(generator.currentClass), lambdaInfo.name,
                 generator.lambdaMethodDescriptor(parameterTypes, new Type[0], new ObjectType()), false);
 
+        generator.instGen.lineNumber(lineNumber);
         // Call invokedynamic to generate a lambda method handle
         generator.instGen.invokedynamic(methodName,
                 generator.lambdaInDyDescriptor(parameterTypes, TailCall.class.getName()),

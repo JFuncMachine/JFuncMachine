@@ -32,7 +32,7 @@ public class HelloWorld {
                             // Get the PrintStream object from System.out, that is the object
                             // that we will be calling println on
                             SimpleTypes.UNIT, new GetJavaStaticField("java.lang.System", "out",
-                                    new ObjectType("java.io.PrintStream")),
+                                    new ObjectType(java.io.PrintStream.class)),
                             // Load up the arguments to println, which is just one, that is a string constant
                             new Expression[] { new StringConstant("Hello World!") }
                             // the function returns void (which in functional languages is called Unit)

@@ -134,6 +134,7 @@ public class CallJavaInterface extends Expression {
             }
             expr.generate(generator, env, false);
         }
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.invokeinterface(
                 generator.className(interfaceName),
                 methodName, generator.methodDescriptor(parameterTypes, returnType));

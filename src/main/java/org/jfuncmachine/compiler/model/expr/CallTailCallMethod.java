@@ -162,10 +162,12 @@ public class CallTailCallMethod extends Expression {
             for (int i = arguments.length-1; i >= 0; i--) {
                 generator.instGen.rawIntOpcode(EnvVar.setOpcode(arguments[i].getType()), argumentLocations[i]);
             }
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.gotolabel(generator.currentMethod.startLabel);
         } else if (inTailPosition) {
             generateTailLambda(invokeClassName, name, parameterTypes, target, arguments, generator, env);
         } else{
+            generator.instGen.lineNumber(lineNumber);
             generator.instGen.invokevirtual(
                     generator.className(invokeClassName),
                     name, generator.methodDescriptor(parameterTypes, new ObjectType()));
@@ -258,7 +260,7 @@ public class CallTailCallMethod extends Expression {
         MethodDef lambdaMethod = new MethodDef(lambdaInfo.name,
                     Access.PRIVATE + Access.SYNTHETIC,
                     lambdaFields, new ObjectType(),
-                new CallJavaMethod(invokeClassName, name+"$$TC$$", parameterTypes, new ObjectType(),
+                new CallJavaMethod(invokeClassName, name, parameterTypes, new ObjectType(),
                         new GetValue("this", new ObjectType()),
                         lambdaArguments));
 
@@ -280,6 +282,7 @@ public class CallTailCallMethod extends Expression {
             dyParameterTypes[i+1] = parameterTypes[i];
         }
         dyParameterTypes[0] = new ObjectType(generator.currentClass.getFullClassName());
+        generator.instGen.lineNumber(lineNumber);
         // Call invokedynamic to generate a lambda method handle
         generator.instGen.invokedynamic(methodName,
                 generator.lambdaInDyDescriptor(dyParameterTypes, TailCall.class.getName()),

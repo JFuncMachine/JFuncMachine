@@ -107,6 +107,7 @@ public class CallJavaConstructor extends Expression {
 
     @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
+        generator.instGen.lineNumber(lineNumber);
         String currClassName = className;
         if (currClassName == null) {
             currClassName = generator.currentClass.getFullClassName();
@@ -125,6 +126,7 @@ public class CallJavaConstructor extends Expression {
             }
             expr.generate(generator, env, false);
         }
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.invokespecial(generator.className(currClassName),
                 "<init>", generator.methodDescriptor(parameterTypes, SimpleTypes.UNIT));
     }

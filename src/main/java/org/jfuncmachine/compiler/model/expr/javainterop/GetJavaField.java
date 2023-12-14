@@ -67,6 +67,7 @@ public class GetJavaField extends Expression {
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         target.generate(generator, env, false);
 
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.getfield(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));
 

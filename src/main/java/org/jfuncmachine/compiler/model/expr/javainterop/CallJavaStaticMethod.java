@@ -124,6 +124,7 @@ public class CallJavaStaticMethod extends Expression {
             }
             expr.generate(generator, env, false);
         }
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.invokestatic(
                 generator.className(className),
                 methodName, generator.methodDescriptor(parameterTypes, returnType));

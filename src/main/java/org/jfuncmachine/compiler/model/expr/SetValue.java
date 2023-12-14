@@ -66,6 +66,7 @@ public class SetValue extends Expression {
             default -> Opcodes.ASTORE;
         };
 
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.rawIntOpcode(opcode, envVar.index);
         if (inTailPosition && generator.currentMethod.isTailCallable) {
             generator.instGen.aconst_null();

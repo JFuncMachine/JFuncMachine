@@ -5,6 +5,7 @@ import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.SourceElement;
 import org.jfuncmachine.compiler.model.types.Type;
 
+/** Base class for all JFuncMachine expressions */
 public abstract class Expression extends SourceElement {
     /**
      * Get the type returned by this expression

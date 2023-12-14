@@ -39,6 +39,7 @@ public class BooleanConstant extends Expression {
 
     @Override
     public void generate(ClassGenerator gen, Environment env, boolean inTailPosition) {
+        gen.instGen.lineNumber(lineNumber);
         if (value) {
             gen.instGen.iconst_1();
         } else {

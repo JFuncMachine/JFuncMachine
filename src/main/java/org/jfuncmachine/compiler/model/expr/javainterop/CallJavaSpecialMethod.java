@@ -138,6 +138,7 @@ public class CallJavaSpecialMethod extends Expression {
             }
             expr.generate(generator, env, false);
         }
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.invokespecial(
                 generator.className(className),
                 methodName, generator.methodDescriptor(parameterTypes, returnType));

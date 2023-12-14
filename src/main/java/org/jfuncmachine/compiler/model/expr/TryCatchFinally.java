@@ -173,7 +173,7 @@ public class TryCatchFinally extends Expression {
 
             generator.instGen.label(finallyBlock);
             Label finallyEnd = new Label();
-            EnvVar var = env.allocate(new ObjectType("java.lang.Throwable"));
+            EnvVar var = env.allocate(new ObjectType(java.lang.Throwable.class));
             var.generateSet(generator);
             generator.instGen.generateLocalVariable(var.name, var.type,
                     finallyBlock, finallyEnd, var.index);

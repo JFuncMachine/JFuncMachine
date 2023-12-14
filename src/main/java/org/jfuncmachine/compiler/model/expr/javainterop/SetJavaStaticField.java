@@ -66,6 +66,7 @@ public class SetJavaStaticField extends Expression {
             expr.generate(generator, env, false);
         }
 
+        generator.instGen.lineNumber(lineNumber);
         generator.instGen.putstatic(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));
 

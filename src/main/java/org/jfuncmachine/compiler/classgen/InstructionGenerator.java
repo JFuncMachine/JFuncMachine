@@ -771,4 +771,12 @@ public class InstructionGenerator {
                 new LabelNode(startLoc.label), new LabelNode(endLoc.label), index));
         return this;
     }
+
+    public void lineNumber(int lineNumber) {
+        if (lineNumber > 0) {
+            LabelNode label = new LabelNode(new Label().label);
+            instructionList.add(new LabelNode());
+            instructionList.add(new LineNumberNode(lineNumber, label));
+        }
+    }
 }
