@@ -6,9 +6,12 @@ import org.jfuncmachine.compiler.classgen.Label;
 
 import java.util.List;
 
+/** A false constant for boolean expressions */
 public class BoolFalse extends BooleanExpr {
     /** The test to execute if this one is false */
     public BooleanExpr falsePath;
+
+    /** Create a false constant */
     public BoolFalse(String filename, int lineNumber) {
         super(filename, lineNumber);
     }

@@ -23,6 +23,7 @@ public abstract class BooleanExpr extends SourceElement {
      */
     public abstract BooleanExpr invert();
 
+    /** Resets any values modified during code generation */
     public void reset() {
         label = null;
     }

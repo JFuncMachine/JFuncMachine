@@ -21,7 +21,7 @@ public class ClassDef extends SourceElement {
     /** The interfaces this class implements */
     public final String[] interfaces;
 
-    /**
+    /** Create a class definition
      * @param packageName The package name of the class (may be null)
      * @param name The name of the class
      * @param access Any access flags for the class (can be a sum of values from the Access class)
@@ -43,7 +43,7 @@ public class ClassDef extends SourceElement {
         this.interfaces = interfaces;
     }
 
-    /**
+    /** Create a class definition
      * @param packageName The package name of the class (may be null)
      * @param name The name of the class
      * @param superClass The ClassDef of the superclass
@@ -67,7 +67,7 @@ public class ClassDef extends SourceElement {
         this.interfaces = interfaces;
     }
 
-    /**
+    /** Create a class definition
      * @param packageName The package name of the class (may be null)
      * @param name The name of the class
      * @param superPackageName The package name of the superclass
@@ -92,7 +92,7 @@ public class ClassDef extends SourceElement {
         this.interfaces = interfaces;
     }
 
-    /**
+    /** Create a class definition
      * @param packageName The package name of the class (may be null)
      * @param name The name of the class
      * @param access Any access flags for the class (can be a sum of values from the Access class)
@@ -117,7 +117,7 @@ public class ClassDef extends SourceElement {
         this.interfaces = interfaces;
     }
 
-    /**
+    /** Create a class definition
      * @param packageName The package name of the class (may be null)
      * @param name The name of the class
      * @param superClass The ClassDef of the superclass
@@ -144,7 +144,7 @@ public class ClassDef extends SourceElement {
         this.interfaces = interfaces;
     }
 
-    /**
+    /** Create a class definition
      * @param packageName The package name of the class (may be null)
      * @param name The name of the class
      * @param superPackageName The package name of the superclass
