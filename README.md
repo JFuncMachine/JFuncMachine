@@ -3,11 +3,35 @@
 # JFuncMachine
 
 JFuncMachine is a library for creating functional languages that
-compile to Java byte codes.
+compile to Java byte codes. Language developers often make use
+of an intermediate language for code generation. For example,
+Idris and Racket, as of December 2023, are using Chez Scheme as an
+intermediate language. The Idris compiler doesn't have to generate
+native machine code, it just generates Scheme code and lets Chez Scheme
+do the translation to the native instructions.
 
-There will be more detailed information soon, but here
-is an example HelloWorld that creates a "Hello World" program,
-loads it, and runs it.
+JFuncMachine aims to perform that service for the Java Virtual Machine.
+While it isn't quite a proper language like Scheme, contains classes
+that represent various execution structures that a compiler might
+generate, such as if statements, function calls, lambdas, and many other
+features.
+
+## Building
+You need at least Java 21 and Gradle 8.5 to build JFuncMachine.
+Although it can generate code for older versions of Java,
+the source code relies on some of the new features of
+Java 21.
+
+At some point the library will be published to a Maven
+repo, but for now you can build it locally and publish
+it to your local repo.
+
+From the root directory of this repo, just do:
+```shell
+gradlew publish
+```
+
+## Getting Started
 
 ```java
 

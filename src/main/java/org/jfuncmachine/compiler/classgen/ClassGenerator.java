@@ -234,6 +234,7 @@ public class ClassGenerator {
      */
     public synchronized void generateAndLoad(ClassDef classDef, String outputDirectory) throws IOException {
         GeneratedClass[] classes = generateClassBytes(classDef);
+
         writeClasses(classes, outputDirectory);
 
         for (GeneratedClass genClass: classes) {
@@ -427,6 +428,7 @@ public class ClassGenerator {
             } else {
                 // If there is no package, write the file directly to the output directory
                 outDir = new File(outputDirectory);
+                outDir.mkdirs();
             }
 
             // Write the file to the destination directory
