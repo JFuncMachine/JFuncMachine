@@ -551,6 +551,14 @@ public class ClassGenerator {
         // Clear out the accumulated lambdas
         addedLambdas.clear();
 
+        List<FieldNode> classFields = new ArrayList<>();
+        for (ClassField field: classDef.fields) {
+            classFields.add(new FieldNode(field.access, field.name, getTypeDescriptor(field.type),
+                    null, field.defaultValue));
+        }
+
+        newNode.fields = classFields;
+
         return newNode;
     }
 
