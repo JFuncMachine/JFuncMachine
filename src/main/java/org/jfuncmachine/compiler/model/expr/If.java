@@ -4,6 +4,7 @@ import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.classgen.Label;
 import org.jfuncmachine.compiler.model.expr.bool.*;
+import org.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.compiler.model.types.Type;
 
 import java.util.List;
@@ -35,14 +36,18 @@ public class If extends Expression {
      */
     public If(BooleanExpr test, Expression trueExpr, Expression falseExpr) {
         super(null, 0);
-        if (trueExpr.getType() != falseExpr.getType()) {
-            generateException(
-                    "True expression type is different from false expression type");
-        }
         this.test = test.removeNot();
         this.trueExpr = trueExpr;
         this.falseExpr = falseExpr;
         this.hasFalse = true;
+        if (falseExpr != null && trueExpr.getType() != falseExpr.getType()) {
+            generateException(
+                    "True expression type is different from false expression type");
+        }
+        if (falseExpr == null && trueExpr.getType() != SimpleTypes.UNIT) {
+            generateException(
+                    "True expression must have type UNIT if false expression is null");
+        }
         this.computeTestSequence();
     }
 
@@ -56,14 +61,18 @@ public class If extends Expression {
     public If(BooleanExpr test, Expression trueExpr, Expression falseExpr,
               String filename, int lineNumber) {
         super(filename, lineNumber);
-        if (trueExpr.getType() != falseExpr.getType()) {
-            generateException(
-                    "True expression type is different from false expression type");
-        }
         this.test = test.removeNot();
         this.trueExpr = trueExpr;
         this.falseExpr = falseExpr;
         this.hasFalse = true;
+        if (falseExpr != null && trueExpr.getType() != falseExpr.getType()) {
+            generateException(
+                    "True expression type is different from false expression type");
+        }
+        if (falseExpr == null && trueExpr.getType() != SimpleTypes.UNIT) {
+            generateException(
+                    "True expression must have type UNIT if false expression is null");
+        }
         this.computeTestSequence();
     }
 
@@ -89,6 +98,10 @@ public class If extends Expression {
     public If(BooleanExpr test, Expression trueExpr,
               String filename, int lineNumber) {
         super(filename, lineNumber);
+        if (trueExpr.getType() != SimpleTypes.UNIT) {
+            generateException(
+                    "True expression must have type UNIT if false expression is null");
+        }
         this.test = test.removeNot();
         this.trueExpr = trueExpr;
         this.falseExpr = null;
@@ -96,7 +109,7 @@ public class If extends Expression {
         this.computeTestSequence();
     }
 
-    public void computeTestSequence() {
+    protected void computeTestSequence() {
         trueResult = new Result(trueExpr);
         falseResult = new Result(falseExpr);
 

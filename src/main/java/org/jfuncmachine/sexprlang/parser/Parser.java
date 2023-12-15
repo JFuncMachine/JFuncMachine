@@ -6,51 +6,114 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Stack;
 
+/** A simple S-expression parser */
 public class Parser {
+    /** The states of the parser */
     public enum State {
+        /** Indicates the parser is waiting for the next item */
         AwaitingItem,
+        /** Indicates the parser is reading a number */
         ReadingNumber,
+        /** Indicates the parser is reading a symbol */
         ReadingSymbol,
+        /** Indicates the parser is reading a String */
         ReadingString,
+        /** Indicates the parser is waiting for a separator */
         AwaitingSeparator,
+        /** Indicates the parser is skipping a line comment */
         SkippingLineComment,
+        /** Indicates the parser is skipping a block comment */
         SkippingBlockComment,
+        /** Indicates the parser is has seen a minus to start an item, but doesn't know yet
+         * if it is part of a number or part of a symbol*/
         GotMinus
     }
 
+    /** Parses a file and returns the first S-expression
+     *
+     * @param filename The file to parse
+     * @return The first S-expression in the file
+     * @throws IOException If there is an error reading or parsing the file
+     */
     public static SexprItem parseFile(String filename)
         throws IOException {
         String fileString = Files.readString(new File(filename).toPath());
         return parseString(fileString, filename, false, new JavaSymbolMatcher());
     }
 
+    /** Parses a file and returns either the first or all S-expressions in it
+     *
+     * @param filename The file to parse
+     * @param parseMultipleSexprs True if the parser should return all S-expressions instead of just the first
+     * @return Either the first or all the S-expressions in the file
+     * @throws IOException If there is an error reading or parsing the file
+     */
     public static SexprItem parseFile(String filename, boolean parseMultipleSexprs)
             throws IOException {
         String fileString = Files.readString(new File(filename).toPath());
         return parseString(fileString, filename, parseMultipleSexprs, new JavaSymbolMatcher());
     }
 
+    /** Parses an S-expression from a String
+     *
+     * @param str The string to parse
+     * @param filename The filename to use as the filename in the generated S-expressions
+     * @return The first S-expression in the string
+     * @throws IOException If there is an error parsing the string
+     */
     public static SexprItem parseString(String str, String filename) throws IOException {
         return parseString(str, filename, false, new JavaSymbolMatcher());
     }
 
+    /** Parses an S-expression from a file using the specified matcher to identify symbols
+     *
+     * @param filename The file to parse
+     * @param symbolMatcher The matcher that determines if a character is part of a symbol
+     * @return The first S-expression matched
+     * @throws IOException If there is an error reading or parsing the file
+     */
     public static SexprItem parseFile(String filename, SymbolMatcher symbolMatcher)
             throws IOException {
         String fileString = Files.readString(new File(filename).toPath());
         return parseString(fileString, filename, false, symbolMatcher);
     }
 
+    /** Parses S-expressions from a file using the specified matcher to identify symbols
+     *
+     * @param filename The file to parse
+     * @param parseMultipleSexprs If true, all S-expressions in the file are parsed, not just the first
+     * @param symbolMatcher The matcher that determines if a character is part of a symbol
+     * @return The first S-expression matched
+     * @throws IOException If there is an error reading or parsing the file
+     */
     public static SexprItem parseFile(String filename, boolean parseMultipleSexprs,
                                       SymbolMatcher symbolMatcher) throws IOException {
         String fileString = Files.readString(new File(filename).toPath());
         return parseString(fileString, filename, parseMultipleSexprs, symbolMatcher);
     }
 
+    /** Parses an S-expression from a string using the specified matcher to identify symbols
+     *
+     * @param str The string to parse
+     * @param filename The filename to use as the filename in the generated S-expression items
+     * @param symbolMatcher The matcher that determines if a character is part of a symbol
+     * @return The first S-expression matched
+     * @throws IOException If there is an error parsing the string
+     */
     public static SexprItem parseString(String str, String filename, SymbolMatcher symbolMatcher)
             throws IOException {
         return parseString(str, filename, false, symbolMatcher);
     }
 
+    /** Parses an S-expression from a string using the specified matcher to identify symbols
+     *
+     * @param str The string to parse
+     * @param filename The filename to use as the filename in the generated S-expression items
+     * @param parseMultipleSexprs If true, all S-expressions in the file are parsed, not just the first
+     * @param symbolMatcher The matcher that determines if a character is part of a symbol
+     * @return The first S-expression matched
+     * @throws IOException If there is an error parsing the string
+     */
     public static SexprItem parseString(String str, String filename, boolean parseMultipleSexprs,
                                         SymbolMatcher symbolMatcher)
         throws IOException {
@@ -221,4 +284,6 @@ public class Parser {
             return new SexprList(top, filename, 1);
         }
     }
+
+    private Parser() {}
 }

@@ -11,7 +11,10 @@ public class BoolTrue extends BooleanExpr {
     /** The test to execute if this one is true */
     public BooleanExpr truePath;
 
-    /** Create a true boolean constant expression */
+    /** Create a true boolean constant expression
+     * @param filename The source file containing this constant
+     * @param lineNumber The line number in the source file where this constant is declared
+     */
     public BoolTrue(String filename, int lineNumber) {
         super(filename, lineNumber);
     }
@@ -37,6 +40,14 @@ public class BoolTrue extends BooleanExpr {
         return this;
     }
 
+    /** Generate Java bytecode for this constant
+     *
+     * In the boolean expressions, a true constant means to take the true path.
+     *
+     * @param generator The class generator that is generating the current class
+     * @param env The environment containing all visible variables
+     * @param next The next boolean expr in the chain
+     */
     public void generate(ClassGenerator generator, Environment env, BooleanExpr next) {
         if (label != null) {
             generator.instGen.label(label);

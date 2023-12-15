@@ -54,6 +54,7 @@ public class InstructionGenerator {
      * @param classGen The parent class generator
      * @param generatingClass The current class definition being generated
      * @param instructionList The current list of generated instructions
+     * @return this instruction generator (for chaining calls)
      */
     protected InstructionGenerator(ClassGenerator classGen, ClassDef generatingClass, InsnList instructionList) {
         this.classGen = classGen;
@@ -61,84 +62,133 @@ public class InstructionGenerator {
         this.instructionList = instructionList;
     }
 
-    /** Emit an instruction to load an object from an array */
+    /** Emit an instruction to load an object from an array
+     *
+     * @return this instruction generator (for chaining calls)
+     */
     public InstructionGenerator aaload() { instructionList.add(new InsnNode(Opcodes.AALOAD)); return this; }
-    /** Emit an instruction to store an object into an array */
+    /** Emit an instruction to store an object into an array
+     * @return this instruction generator (for chaining calls)
+     */
     public InstructionGenerator aastore() { instructionList.add(new InsnNode(Opcodes.AASTORE)); return this; }
-    /** Emit an instruction to push a null constant onto the stack */
+    /** Emit an instruction to push a null constant onto the stack
+     * @return this instruction generator (for chaining calls)
+    */
     public InstructionGenerator aconst_null() { instructionList.add(new InsnNode(Opcodes.ACONST_NULL)); return this; }
-    /** Emit an instruction to load a reference from a local variable */
+    /** Emit an instruction to load a reference from a local variable
+     * @param index The local variable index to load the value from
+     * @return this instruction generator (for chaining calls)
+    */
     public InstructionGenerator aload(int index) { instructionList.add(new VarInsnNode(Opcodes.ALOAD, index)); return this; }
-    /** Emit an instruction to create a new array of objects of a specified type */
+    /** Emit an instruction to create a new array of objects of a specified type
+     * @param type The type of the array elements
+     * @return this instruction generator (for chaining calls)
+    */
     public InstructionGenerator anewarray(String type) { instructionList.add(new TypeInsnNode(Opcodes.ANEWARRAY, type)); return this; }
-    /** Emit an instruction to return an object from the current method */
+    /** Emit an instruction to return an object from the current method
+     * @return this instruction generator (for chaining calls)
+    */
     public InstructionGenerator areturn() { instructionList.add(new InsnNode(Opcodes.ARETURN)); return this; }
-    /** Emit an instruction to retrieve the length of an array */
+    /** Emit an instruction to retrieve the length of an array
+     * @return this instruction generator (for chaining calls)
+    */
     public InstructionGenerator arraylength() { instructionList.add(new InsnNode(Opcodes.ARRAYLENGTH)); return this; }
-    /** Emit an instruction to store a reference in a local variable */
+    /** Emit an instruction to store a reference in a local variable
+     * @param index The local variable index this value should be stored in
+     * @return this instruction generator (for chaining calls)
+    */
     public InstructionGenerator astore(int index) { instructionList.add(new VarInsnNode(Opcodes.ASTORE, index)); return this; }
-    /** Emit an instruction to throw an exception */
+    /** Emit an instruction to throw an exception
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator athrow() { instructionList.add(new InsnNode(Opcodes.ATHROW)); return this; }
-    /** Emit an instruction to fetch a value from a byte array */
+    /** Emit an instruction to fetch a value from a byte array
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator baload() { instructionList.add(new InsnNode(Opcodes.BALOAD)); return this; }
-    /** Emit an instruction to store a value in a byte array */
+    /** Emit an instruction to store a value in a byte array
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator bastore() { instructionList.add(new InsnNode(Opcodes.BASTORE)); return this; }
     /** Emit an instruction to push a byte value onto the stack
-     * (like loading a constant, but doesn't require an entry in the constant pool) */
+     * (like loading a constant, but doesn't require an entry in the constant pool)
+     * @param value The value that should be pushed onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator bipush(int value) { instructionList.add(new IntInsnNode(Opcodes.BIPUSH, value)); return this; }
-    /** Emit an instruction to fetch a value from a char array */
+    /** Emit an instruction to fetch a value from a char array
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator caload() { instructionList.add(new InsnNode(Opcodes.CALOAD)); return this; }
-    /** Emit an instruction to store a value in a char array */
+    /** Emit an instruction to store a value in a char array
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator castore() { instructionList.add(new InsnNode(Opcodes.CASTORE)); return this; }
-    /** Emit an instruction to verify that an object can be cast to the specified type */
+    /** Emit an instruction to verify that an object can be cast to the specified type
+     * @param type The type to check the cast to
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator checkcast(String type) { instructionList.add(
             new TypeInsnNode(Opcodes.CHECKCAST, classGen.className(type))); return this; }
-    /** Emit an instruction to convert a double value to a float */
+    /** Emit an instruction to convert a double value to a float
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator d2f() { instructionList.add(new InsnNode(Opcodes.D2F)); return this; }
-    /** Emit an instruction to convert a double value to an int */
+    /** Emit an instruction to convert a double value to an int
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator d2i() { instructionList.add(new InsnNode(Opcodes.D2I)); return this; }
-    /** Emit an instruction to convert a double value to a long */
+    /** Emit an instruction to convert a double value to a long
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator d2l() { instructionList.add(new InsnNode(Opcodes.D2L)); return this; }
-    /** Emit an instruction to add two doubles */
+    /** Emit an instruction to add two doubles
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dadd() { instructionList.add(new InsnNode(Opcodes.DADD)); return this; }
-    /** Emit an instruction to fetch a value from an array of doubles */
+    /** Emit an instruction to fetch a value from an array of doubles
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator daload() { instructionList.add(new InsnNode(Opcodes.DALOAD)); return this; }
-    /** Emit an instruction to store a value in an array of doubles */
+    /** Emit an instruction to store a value in an array of doubles
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dastore() { instructionList.add(new InsnNode(Opcodes.DASTORE)); return this; }
-    /** Emit an instruction to compare two doubles where NaN is greater than a value */
+    /** Emit an instruction to compare two doubles where NaN is greater than a value
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dcmpg() { instructionList.add(new InsnNode(Opcodes.DCMPG)); return this; }
-    /** Emit an instruction to compare two doubles where NaN is less than a value */
+    /** Emit an instruction to compare two doubles where NaN is less than a value
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dcmpl() { instructionList.add(new InsnNode(Opcodes.DCMPL)); return this; }
-    /** Emit an instruction to push a double value of 0.0 onto the stack */
+    /** Emit an instruction to push a double value of 0.0 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dconst_0() { instructionList.add(new InsnNode(Opcodes.DCONST_0)); return this; }
-    /** Emit an instruction to push a double value of 1.0 onto the stack */
+    /** Emit an instruction to push a double value of 1.0 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dconst_1() { instructionList.add(new InsnNode(Opcodes.DCONST_1)); return this; }
-    /** Emit an instruction to divide a double value by a double value */
+    /** Emit an instruction to divide a double value by a double value
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ddiv() { instructionList.add(new InsnNode(Opcodes.DDIV)); return this; }
-    /** Emit an instruction to load a double value from a local variable */
+    /** Emit an instruction to load a double value from a local variable
+     * @param index The index of the local variable to load the value from
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dload(int index) { instructionList.add(new VarInsnNode(Opcodes.DLOAD, index)); return this; }
-    /** Emit an instruction to multiply two double values */
+    /** Emit an instruction to multiply two double values
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dmul() { instructionList.add(new InsnNode(Opcodes.DMUL)); return this; }
-    /** Emit an instruction to negate a double value */
+    /** Emit an instruction to negate a double value
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dneg() { instructionList.add(new InsnNode(Opcodes.DNEG)); return this; }
-    /** Emit an instruction to compute the remainder when dividing one double value by another */
+    /** Emit an instruction to compute the remainder when dividing one double value by another
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator drem() { instructionList.add(new InsnNode(Opcodes.DREM)); return this; }
-    /** Emit an instruction to return a double value from the current method */
+    /** Emit an instruction to return a double value from the current method
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dreturn() { instructionList.add(new InsnNode(Opcodes.DRETURN)); return this; }
-    /** Emit an instruction to store a double value in a local variable */
+    /** Emit an instruction to store a double value in a local variable
+     * @param index The index of the local variable to store the value into
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dstore(int index) { instructionList.add(new VarInsnNode(Opcodes.DSTORE, index)); return this; }
-    /** Emit an instruction to subtract two double values */
+    /** Emit an instruction to subtract two double values
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dsub() { instructionList.add(new InsnNode(Opcodes.DSUB)); return this; }
     /** Emit an instruction to duplicate the value on top of the stack.
      * The value must be a 1-slot value (i.e. not a double or a long)
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dup() { instructionList.add(new InsnNode(Opcodes.DUP)); return this; }
 
     /** Emit an instruction to duplicate the top value on the stack and insert it two positions back.
      * <p>
      * The top two values on the stack must be 1-slot values (i.e. not double or long)
      * <pre>Stack:  x3 x2 (x1) becomes  x3 x1 x2 (x1)</pre>
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dup_x1() { instructionList.add(new InsnNode(Opcodes.DUP_X1)); return this; }
     /** Emit an instruction to duplicate the top two values on the stack (or the top value
      * if it is a 2-slot value (long or double) and place it two or three positions back
@@ -148,7 +198,7 @@ public class InstructionGenerator {
      * <p>
      * If x2 is a two-slot value (x1 must still be a 1-slot), this is:
      * <pre>Stack: x3 x2 x1 becomes x3 x1 x2 x1</pre>
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dup_x2() { instructionList.add(new InsnNode(Opcodes.DUP_X2)); return this; }
     /** Emit an instruction to duplicate the top two slots on the stack.
      * <p>
@@ -157,7 +207,7 @@ public class InstructionGenerator {
      * <p>
      * If x1 is a 2-slot value, this is:
      * <pre>Stack: x2 x1 becomes x2 x1 x1</pre>
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dup2() { instructionList.add(new InsnNode(Opcodes.DUP2)); return this; }
     /** Emit an instruction to duplicate the top one or two values on the stack and
      * insert them two or three slots back.
@@ -167,7 +217,7 @@ public class InstructionGenerator {
      * <p>
      * If x2 is a 1-slot value and x1 is a two slot value, this is:
      * <pre>Stack: x3 x2 x1 becomes x3 x1 x2 x1</pre>
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dup2_x1() { instructionList.add(new InsnNode(Opcodes.DUP2_X1)); return this; }
     /** Emit an instruction to duplicate the top one or two values on the stack and
      * insert them two, three, or four slots back.
@@ -183,155 +233,231 @@ public class InstructionGenerator {
      * <p>
      * If x2 and x1 are both 2-slot values (double or long), this is:
      * <pre>Stack: x2 x1 becomes x1 x2 x1</pre>
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator dup2_x2() { instructionList.add(new InsnNode(Opcodes.DUP2_X2)); return this; }
-    /** Emit an instruction to convert a float to a double */
+    /** Emit an instruction to convert a float to a double
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator f2d() { instructionList.add(new InsnNode(Opcodes.F2D)); return this; }
-    /** Emit an instruction to convert a float to an int */
+    /** Emit an instruction to convert a float to an int
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator f2i() { instructionList.add(new InsnNode(Opcodes.F2I)); return this; }
-    /** Emit an instruction to convert a float to a long */
+    /** Emit an instruction to convert a float to a long
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator f2l() { instructionList.add(new InsnNode(Opcodes.F2L)); return this; }
-    /** Emit an instruction to add two float values */
+    /** Emit an instruction to add two float values
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fadd() { instructionList.add(new InsnNode(Opcodes.FADD)); return this; }
-    /** Emit an instruction to fetch a float value from an array */
+    /** Emit an instruction to fetch a float value from an array
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator faload() { instructionList.add(new InsnNode(Opcodes.FALOAD)); return this; }
-    /** Emit an instruction to store a float value in an array */
+    /** Emit an instruction to store a float value in an array
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fastore() { instructionList.add(new InsnNode(Opcodes.FASTORE)); return this; }
-    /** Emit an instruction to compare two floats where NaN is greater than a value */
+    /** Emit an instruction to compare two floats where NaN is greater than a value
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fcmpg() { instructionList.add(new InsnNode(Opcodes.FCMPG)); return this; }
-    /** Emit an instruction to compare two floats where NaN is less than a value */
+    /** Emit an instruction to compare two floats where NaN is less than a value
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fcmpl() { instructionList.add(new InsnNode(Opcodes.FCMPL)); return this; }
-    /** Emit an instruction to push a float constant 0.0 onto the stack */
+    /** Emit an instruction to push a float constant 0.0 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fconst_0() { instructionList.add(new InsnNode(Opcodes.FCONST_0)); return this; }
-    /** Emit an instruction to push a float constant 1.0 onto the stack */
+    /** Emit an instruction to push a float constant 1.0 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fconst_1() { instructionList.add(new InsnNode(Opcodes.FCONST_1)); return this; }
-    /** Emit an instruction to push a float constant 2.0 onto the stack */
+    /** Emit an instruction to push a float constant 2.0 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fconst_2() { instructionList.add(new InsnNode(Opcodes.FCONST_2)); return this; }
-    /** Emit an instruction to divide two float values */
+    /** Emit an instruction to divide two float values
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fdiv() { instructionList.add(new InsnNode(Opcodes.FDIV)); return this; }
-    /** Emit an instruction to load a float from a local variable */
+    /** Emit an instruction to load a float from a local variable
+     * @param index The local variable index the value should be loaded from
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fload(int index) { instructionList.add(new VarInsnNode(Opcodes.FLOAD, index)); return this; }
-    /** Emit an instruction to multiple two float values */
+    /** Emit an instruction to multiple two float values
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fmul() { instructionList.add(new InsnNode(Opcodes.FMUL)); return this; }
-    /** Emit an instruction to negate a float value */
+    /** Emit an instruction to negate a float value
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fneg() { instructionList.add(new InsnNode(Opcodes.FNEG)); return this; }
-    /** Emit an instruction to compute the remainder when dividing two float values */
+    /** Emit an instruction to compute the remainder when dividing two float values
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator frem() { instructionList.add(new InsnNode(Opcodes.FREM)); return this; }
-    /** Emit an instruction to return a float value from the current method */
+    /** Emit an instruction to return a float value from the current method
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator freturn() { instructionList.add(new InsnNode(Opcodes.FRETURN)); return this; }
-    /** Emit an instruction to store a float value in a local variable */
+    /** Emit an instruction to store a float value in a local variable
+     * @param index The local variable index the value should be stored in
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fstore(int index) { instructionList.add(new VarInsnNode(Opcodes.FSTORE, index)); return this; }
-    /** Emit an instruction to two subtract two float values */
+    /** Emit an instruction to two subtract two float values
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator fsub() { instructionList.add(new InsnNode(Opcodes.FSUB)); return this; }
 
     /** Emit an instruction to fetch the value of a field
-     * <p>
+     *
      * @param owner The class to which the field belongs
      * @param name The name of the field
      * @param descriptor The type descriptor of the field
-     * @return
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator getfield(String owner, String name, String descriptor) {
         instructionList.add(new FieldInsnNode(Opcodes.GETFIELD, owner, name, descriptor));
         return this;
     }
     /** Emit an instruction to fetch the value of a static field
-     * <p>
+     *
      * @param owner The class to which the field belongs
      * @param name The name of the field
      * @param descriptor The type descriptor of the field
-     * @return
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator getstatic(String owner, String name, String descriptor) {
         instructionList.add(new FieldInsnNode(Opcodes.GETSTATIC, owner, name, descriptor));
         return this;
     }
-    /** Emit an instruction to jump to a label */
+    /** Emit an instruction to jump to a label
+     * @param label The label to jump to
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator gotolabel(Label label) { instructionList.add(new JumpInsnNode(Opcodes.GOTO, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to convert an int to a byte */
+    /** Emit an instruction to convert an int to a byte
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator i2b() { instructionList.add(new InsnNode(Opcodes.I2B)); return this; }
-    /** Emit an instruction to convert an int to a char */
+    /** Emit an instruction to convert an int to a char
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator i2c() { instructionList.add(new InsnNode(Opcodes.I2C)); return this; }
-    /** Emit an instruction to convert an int to a double */
+    /** Emit an instruction to convert an int to a double
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator i2d() { instructionList.add(new InsnNode(Opcodes.I2D)); return this; }
-    /** Emit an instruction to convert an int to a float */
+    /** Emit an instruction to convert an int to a float
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator i2f() { instructionList.add(new InsnNode(Opcodes.I2F)); return this; }
-    /** Emit an instruction to convert an int to a long */
+    /** Emit an instruction to convert an int to a long
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator i2l() { instructionList.add(new InsnNode(Opcodes.I2L)); return this; }
-    /** Emit an instruction to convert an int to a short */
+    /** Emit an instruction to convert an int to a short
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator i2s() { instructionList.add(new InsnNode(Opcodes.I2S)); return this; }
-    /** Emit an instruction to add two integers */
+    /** Emit an instruction to add two integers
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iadd() { instructionList.add(new InsnNode(Opcodes.IADD)); return this; }
-    /** Emit an instruction to fetch a value from an array of ints */
+    /** Emit an instruction to fetch a value from an array of ints
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iaload() { instructionList.add(new InsnNode(Opcodes.IALOAD)); return this; }
-    /** Emit an instruction to perform a bitwise and between two integers */
+    /** Emit an instruction to perform a bitwise and between two integers
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iand() { instructionList.add(new InsnNode(Opcodes.IAND)); return this; }
-    /** Emit an instruction to store a value into an array of ints */
+    /** Emit an instruction to store a value into an array of ints
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iastore() { instructionList.add(new InsnNode(Opcodes.IASTORE)); return this; }
-    /** Emit an instruction to push the int constant -1 onto the stack */
+    /** Emit an instruction to push the int constant -1 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iconst_m1() { instructionList.add(new InsnNode(Opcodes.ICONST_M1)); return this; }
-    /** Emit an instruction to push the int constant 0 onto the stack */
+    /** Emit an instruction to push the int constant 0 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iconst_0() { instructionList.add(new InsnNode(Opcodes.ICONST_0)); return this; }
-    /** Emit an instruction to push the int constant 1 onto the stack */
+    /** Emit an instruction to push the int constant 1 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iconst_1() { instructionList.add(new InsnNode(Opcodes.ICONST_1)); return this; }
-    /** Emit an instruction to push the int constant 2 onto the stack */
+    /** Emit an instruction to push the int constant 2 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iconst_2() { instructionList.add(new InsnNode(Opcodes.ICONST_2)); return this; }
-    /** Emit an instruction to push the int constant 3 onto the stack */
+    /** Emit an instruction to push the int constant 3 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iconst_3() { instructionList.add(new InsnNode(Opcodes.ICONST_3)); return this; }
-    /** Emit an instruction to push the int constant 4 onto the stack */
+    /** Emit an instruction to push the int constant 4 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iconst_4() { instructionList.add(new InsnNode(Opcodes.ICONST_4)); return this; }
-    /** Emit an instruction to push the int constant 5 onto the stack */
+    /** Emit an instruction to push the int constant 5 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iconst_5() { instructionList.add(new InsnNode(Opcodes.ICONST_5)); return this; }
-    /** Emit an instruction to divide two integers */
+    /** Emit an instruction to divide two integers
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator idiv() { instructionList.add(new InsnNode(Opcodes.IDIV)); return this; }
-    /** Emit an instruction to compare two objects for equality, and if true, to jump to the specified label */
+    /** Emit an instruction to compare two objects for equality, and if true, to jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator if_acmpeq(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IF_ACMPEQ, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to compare two objects for non-equality, and if true, to jump to the specified label */
+    /** Emit an instruction to compare two objects for non-equality, and if true, to jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator if_acmpne(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IF_ACMPNE, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to compare two ints for equality, and if true, to jump to the specified label */
+    /** Emit an instruction to compare two ints for equality, and if true, to jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator if_icmpeq(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IF_ICMPEQ, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to compare two ints for non-equality, and if true, to jump to the specified label */
+    /** Emit an instruction to compare two ints for non-equality, and if true, to jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator if_icmpne(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IF_ICMPNE, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to compare two ints for less-than, and if true, to jump to the specified label */
+    /** Emit an instruction to compare two ints for less-than, and if true, to jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator if_icmplt(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IF_ICMPLT, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to compare two ints for greater-or-equal, and if true, to jump to the specified label */
+    /** Emit an instruction to compare two ints for greater-or-equal, and if true, to jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator if_icmpge(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IF_ICMPGE, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to compare two ints for greater-than, and if true, to jump to the specified label */
+    /** Emit an instruction to compare two ints for greater-than, and if true, to jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator if_icmpgt(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IF_ICMPGT, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to compare two ints for less-or-equal, and if true, to jump to the specified label */
+    /** Emit an instruction to compare two ints for less-or-equal, and if true, to jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator if_icmple(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IF_ICMPLE, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to test whether the result of a comparison was equal (0), and if true, jump to the specified label */
+    /** Emit an instruction to test whether the result of a comparison was equal (0), and if true, jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ifeq(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IFEQ, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to test whether the result of a comparison was equal (!= 0), and if true, jump to the specified label */
+    /** Emit an instruction to test whether the result of a comparison was equal (!= 0), and if true, jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ifne(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IFNE, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to test whether the result of a comparison was less (&lt; 0), and if true, jump to the specified label */
+    /** Emit an instruction to test whether the result of a comparison was less (&lt; 0), and if true, jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iflt(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IFLT, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to test whether the result of a comparison was greater-or-equal (&gt;= 0), and if true, jump to the specified label */
+    /** Emit an instruction to test whether the result of a comparison was greater-or-equal (&gt;= 0), and if true, jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ifge(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IFGE, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to test whether the result of a comparison was greater-than (&gt; 0), and if true, jump to the specified label */
+    /** Emit an instruction to test whether the result of a comparison was greater-than (&gt; 0), and if true, jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ifgt(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IFGT, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to test whether the result of a comparison was less-or-equal (&lt;= 0), and if true, jump to the specified label */
+    /** Emit an instruction to test whether the result of a comparison was less-or-equal (&lt;= 0), and if true, jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ifle(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IFLE, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to test whether an object reference is not null, and if true, jump to the specified label */
+    /** Emit an instruction to test whether an object reference is not null, and if true, jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ifnonnull(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IFNONNULL, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to test whether an object reference is null, and if true, jump to the specified label */
+    /** Emit an instruction to test whether an object reference is null, and if true, jump to the specified label
+     * @param label The label to jump to if the test is true
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ifnull(Label label) { instructionList.add(new JumpInsnNode(Opcodes.IFNULL, new LabelNode(label.label))); return this; }
     /** Emit an instruction to increment a local variable by an amount specified by a byte
      * @param index The index of the local variable
      * @param incr The byte value to add to the local variable
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iinc(int index, int incr) { instructionList.add(new IincInsnNode(index, incr)); return this; }
-    /** Emit an instruction to load a value from a local variable */
+    /** Emit an instruction to load a value from a local variable
+     * @param index The local variable index to load the value from
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iload(int index) { instructionList.add(new VarInsnNode(Opcodes.ILOAD, index)); return this; }
-    /** Emit an instruction to multiple to int values */
+    /** Emit an instruction to multiple to int values
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator imul() { instructionList.add(new InsnNode(Opcodes.IMUL)); return this; }
-    /** Emit an instruction to negate an int value */
+    /** Emit an instruction to negate an int value
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ineg() { instructionList.add(new InsnNode(Opcodes.INEG)); return this; }
     /** Emit an instruction to test whether an object reference is an instance of the given class name,
      * pushing 1 onto the stack if true, and 0 if not. If the object reference is null, this
      * pushes a 0 onto the stack, which differs from Java's usual notion that a null can be
      * of any object type.
-     */
+     * @param type The type to check the value against
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator instance_of(String type) { instructionList.add(new TypeInsnNode(Opcodes.INSTANCEOF, type)); return this; }
     /** Emit an instruction to create a dynamic method invocation. A bootstrap method is invoked the first time this
      * is invoked, and the bootstrap generates a MethodHandle that may invoke a method, or access a field. This is
@@ -340,6 +466,7 @@ public class InstructionGenerator {
      * @param descriptor The type descriptor of the method
      * @param handle A handle to the bootstrap method
      * @param bootstrapArgs The arguments for the bootstrap method
+     * @return this instruction generator (for chaining calls)
      */
     public InstructionGenerator invokedynamic(String name, String descriptor, Handle handle, Object... bootstrapArgs) {
         for (int i=0; i < bootstrapArgs.length; i++) {
@@ -355,6 +482,7 @@ public class InstructionGenerator {
      * @param owner The class/interface that owns the method
      * @param name The name of the method
      * @param descriptor The type descriptor of the method
+     * @return this instruction generator (for chaining calls)
      */
     public InstructionGenerator invokeinterface(String owner, String name, String descriptor) {
         instructionList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, classGen.className(owner), name, descriptor));
@@ -365,6 +493,7 @@ public class InstructionGenerator {
      * @param owner The class that owns the method
      * @param name The name of the method
      * @param descriptor The type descriptor of the method
+     * @return this instruction generator (for chaining calls)
      */
     public InstructionGenerator invokespecial(String owner, String name, String descriptor) {
         instructionList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, classGen.className(owner), name, descriptor));
@@ -374,6 +503,7 @@ public class InstructionGenerator {
      * @param owner The class that owns the method
      * @param name The name of the method
      * @param descriptor The type descriptor of the method
+     * @return this instruction generator (for chaining calls)
      */
     public InstructionGenerator invokestatic(String owner, String name, String descriptor) {
         instructionList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, classGen.className(owner), name, descriptor));
@@ -384,59 +514,83 @@ public class InstructionGenerator {
      * @param owner The class that owns the method
      * @param name The name of the method
      * @param descriptor The type descriptor of the method
+     * @return this instruction generator (for chaining calls)
      */
     public InstructionGenerator invokevirtual(String owner, String name, String descriptor) {
         instructionList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, classGen.className(owner), name, descriptor));
         return this;
     }
-    /** Emit an instruction to perform a bitwise or of two ints */
+    /** Emit an instruction to perform a bitwise or of two ints
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ior() { instructionList.add(new InsnNode(Opcodes.IOR)); return this; }
-    /** Emit an instruction to compute the remainder from dividing two ints */
+    /** Emit an instruction to compute the remainder from dividing two ints
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator irem() { instructionList.add(new InsnNode(Opcodes.IREM)); return this; }
-    /** Emit an instruction to return an int value from the current method */
+    /** Emit an instruction to return an int value from the current method
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ireturn() { instructionList.add(new InsnNode(Opcodes.IRETURN)); return this; }
-    /** Emit an instruction to shift an int left by a number of bits */
+    /** Emit an instruction to shift an int left by a number of bits
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ishl() { instructionList.add(new InsnNode(Opcodes.ISHL)); return this; }
-    /** Emit an instruction to shift an int right by a number of bits, extending the sign bit */
+    /** Emit an instruction to shift an int right by a number of bits, extending the sign bit
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ishr() { instructionList.add(new InsnNode(Opcodes.ISHR)); return this; }
-    /** Emit an instruction to store an int in a local variable */
+    /** Emit an instruction to store an int in a local variable
+     * @param index The local variable index to store the value in
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator istore(int index) { instructionList.add(new VarInsnNode(Opcodes.ISTORE, index)); return this; }
-    /** Emit an instruction to subtract two ints*/
+    /** Emit an instruction to subtract two ints
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator isub() { instructionList.add(new InsnNode(Opcodes.ISUB)); return this; }
-    /** Emit an instruction to shift an int right by a number of bits, not extending the sign bit */
+    /** Emit an instruction to shift an int right by a number of bits, not extending the sign bit
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator iushr() { instructionList.add(new InsnNode(Opcodes.IUSHR)); return this; }
-    /** Emit an instruction to perform a bitwise exclusive-or on two ints */
+    /** Emit an instruction to perform a bitwise exclusive-or on two ints
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ixor() { instructionList.add(new InsnNode(Opcodes.IXOR)); return this; }
     /** Emit an instruction to jump to a subroutine
      * @param label The label to jump to
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator jsr(Label label) { instructionList.add(new JumpInsnNode(Opcodes.JSR, new LabelNode(label.label))); return this; }
-    /** Emit an instruction to convert a long to a double */
+    /** Emit an instruction to convert a long to a double
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator l2d() { instructionList.add(new InsnNode(Opcodes.L2D)); return this; }
-    /** Emit an instruction to convert a long to a float */
+    /** Emit an instruction to convert a long to a float
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator l2f() { instructionList.add(new InsnNode(Opcodes.L2F)); return this; }
-    /** Emit an instruction to convert a long to an int */
+    /** Emit an instruction to convert a long to an int
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator l2i() { instructionList.add(new InsnNode(Opcodes.L2I)); return this; }
-    /** Emit an instruction to generate a label at the current instruction position */
+    /** Emit an instruction to generate a label at the current instruction position
+     * @param label The label to generate
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator label(Label label) { instructionList.add(new LabelNode(label.label)); return this; }
-    /** Emit an instruction to add to longs */
+    /** Emit an instruction to add to longs
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ladd() { instructionList.add(new InsnNode(Opcodes.LADD)); return this; }
-    /** Emit an instruction to fetch a value from an array of longs */
+    /** Emit an instruction to fetch a value from an array of longs
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator laload() { instructionList.add(new InsnNode(Opcodes.LALOAD)); return this; }
-    /** Emit an instruction to do a bitwise and of two longs */
+    /** Emit an instruction to do a bitwise and of two longs
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator land() { instructionList.add(new InsnNode(Opcodes.LAND)); return this; }
-    /** Emit an instruction to store a value in an array of longs */
+    /** Emit an instruction to store a value in an array of longs
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lastore() { instructionList.add(new InsnNode(Opcodes.LASTORE)); return this; }
-    /** Emit an instruction to compare two long values */
+    /** Emit an instruction to compare two long values
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lcmp() { instructionList.add(new InsnNode(Opcodes.LCMP)); return this; }
-    /** Emit an instruction to push a long constant 0 onto the stack */
+    /** Emit an instruction to push a long constant 0 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lconst_0() { instructionList.add(new InsnNode(Opcodes.LCONST_0)); return this; }
-    /** Emit an instruction to push a long constant 1 onto the stack */
+    /** Emit an instruction to push a long constant 1 onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lconst_1() { instructionList.add(new InsnNode(Opcodes.LCONST_1)); return this; }
     /** Emit an instruction to push a constant double onto the stack.
      * <p>
      * This method will insert a dconst_0 or dconst_1 instead of ldc if the constant is 0.0 or 1.0
-     */
+     * @param d The value to push onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ldc(double d) {
         if (d == 0.0) {
             return dconst_0();
@@ -451,7 +605,8 @@ public class InstructionGenerator {
      * <p>
      * This method will insert an iconst_m1, iconst_0, iconst_1, iconst_2, iconst_3, iconst_4, or iconst_5
      * instead of ldc if the int value is -1, 0, 1, 2, 3, 4, or 5.
-     */
+     * @param i The value to push onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ldc(int i) {
         switch (i) {
             case -1 -> iconst_m1();
@@ -469,7 +624,8 @@ public class InstructionGenerator {
      * <p>
      *  This method will insert an fconst_0, fconst_1, or fconst_2 instead of ldc
      *  if the constant value is 0.0, 1.0, or 2.0
-     */
+     * @param f The value to push onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ldc(float f) {
         if (f == 0.0) {
             return fconst_0();
@@ -485,7 +641,8 @@ public class InstructionGenerator {
     /** Emit an instruction to push a constant long onto the stack.
      * <p>
      * This method will insert lconst_0 or lconst_1 instead of ldc if the constant is 0 or 1
-     */
+     * @param l The value to push onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ldc(long l) {
         if (l == 0) {
             return lconst_0();
@@ -496,26 +653,40 @@ public class InstructionGenerator {
             return this;
         }
     }
-    /** Emit an instruction to push a reference to a string constant onto the stack */
+    /** Emit an instruction to push a reference to a string constant onto the stack
+     * @param s The string value to push onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ldc(String s) { instructionList.add(new LdcInsnNode(s)); return this; }
-    /** Emit an instruction to push a reference to a method onto the stack */
+    /** Emit an instruction to push a reference to a method onto the stack
+     * @param m The method value to push onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ldc(Method m) { instructionList.add(new LdcInsnNode(m)); return this; }
-    /** Emit an instruction to push a method referenced by a handle onto the stack */
+    /** Emit an instruction to push a method referenced by a handle onto the stack
+     * @param h The handle value to push onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ldc(Handle h) { instructionList.add(new LdcInsnNode(h.getAsmHandle())); return this; }
     /** Emit an instruction to push a dynamic constant onto the stack
      * <p>
      * A dynamic constant is computed at runtime once by a bootstrap method
-     */
+     * @param cd The ConstantDynamic value to push onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ldc(ConstantDynamic cd) { instructionList.add(new LdcInsnNode(cd.getAsmConstantDynamic())); return this; }
-    /** Emit an instruction to push a constant object onto the stack */
+    /** Emit an instruction to push a constant object onto the stack
+     * @param o The object value to push onto the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ldc(Object o) { instructionList.add(new LdcInsnNode(o)); return this; }
-    /** Emit an instruction to divide two longs */
+    /** Emit an instruction to divide two longs
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ldiv() { instructionList.add(new InsnNode(Opcodes.LDIV)); return this; }
-    /** Emit an instruction to load a long from a local variable */
+    /** Emit an instruction to load a long from a local variable
+     * @param index The index of the local variable to load the value from
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lload(int index) { instructionList.add(new VarInsnNode(Opcodes.LLOAD, index)); return this; }
-    /** Emit an instruction to multiple two longs */
+    /** Emit an instruction to multiple two longs
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lmul() { instructionList.add(new InsnNode(Opcodes.LMUL)); return this; }
-    /** Emit an instruction to negate a long value*/
+    /** Emit an instruction to negate a long value
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lneg() { instructionList.add(new InsnNode(Opcodes.LNEG)); return this; }
     /** Emit an instruction to perform a switch using a sorted array of keys, and their corresponding labels.
      * <p>
@@ -524,7 +695,7 @@ public class InstructionGenerator {
      * @param default_label The label to jump to if the key isn't found
      * @param keys A sorted list of integer keys
      * @param labels The corresponding label for each key
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lookupswitch(Label default_label, int[] keys, Label[] labels) {
         LabelNode[] labelNodes = new LabelNode[labels.length];
         for (int i=0; i < labels.length; i++) {
@@ -534,37 +705,48 @@ public class InstructionGenerator {
                 new LookupSwitchInsnNode(new LabelNode(default_label.label), keys, labelNodes));
         return this;
     }
-    /** Emit an instruction to perform a bitwise or between two longs */
+    /** Emit an instruction to perform a bitwise or between two longs
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lor() { instructionList.add(new InsnNode(Opcodes.LOR)); return this; }
-    /** Emit an instruction to compute the remainder of dividing two longs */
+    /** Emit an instruction to compute the remainder of dividing two longs
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lrem() { instructionList.add(new InsnNode(Opcodes.LREM)); return this; }
-    /** Emit an instruction to return a long value from the current method*/
+    /** Emit an instruction to return a long value from the current method
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lreturn() { instructionList.add(new InsnNode(Opcodes.LRETURN)); return this; }
-    /** Emit an instruction to perform a bitwise left shift on a long for some number of bits */
+    /** Emit an instruction to perform a bitwise left shift on a long for some number of bits
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lshl() { instructionList.add(new InsnNode(Opcodes.LSHL)); return this; }
     /** Emit an instruction to perform a bitwise right shift on a long value, extending the sign bit
      * (i.e. do an arithmetic right shift)
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lshr() { instructionList.add(new InsnNode(Opcodes.LSHR)); return this; }
-    /** Emit an instruction to store a long in a local variable */
+    /** Emit an instruction to store a long in a local variable
+     * @param index The index of the local variable to store the value in
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lstore(int index) { instructionList.add(new VarInsnNode(Opcodes.LSTORE, index)); return this; }
-    /** Emit an instruction to subtract two longs */
+    /** Emit an instruction to subtract two longs
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lsub() { instructionList.add(new InsnNode(Opcodes.LSUB)); return this; }
     /** Emit an instruction to perform a bitwise right shift on a long value, not extending the sign bit
      * (i.e. do a logical right shift)
-     */
+
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lushr() { instructionList.add(new InsnNode(Opcodes.LUSHR)); return this; }
-    /** Emit an instruction to perform a bitwise exclusive-or on two longs */
+    /** Emit an instruction to perform a bitwise exclusive-or on two longs
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator lxor() { instructionList.add(new InsnNode(Opcodes.LXOR)); return this; }
-    /** Emit an instruction to enter a monitor (i.e. synchronize on an object) */
+    /** Emit an instruction to enter a monitor (i.e. synchronize on an object)
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator monitorenter() { instructionList.add(new InsnNode(Opcodes.MONITORENTER)); return this; }
-    /** Emit an instruction to exit a monitor (i.e. synchronize on an object) */
+    /** Emit an instruction to exit a monitor (i.e. synchronize on an object)
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator monitorexit() { instructionList.add(new InsnNode(Opcodes.MONITOREXIT)); return this; }
 
     /** Create a multi-dimentional array
      * @param descriptor The type descriptor of the array
      * @param dims The number of dimensions
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator multianewarray(String descriptor, int dims) {
         instructionList.add(new MultiANewArrayInsnNode(descriptor, dims));
         return this;
@@ -580,12 +762,12 @@ public class InstructionGenerator {
      *       invokespecial(constructor)
      *     </pre>
      * @param type The type of object to allocate
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator new_object(String type) { instructionList.add(new TypeInsnNode(Opcodes.NEW, type)); return this; }
 
     /** Emit an instruction to create a new array of some native type
      * @param type The type of the array elements
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator newarray(Type type) {
         int arrayType = switch (type) {
             case BooleanType b -> 4;
@@ -601,18 +783,21 @@ public class InstructionGenerator {
         instructionList.add(new IntInsnNode(Opcodes.NEWARRAY, arrayType));
         return this;
     }
-    /** Emit an instruction to do nothing */
+    /** Emit an instruction to do nothing
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator nop() { instructionList.add(new InsnNode(Opcodes.NOP)); return this; }
-    /** Emit an instruction to pop a value off the stack */
+    /** Emit an instruction to pop a value off the stack
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator pop() { instructionList.add(new InsnNode(Opcodes.POP)); return this; }
-    /** Emit an instruction to pop two values off the stack (or one 2-slot value) */
+    /** Emit an instruction to pop two values off the stack (or one 2-slot value)
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator pop2() { instructionList.add(new InsnNode(Opcodes.POP2)); return this; }
 
     /** Emit an instruction to store a value in a field
      * @param owner The class that owns the field
      * @param name The name of the field
      * @param descriptor The type descriptor of the field
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator putfield(String owner, String name, String descriptor) {
         instructionList.add(new FieldInsnNode(Opcodes.PUTFIELD, owner, name, descriptor));
         return this;
@@ -622,7 +807,7 @@ public class InstructionGenerator {
      * @param owner The class that owns the field
      * @param name The name of the field
      * @param descriptor The type descriptor of the field
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator putstatic(String owner, String name, String descriptor) {
         instructionList.add(new FieldInsnNode(Opcodes.PUTSTATIC, owner, name, descriptor));
         return this;
@@ -630,24 +815,27 @@ public class InstructionGenerator {
 
     /** Returns from a subroutine using the return address stored in a local variable
      * @param index The index of the local variable containing the return address
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator ret(int index) { instructionList.add(new VarInsnNode(Opcodes.RET, index)); return this; }
-    /** Returns from the current method without returning a value */
+    /** Returns from the current method without returning a value
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator return_void() { instructionList.add(new InsnNode(Opcodes.RETURN)); return this; }
-    /** Emit an instruction to load a value from an array of shorts */
+    /** Emit an instruction to load a value from an array of shorts
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator saload() { instructionList.add(new InsnNode(Opcodes.SALOAD)); return this; }
-    /** Emit an instruction to store a value in an array of shorts */
+    /** Emit an instruction to store a value in an array of shorts
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator sastore() { instructionList.add(new InsnNode(Opcodes.SASTORE)); return this; }
 
     /** Emit an instruction to push an immediate short value onto the stack.
      * This instruction lets you push short constants without having to store the value in
      * the constant pool and use ldc. The two bytes of the value are encoded in instructions.
      * @param value The value to push
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator sipush(int value) { instructionList.add(new IntInsnNode(Opcodes.SIPUSH, value)); return this; }
     /** Emit an instruction to swap the top 2 1-slot values on the stack.
      * There is no 2-slot equivalent for this.
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator swap() { instructionList.add(new InsnNode(Opcodes.SWAP)); return this; }
 
     /** Emit the labels and class name for a try-catch block.
@@ -657,7 +845,7 @@ public class InstructionGenerator {
      * @param end The label indicating the end of the try block
      * @param handler The label indicating the location of the exception handler
      * @param catchClass The class of exception that the handler catches
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator trycatch(Label start, Label end, Label handler, String catchClass) {
         if (catchClass != null) {
             catchClass = catchClass.replace('.', '/');
@@ -675,7 +863,7 @@ public class InstructionGenerator {
      * @param max The maximum value that can match
      * @param default_label The label to jump to if the value is &lt; min or &gt; max
      * @param labels The array of labels indicating where to jump for a matching value
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator tableswitch(int min, int max, Label default_label, Label[] labels) {
         LabelNode[] labelNodes = new LabelNode[labels.length];
         for (int i=0; i < labels.length; i++) {
@@ -688,7 +876,7 @@ public class InstructionGenerator {
 
     /** Returns the type of return instruction needed for a value of a specific type
      * @param type The type to get a return instruction for
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator return_by_type(Type type) {
         int opcode = switch(type) {
             case ArrayType a -> Opcodes.ARETURN;
@@ -698,7 +886,6 @@ public class InstructionGenerator {
             case DoubleType d -> Opcodes.DRETURN;
             case FloatType f -> Opcodes.FRETURN;
             case FunctionType f -> Opcodes.ARETURN;
-            case IndirectFunctionType f -> Opcodes.ARETURN;
             case IntType i -> Opcodes.IRETURN;
             case LongType l -> Opcodes.LRETURN;
             case ObjectType o -> Opcodes.ARETURN;
@@ -710,6 +897,11 @@ public class InstructionGenerator {
         return this;
     }
 
+    /** Generate a box for a type
+     *
+     * @param type The type to generate the box for
+     * @return this instruction generator (for chaining calls)
+     */
     public InstructionGenerator generateBox(Type type) {
         String boxType = type.getBoxTypeName();
         if (boxType != null) {
@@ -724,13 +916,13 @@ public class InstructionGenerator {
 
     /** Inserts a raw opcode into the instruction stream
      * @param opcode The opcode to insert
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator rawOpcode(int opcode) { instructionList.add(new InsnNode(opcode)); return this; }
 
     /** Inserts a raw opcode that takes an int argument into the instruction stream
      * @param opcode The opcode to insert
      * @param index The int argument to insert
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator rawIntOpcode(int opcode, int index) {
         instructionList.add(new IntInsnNode(opcode, index));
         return this;
@@ -741,7 +933,7 @@ public class InstructionGenerator {
      * the kind of test being done.
      * @param opcode The opcode to insert
      * @param label The label the opcode should jump to under some condition
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator rawJumpOpcode(int opcode, Label label) {
         instructionList.add(new JumpInsnNode(opcode, new LabelNode(label.label)));
         return this;
@@ -749,7 +941,7 @@ public class InstructionGenerator {
 
     /** Schedules the generation of a lambda method
      * @param lambda The method to generate
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator generateLambda(MethodDef lambda) {
         classGen.addMethodToGenerate(lambda);
         return this;
@@ -762,7 +954,7 @@ public class InstructionGenerator {
      * @param startLoc The label of the first instruction where the variable is valid
      * @param endLoc The label just past the last instruction where the variable is valid
      * @param index The index number of the local variable
-     */
+     * @return this instruction generator (for chaining calls) */
     public InstructionGenerator generateLocalVariable(String name, Type type,
                                                       Label startLoc, Label endLoc,
                                                       int index) {
@@ -772,6 +964,12 @@ public class InstructionGenerator {
         return this;
     }
 
+    /** Generate a line number pseudo instruction for debugging and stack traces.
+     *
+     * If the line number is 0, no line number pseudo instruction will be generated.
+     *
+     * @param lineNumber The line number in the source code that this section of code comes from
+     */
     public void lineNumber(int lineNumber) {
         if (lineNumber > 0) {
             LabelNode label = new LabelNode(new Label().label);

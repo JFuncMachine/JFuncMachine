@@ -78,6 +78,11 @@ test {
     useJUnitPlatform()
 }
 
+javadoc {
+    exclude("org/jfuncmachine/examples/**")
+    options.memberLevel = JavadocMemberLevel.PUBLIC
+}
+
 task copyJar(type: Copy) {
     from jar
     into "."

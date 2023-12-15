@@ -86,13 +86,21 @@ public class BinaryComparison extends BooleanExpr {
         return this;
     }
 
-    /** Identify any variables captured by the left and right hand expressions */
+    /** Identify any variables captured by the left and right hand expressions
+     *
+     * @param env The environment chain to be searched
+     */
     public void findCaptured(Environment env) {
         left.findCaptured(env);
         right.findCaptured(env);
     }
 
-    /** Generate Java bytecode for this comparison */
+    /** Generate Java bytecode for this comparison
+     *
+     * @param generator The class generator that is generating the current class
+     * @param env The environment containing all visible variables
+     * @param next The next boolean expr in the chain
+     */
     public void generate(ClassGenerator generator, Environment env, BooleanExpr next) {
         // If this test has a non-null label, generate the label
         if (label != null) {

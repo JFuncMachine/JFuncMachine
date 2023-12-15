@@ -12,7 +12,7 @@ import org.jfuncmachine.util.unification.UnificationException;
 
 @ModelItem(includeStartSymbol = true)
 public class StringUnaryExpr extends StringExpr {
-    @ModelItem(isExprStart = true, exprLength=2)
+    @ModelItem(isExprStart = true)
     public enum ExprType {
         ToUpper("toupper"),
         ToLower("tolower");

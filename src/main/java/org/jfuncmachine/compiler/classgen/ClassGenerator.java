@@ -7,6 +7,7 @@ import org.jfuncmachine.compiler.model.expr.GetValue;
 import org.jfuncmachine.compiler.model.expr.boxing.Autobox;
 import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaSuperConstructor;
 import org.jfuncmachine.compiler.model.types.*;
+import org.jfuncmachine.runtime.TCOReturn;
 import org.jfuncmachine.runtime.TailCall;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -94,7 +95,7 @@ public class ClassGenerator {
      *
      * @param classes The class definitions of the classes to be generated.
      * @param outputDirectory The name of the directory where the &period;class files should be written.
-     * @throws IOException
+     * @throws IOException If there is an exception writing the class files
      */
     public synchronized void generate(ClassDef[] classes, String outputDirectory)
         throws IOException {
@@ -113,7 +114,7 @@ public class ClassGenerator {
      *
      * @param classDef The class definition to be generated
      * @param outputDirectory The name of the directory where the &period;class files should be written.
-     * @throws IOException
+     * @throws IOException If there is an exception writing the class files
      */
     public synchronized void generate(ClassDef classDef, String outputDirectory)
             throws IOException {
@@ -231,6 +232,7 @@ public class ClassGenerator {
      *
      * @param classDef The class definitions of the classes to be generated.
      * @param outputDirectory The name of the directory where the &period;class files should be written.
+     * @throws IOException If there is an exception writing the class files
      */
     public synchronized void generateAndLoad(ClassDef classDef, String outputDirectory) throws IOException {
         GeneratedClass[] classes = generateClassBytes(classDef);
@@ -247,6 +249,13 @@ public class ClassGenerator {
 
     }
 
+    /** Generates a temporary containing class and invokes the method defined by the method def
+     * with the given arguments.
+     *
+     * @param methodDef The definition of the method to execute
+     * @param args The method arguments
+     * @return The method return value
+     */
     public Object invokeMethod(MethodDef methodDef, Object... args) {
         Random random = new Random();
         String className = "TempClass_"+new BigInteger(128, new Random()).toString(16);
@@ -297,6 +306,14 @@ public class ClassGenerator {
         }
     }
 
+    /** Generates a temporary containing class with a specific name and invokes the method defined by the method def
+     * with the given arguments.
+     *
+     * @param className The name of the temporary class to generate
+     * @param methodDef The definition of the method to execute
+     * @param args The method arguments
+     * @return The method return value
+     */
     public Object invokeMethod(String className, MethodDef methodDef, Object... args) {
         String packageName = "org.jfuncmachine.temp";
         ClassDef classDef;
@@ -348,6 +365,14 @@ public class ClassGenerator {
         }
     }
 
+    /** Invokes a specific method defined in the given class definition
+     * with the given arguments.
+     *
+     * @param classDef The class definition containing the method to execute
+     * @param methodName The name of the method to execute
+     * @param args The method arguments
+     * @return The method return value
+     */
     public Object invokeMethod(ClassDef classDef, String methodName, Object... args) {
         try {
 
@@ -399,7 +424,7 @@ public class ClassGenerator {
      *
      * @param classes The classes to write
      * @param outputDirectory The destination output directory
-     * @throws IOException
+     * @throws IOException If there is an exception writing the class files
      */
     public void writeClasses(GeneratedClass[] classes, String outputDirectory)
         throws IOException {
@@ -641,6 +666,13 @@ public class ClassGenerator {
             }
         }
 
+        if (methodDef.isTailCallable) {
+            if (newMethod.invisibleAnnotations == null) {
+                newMethod.invisibleAnnotations = new ArrayList<>();
+            }
+            newMethod.invisibleAnnotations.add(new AnnotationNode(Opcodes.ASM9,
+                    TCOReturn.class.descriptorString()));
+        }
         return newMethod;
     }
 
@@ -813,8 +845,8 @@ public class ClassGenerator {
     /**
      * Returns a class signature name for a class (L + class signature + ;)
      *
-     * @param classDef
-     * @return
+     * @param classDef The class definition to get the signature name for
+     * @return The signature of the class
      */
     public String classSignature(ClassDef classDef) {
         return "L"+className(classDef)+";";
@@ -955,7 +987,6 @@ public class ClassGenerator {
             case DoubleType d -> "D";
             case FloatType f -> "F";
             case FunctionType f -> getTypeDescriptor(allocateLambdaInt(f).getObjectType());
-            case IndirectFunctionType f -> getTypeDescriptor(allocateLambdaInt(f.containedType()).getObjectType());
             case IntType i -> "I";
             case LongType l -> "J";
             case ObjectType o -> "L" + o.className.replace('.', '/') + ";";

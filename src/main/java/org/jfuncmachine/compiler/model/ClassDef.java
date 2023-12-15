@@ -172,7 +172,10 @@ public class ClassDef extends SourceElement {
         this.interfaces = interfaces;
     }
 
-    /** Returns the fully-qualified name of the class - package (if not null) + '.' + class name */
+    /** Returns the fully-qualified name of the class - package (if not null) + '.' + class name
+     *
+     * @return The fully-qualified name of this class
+     */
     public String getFullClassName() {
         if (packageName == null || packageName.isEmpty()) {
             return name;

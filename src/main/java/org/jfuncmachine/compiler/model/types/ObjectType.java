@@ -2,9 +2,12 @@ package org.jfuncmachine.compiler.model.types;
 
 import java.util.Objects;
 
+/** An object type */
 public final class ObjectType implements Type {
+    /** The class name of the object */
     public final String className;
 
+    /** Create an object type for java.lang.Object */
     public ObjectType() {
         this.className = "java.lang.Object";
     }
@@ -23,6 +26,11 @@ public final class ObjectType implements Type {
         };
     }
 
+    /** Tests whether this object type can be unboxed to a specific type
+     *
+     * @param desiredType The type that the object should be unboxed to
+     * @return True if this object type can be unboxed to the desired type
+     */
     public boolean isUnboxableTo(Type desiredType) {
         return switch (className) {
             case BooleanType.BOX_TYPE -> desiredType.hasIntRepresentation();
@@ -37,6 +45,11 @@ public final class ObjectType implements Type {
         };
     }
 
+    /** Tests whether this object type can be a box for the specified type
+     *
+     * @param desiredType The type that is supposed to be boxed
+     * @return True if this object type can serve as a box from the desired type
+     */
     public boolean isBoxableFrom(Type desiredType) {
         if (className.equals("java.lang.Object")) return true;
         return isUnboxableTo(desiredType);
@@ -51,11 +64,19 @@ public final class ObjectType implements Type {
         };
     }
 
+    /** Create an object type for the given class name
+     *
+     * @param className The class name of this object type
+     */
     public ObjectType(String className) {
 
         this.className = className;
     }
 
+    /** Create an object type from the given class
+     *
+     * @param clazz The class to extract the class name from
+     */
     public ObjectType(Class clazz) {
         this.className = clazz.getName();
     }

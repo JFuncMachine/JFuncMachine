@@ -71,7 +71,7 @@ public class CallJavaSuperConstructor extends Expression {
      * @param lineNumber     The source line number this expression is associated with
      */
     public CallJavaSuperConstructor(Type[] parameterTypes,
-                                    Type returnType, Expression target, Expression[] arguments,
+                                    Expression target, Expression[] arguments,
                                     String filename, int lineNumber) {
         super(filename, lineNumber);
         this.parameterTypes = parameterTypes;

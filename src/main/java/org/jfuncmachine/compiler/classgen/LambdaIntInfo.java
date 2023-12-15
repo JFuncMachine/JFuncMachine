@@ -24,7 +24,9 @@ public class LambdaIntInfo {
         this.type = type;
     }
 
-    /** Returns an ObjectType for this interface */
+    /** Returns an ObjectType for this interface
+     * @return The ObjectType for this interface
+     */
     public Type getObjectType() {
         return new ObjectType(packageName+"."+name);
     }

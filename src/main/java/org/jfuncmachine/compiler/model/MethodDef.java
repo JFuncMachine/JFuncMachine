@@ -107,13 +107,19 @@ public class MethodDef extends SourceElement {
         this.isTailCallable = isTailCallable;
     }
 
-    /** Returns a version of this method that can be called from the JFuncMachines tail call optimization */
+    /** Returns a version of this method that can be called from the JFuncMachines tail call optimization
+     *
+     * @return A tail-callable version of this method
+     */
     public MethodDef getTailCallVersion() {
         return new MethodDef(name+"$$TC$$", access, parameters, returnType, true,
                 body, filename, lineNumber);
     }
 
-    /** Gets the return type of this method */
+    /** Gets the return type of this method
+     *
+     * @return The return type of this method
+     */
     public Type getReturnType() {
         return returnType;
     }

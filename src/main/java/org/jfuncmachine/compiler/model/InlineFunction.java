@@ -23,7 +23,10 @@ public abstract class InlineFunction {
         this.returnType = returnType;
     }
 
-    /** Get the return type of the function */
+    /** Get the return type of the function
+     *
+     * @return The return type of this function
+     */
     public Type getReturnType() {
         return returnType;
     }

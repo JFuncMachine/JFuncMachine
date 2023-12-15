@@ -71,10 +71,20 @@ public class UnaryComparison extends BooleanExpr {
         return this;
     }
 
+    /** Identify any variables captured by the expression
+     *
+     * @param env The environment chain to be searched
+     */
     public void findCaptured(Environment env) {
         expr.findCaptured(env);
     }
 
+    /** Generate Java bytecode for this comparison
+     *
+     * @param generator The class generator that is generating the current class
+     * @param env The environment containing all visible variables
+     * @param next The next boolean expr in the chain
+     */
     public void generate(ClassGenerator generator, Environment env, BooleanExpr next) {
         if (label != null) {
             generator.instGen.label(label);

@@ -39,6 +39,14 @@ public class Handle {
     /** If true, this handle refers to a member of an interface */
     public final boolean isInterface;
 
+    /** Create a new handle
+     *
+     * @param tag The type of handle this is
+     * @param owner The class containing this handle
+     * @param name The name of the method/field this handle refers to
+     * @param descriptor The type descriptor of the field or method
+     * @param isInterface If true, this handle refers to a member of an interface
+     */
     public Handle(int tag, String owner, String name, String descriptor, boolean isInterface) {
         this.tag = tag;
         this.owner = owner;

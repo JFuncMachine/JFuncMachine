@@ -1,6 +1,8 @@
 package org.jfuncmachine.compiler.model.types;
 
+/** An int type */
 public record IntType() implements Type {
+    /** The Java class name of the equivalent box type */
     public static final String BOX_TYPE = "java.lang.Integer";
 
     public String getBoxTypeName() { return BOX_TYPE; }
@@ -20,7 +22,7 @@ public record IntType() implements Type {
         return other instanceof IntType;
     }
 
-    public int hash() { return 11; }
+    public int hashCode() { return 11; }
 
     public String toString() { return "IntType"; }
 }

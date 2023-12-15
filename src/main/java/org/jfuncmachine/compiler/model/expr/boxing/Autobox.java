@@ -37,6 +37,12 @@ public class Autobox {
         }
     }
 
+    /** Returns true if the expression needs to be autoboxed to be of the desired type
+     *
+     * @param expr The expression to be examined
+     * @param desiredType The desired type of the expression
+     * @return True if the expression needs autoboxing
+     */
     public static boolean autoboxNeeded(Expression expr, Type desiredType) {
         if (expr.getType() instanceof ObjectType exprObj && !(desiredType instanceof ObjectType)) {
             if (expr.getType().isBoxType() && exprObj.isUnboxableTo(desiredType)) {
@@ -56,4 +62,7 @@ public class Autobox {
         }
 
     }
+
+    /** Unused default constructor */
+    private Autobox() {}
 }

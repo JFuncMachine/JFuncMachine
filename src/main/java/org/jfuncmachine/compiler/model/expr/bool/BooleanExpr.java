@@ -20,6 +20,7 @@ public abstract class BooleanExpr extends SourceElement {
 
     /** Invert this expression, which may involve reversing comparisons or changing and to or with inverted
      * tests, etc.
+     * @return An inverted boolean expression
      */
     public abstract BooleanExpr invert();
 
@@ -28,13 +29,16 @@ public abstract class BooleanExpr extends SourceElement {
         label = null;
     }
 
-    /** Remove any not expressions from a tree of boolean expressions by inverting the expression under the not */
+    /** Remove any not expressions from a tree of boolean expressions by inverting the expression under the not
+     * @return a BooleanExpr with any nested Not constructions removed
+     */
     public abstract BooleanExpr removeNot();
 
     /** Compute a sequence of tests to determine if this expression is true or false
      * @param trueNext The next expression to evaluate if this expression is true
      * @param falseNext The next expression to evaluate if this expression is false
      * @param tests An accumulator for the tests to be executed
+     * @return The beginning of the sequence
      */
     public abstract BooleanExpr computeSequence(BooleanExpr trueNext, BooleanExpr falseNext, List<BooleanExpr> tests);
 }

@@ -1,6 +1,8 @@
 package org.jfuncmachine.compiler.model.types;
 
+/** A long type */
 public record LongType() implements Type {
+    /** The Java class name of the equivalent box type */
     public static final String BOX_TYPE = "java.lang.Long";
 
     public String getBoxTypeName() { return BOX_TYPE; }
@@ -20,7 +22,7 @@ public record LongType() implements Type {
         return other instanceof LongType;
     }
 
-    public int hash() { return 13; }
+    public int hashCode() { return 13; }
 
     public String toString() { return "LongType"; }
 }

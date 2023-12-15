@@ -34,9 +34,11 @@ public class ClassGeneratorOptions {
     public final String lambdaMethodName;
 
     /** Indicate whether to generate Java-compatible generic object interfaces for each lambda. This facilitates
-     * lambdas that are compatible with the java.util.function package. */
+     * lambdas that are compatible with the java.util.function package.
+     */
     public final boolean genericLambdas;
 
+    /** Create a ClassGeneratorOptions instance with the default settings */
     public ClassGeneratorOptions() {
         this.javaVersion = 21;
         this.localTailCallsToLoops = true;
@@ -47,6 +49,16 @@ public class ClassGeneratorOptions {
         this.genericLambdas = false;
     }
 
+    /** Create a ClassGeneratorOptions instance with specific settings
+     *
+     * @param javaVersion The Java version to generate class files for
+     * @param localTailCallsToLoops Convert local recursive calls (method calling itself) to loops
+     * @param fullTailCalls Generate non-Java-callable methods with tail-call optimization
+     * @param autobox Automatically box and unbox types as needed
+     * @param sharedLambdaInterfaces Any lambdas generated for one class can be shared by all classes in the same package
+     * @param lambdaMethodName The name used for the single method in a lambda interface
+     * @param genericLambdas generate Java-compatible generic object interfaces for each lambda
+     */
     public ClassGeneratorOptions(int javaVersion, boolean localTailCallsToLoops,
                                  boolean fullTailCalls, boolean autobox,
                                  boolean sharedLambdaInterfaces,

@@ -65,6 +65,7 @@ public class Lambda extends Expression {
 
     /** Create a lambda expression
      * @param interfaceType The type of the lambda interface
+     * @param interfaceMethodName The name of the interface method to generate
      * @param parameters The lambda parameters and their types
      * @param returnType The lambda return type
      * @param body The body of the lambda
@@ -83,6 +84,7 @@ public class Lambda extends Expression {
 
     /** Create a lambda expression
      * @param interfaceType The type of the lambda interface
+     * @param interfaceMethodName The name of the interface method to generate
      * @param parameters The lambda parameters and their types
      * @param returnType The lambda return type
      * @param body The body of the lambda
@@ -143,6 +145,7 @@ public class Lambda extends Expression {
 
     /** Create a lambda expression
      * @param interfaceType The type of the lambda interface
+     * @param interfaceMethodName The name of the interface method to generate
      * @param parameters The lambda parameters and their types
      * @param returnType The lambda return type
      * @param useObjectInterface If true, the lambda interface should not use native types
@@ -163,6 +166,7 @@ public class Lambda extends Expression {
 
     /** Create a lambda expression
      * @param interfaceType The type of the lambda interface
+     * @param interfaceMethodName The name of the interface method to generate
      * @param parameters The lambda parameters and their types
      * @param returnType The lambda return type
      * @param useObjectInterface If true, the lambda interface should not use native types

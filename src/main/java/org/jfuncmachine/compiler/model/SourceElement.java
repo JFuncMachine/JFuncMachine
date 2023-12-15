@@ -26,7 +26,7 @@ public abstract class SourceElement {
         if (filename == null) {
             return new JFuncMachineException(message);
         } else {
-            return new JFuncMachineException(filename, lineNumber, message);
+            return new JFuncMachineException(message, filename, lineNumber);
         }
     }
 }

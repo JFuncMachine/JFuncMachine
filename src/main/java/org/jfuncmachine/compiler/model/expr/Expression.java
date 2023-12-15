@@ -26,7 +26,7 @@ public abstract class Expression extends SourceElement {
      * Search for local variables that would be captured by a lambda.
      *
      * Each expression has its own implementation of this, because each subexpression must be searched.
-     * @param env
+     * @param env The environment chain to search
      */
     public abstract void findCaptured(Environment env);
 

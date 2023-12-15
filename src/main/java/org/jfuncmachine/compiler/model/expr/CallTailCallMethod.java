@@ -241,7 +241,7 @@ public class CallTailCallMethod extends Expression {
         return true;
     }
 
-    public void generateTailLambda(String invokeClassName, String name, Type[] parameterTypes,
+    protected void generateTailLambda(String invokeClassName, String name, Type[] parameterTypes,
                                    Expression target, Expression[] arguments,
                                    ClassGenerator generator, Environment env) {
         // Start a capture analysis to see what variables this lambda captures

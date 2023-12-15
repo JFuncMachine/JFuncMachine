@@ -11,7 +11,7 @@ import org.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.util.unification.UnificationException;
 
-@ModelItem(symbol="if", exprLength=3)
+@ModelItem(symbol="if")
 public class IfExpr extends Expr {
     public final Expr test;
     public final Expr truePath;

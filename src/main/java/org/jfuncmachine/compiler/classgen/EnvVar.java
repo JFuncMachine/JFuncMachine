@@ -29,12 +29,20 @@ public class EnvVar {
         this.index = index;
     }
 
-    /** Returns the opcode used to store a variable of this type */
+    /** Generates an instruction to set this variable
+     *
+     * @param generator The class generator currently generating the class
+     */
     public void generateSet(ClassGenerator generator) {
         int opcode = setOpcode(type);
         generator.instGen.rawIntOpcode(opcode, index);
     }
 
+    /** Returns the opcode used to set variables of a particular type
+     *
+     * @param t The type of variable to return the opcode for
+     * @return The opcode used to store variables of the given type
+     */
     public static int setOpcode(Type t) {
         return switch (t) {
             case BooleanType b -> Opcodes.ISTORE;
@@ -49,12 +57,20 @@ public class EnvVar {
         };
     }
 
-    /** Returns the opcode used to load a variable of this type */
+    /** Generates an instruction to get this variable
+     *
+     * @param generator The class generator currently generating the class
+     */
     public void generateGet(ClassGenerator generator) {
         int opcode = getOpcode(type);
         generator.instGen.rawIntOpcode(opcode, index);
     }
 
+    /** Returns the opcode used to get variables of a particular type
+     *
+     * @param t The type of variable to return the opcode for
+     * @return The opcode used to fetch variables of the given type
+     */
     public static int getOpcode(Type t) {
         return switch (t) {
             case BooleanType b -> Opcodes.ILOAD;

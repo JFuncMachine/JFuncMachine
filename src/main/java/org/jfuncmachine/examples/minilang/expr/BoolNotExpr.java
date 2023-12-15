@@ -14,7 +14,7 @@ import org.jfuncmachine.sexprlang.translate.ModelItem;
 import org.jfuncmachine.util.unification.TypeHolder;
 import org.jfuncmachine.util.unification.UnificationException;
 
-@ModelItem(symbol="not", exprLength=2)
+@ModelItem(symbol="not")
 public class BoolNotExpr extends BoolExpr {
     public final Expr expr;
     public BoolNotExpr(Expr expr, String filename, int lineNumber) {
