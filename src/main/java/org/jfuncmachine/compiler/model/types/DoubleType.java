@@ -1,6 +1,8 @@
 package org.jfuncmachine.compiler.model.types;
 
+/** A double type */
 public record DoubleType() implements Type {
+    /** The Java class name of the equivalent box type */
     public static final String BOX_TYPE = "java.lang.Double";
     public String getBoxTypeName() { return BOX_TYPE; }
 
@@ -19,7 +21,7 @@ public record DoubleType() implements Type {
         return other instanceof DoubleType;
     }
 
-    public int hash() { return 5; }
+    public int hashCode() { return 5; }
 
     public String toString() { return "DoubleType"; }
 }

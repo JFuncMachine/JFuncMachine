@@ -1,6 +1,8 @@
 package org.jfuncmachine.compiler.model.types;
 
+/** A float type */
 public record FloatType() implements Type {
+    /** The Java class name of the equivalent box type */
     public static final String BOX_TYPE = "java.lang.Float";
 
     public String getBoxTypeName() { return BOX_TYPE; }
@@ -18,7 +20,7 @@ public record FloatType() implements Type {
         return other instanceof FloatType;
     }
 
-    public int hash() { return 7; }
+    public int hashCode() { return 7; }
 
     public String toString() { return "FloatType"; }
 }

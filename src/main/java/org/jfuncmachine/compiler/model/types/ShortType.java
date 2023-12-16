@@ -1,6 +1,8 @@
 package org.jfuncmachine.compiler.model.types;
 
+/** A short type */
 public record ShortType() implements Type {
+    /** The Java class name of the equivalent box type */
     public static final String BOX_TYPE = "java.lang.Short";
 
     public String getBoxTypeName() { return BOX_TYPE; }
@@ -20,7 +22,7 @@ public record ShortType() implements Type {
         return other instanceof ShortType;
     }
 
-    public int hash() { return 17; }
+    public int hashCode() { return 17; }
 
     public String toString() { return "ShortType"; }
 }

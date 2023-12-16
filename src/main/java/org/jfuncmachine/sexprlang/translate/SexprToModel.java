@@ -8,7 +8,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+/** A utility to map S-expressions to an object model using the SexprMapper interface */
 public class SexprToModel {
+    /** Map a list of S-expressions to model objects
+     *
+     * @param sexprs The list of S-expressions to map
+     * @param mapper The mapper to use
+     * @param targetClass The (super-)class that each expression is supposed to map to,
+     *                    or null if there is no expectation
+     * @return An array of the mapped objects
+     * @throws MappingException If there is an error performing the mapping
+     */
     public static Object[] sexprsToModel(SexprList sexprs, SexprMapper mapper, Class targetClass)
         throws MappingException {
         List<Object> objects = new ArrayList<>();
@@ -18,6 +28,15 @@ public class SexprToModel {
         return objects.toArray();
     }
 
+    /** Map an S-expression item to a model object
+     *
+     * @param item The S-expression item to map
+     * @param mapper The mapper to use
+     * @param targetClass The (super-)class that the object is supposed to map to,
+     *                    or null if there is no expectation
+     * @return The mapped object
+     * @throws MappingException If there is an error performing the mapping
+     */
     public static Object sexprToModel(SexprItem item, SexprMapper mapper, Class targetClass)
         throws MappingException {
         switch(item) {
@@ -156,6 +175,13 @@ public class SexprToModel {
         }
     }
 
+    /** Map an S-expression list to a model item using a mapper
+     *
+     * @param list The S-expression to map
+     * @param mapper The mapper to use
+     * @return The object the list maps to
+     * @throws MappingException If there is an error performing the mapping
+     */
     public static Object sexprListToItemList(SexprList list, SexprMapper mapper) throws MappingException {
         Object[] items = new Object[list.value.size()];
         for (int i=0; i < items.length; i++) {
@@ -164,6 +190,14 @@ public class SexprToModel {
         return items;
     }
 
+    /** Map an S-expression list to an instance of a specific class
+     *
+     * @param clazz The class the list should map to
+     * @param list The list to map
+     * @param mapper The mapper to use
+     * @return An instance of the class that the list has been mapped to
+     * @throws MappingException If there is an error performing the mapping
+     */
     public static Object sexprListToModel(Class clazz, SexprList list, SexprMapper mapper)
         throws MappingException {
         ArrayList<SexprItem> items = list.value;
@@ -224,6 +258,14 @@ public class SexprToModel {
                         clazz.getName(), list));
     }
 
+    /** Convert any Object arrays in a parameter list to objects of a specific component type.
+     *
+     * This is used when invoking constructors, which may take a specific type of object,
+     * but the parameters have all been generated as arrays of type Object (Object[]).
+     *
+     * @param paramTypes The types of each parameter
+     * @param params The parameters to convert
+     */
     public static void convertArrayTypes(Class[] paramTypes, Object[] params) {
         for (int i=0; i < params.length; i++) {
             if (paramTypes[i].isArray()) {
@@ -237,6 +279,16 @@ public class SexprToModel {
         }
     }
 
+    /** Test whether a list of S-expression items can be mapped to the arguments of a constructor,
+     * and place the mapped arguments into the params array
+     *
+     * @param cons The constructor to match against
+     * @param params An array of constructor parameters to be populated during the matching process
+     * @param items The list of S-expression items to match to the constructor
+     * @param mapper The mapper to use
+     * @return True if the items can be mapped to the constructor params
+     * @throws MappingException If there is an error performing the mapping
+     */
     public static boolean matches(Constructor cons, Object[] params, List<SexprItem> items,
                                   SexprMapper mapper) throws MappingException {
         Class[] paramTypes = cons.getParameterTypes();
@@ -255,6 +307,17 @@ public class SexprToModel {
         return true;
     }
 
+    /** Test whether a list of S-expression items can be mapped to the arguments of a constructor,
+     * where the constructor's last two parameters are a String and an int, which are expected
+     * to be a filename and line number, and place the mapped arguments into the params array
+     *
+     * @param cons The constructor to match against
+     * @param params An array of constructor parameters to be populated during the matching process
+     * @param items The list of S-expression items to match to the constructor
+     * @param mapper The mapper to use
+     * @return True if the items can be mapped to the constructor params
+     * @throws MappingException If there is an error performing the mapping
+     */
     public static boolean matchesWithLocation(Constructor cons, Object[] params,
                                               List<SexprItem> items, SexprMapper mapper) throws MappingException {
         Class[] paramTypes = cons.getParameterTypes();
@@ -278,7 +341,14 @@ public class SexprToModel {
         }
         return true;
     }
-    public static boolean matches(Constructor cons, Object[] params) throws MappingException {
+
+    /** Tests whether an array of parameters matches the parameters for a constructor
+     *
+     * @param cons The constructor to test
+     * @param params The parameters to test against the constructor parameters
+     * @return True if the params match the constructor parameters
+     */
+    public static boolean matches(Constructor cons, Object[] params) {
         Class[] paramTypes = cons.getParameterTypes();
         if (paramTypes.length != params.length) return false;
         for (int i=0; i < paramTypes.length; i++) {
@@ -294,7 +364,15 @@ public class SexprToModel {
         return true;
     }
 
-    public static boolean matchesWithLocation(Constructor cons, Object[] params) throws MappingException {
+    /** Tests whether an array of parameters matches the parameters for a constructor,
+     * where the last two parameters of the constructor are a string and an int,
+     * which are expected to be a filename and line number
+     *
+     * @param cons The constructor to test
+     * @param params The parameters to test against the constructor parameters
+     * @return True if the params match the constructor parameters
+     */
+    public static boolean matchesWithLocation(Constructor cons, Object[] params) {
         Class[] paramTypes = cons.getParameterTypes();
         if (paramTypes.length != params.length + 2) return false;
         if (!paramTypes[paramTypes.length-2].getName().equals("java.lang.String")) return false;
@@ -316,4 +394,6 @@ public class SexprToModel {
         }
         return true;
     }
+
+    private SexprToModel() {}
 }

@@ -13,6 +13,7 @@ public class Label {
         this.label = new org.objectweb.asm.Label();
     }
 
+    /** Resets this label so it can be regenerated */
     public void reset() {
         this.label = new org.objectweb.asm.Label();
     }

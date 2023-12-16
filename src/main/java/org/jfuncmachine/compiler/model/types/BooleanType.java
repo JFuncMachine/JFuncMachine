@@ -1,6 +1,8 @@
 package org.jfuncmachine.compiler.model.types;
 
+/** A boolean type */
 public record BooleanType() implements Type {
+    /** The Java class name of the equivalent box type */
     public static final String BOX_TYPE = "java.lang.Boolean";
 
     public String getBoxTypeName() { return BOX_TYPE; }
@@ -15,7 +17,10 @@ public record BooleanType() implements Type {
         return other instanceof BooleanType;
     }
 
-    public int hash() { return 2; }
+    @Override
+    public int hashCode() {
+        return 1;
+    }
 
     public String toString() { return "BooleanType"; }
 }

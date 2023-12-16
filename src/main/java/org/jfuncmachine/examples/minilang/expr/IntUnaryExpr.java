@@ -13,7 +13,7 @@ import org.jfuncmachine.util.unification.UnificationException;
 
 @ModelItem(includeStartSymbol = true)
 public class IntUnaryExpr extends IntExpr {
-    @ModelItem(isExprStart = true, exprLength=2)
+    @ModelItem(isExprStart = true)
     public enum ExprType {
         Neg,
     }

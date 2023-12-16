@@ -13,7 +13,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/** An S-expression mapper that maps S-expression to model classes that are
+ * annotated with the @ModelItem annotation.
+ */
 public class ModelMapper implements SexprMapper {
+    /** The package containing the model to be mapped */
     public final String packageName;
     protected Map<String, Class> symbolToClassMap;
     protected Map<String, Class> enumSymbolToClassMap;
@@ -24,12 +28,17 @@ public class ModelMapper implements SexprMapper {
     protected Class doubleValueClass;
     protected Class symbolExprClass;
 
+    /** Create a model mapper for a particular package (including sub-packages)
+     *
+     * @param packageName The package containing the classes to map S-expressions to
+     * @throws MappingException If there is an error performing the mapping
+     */
     public ModelMapper(String packageName) throws MappingException {
         this.packageName = packageName;
         buildModelMaps();
     }
 
-    public void buildModelMaps() throws MappingException {
+    protected void buildModelMaps() throws MappingException {
         symbolToClassMap = new HashMap<>();
         enumSymbolToClassMap = new HashMap<>();
         symbolToEnumMap = new HashMap<>();
@@ -103,6 +112,12 @@ public class ModelMapper implements SexprMapper {
         }
     }
 
+    /** Map an S-expression symbol to an object
+     *
+     * @param symbol The symbol to map
+     * @return The value the symbol maps to
+     * @throws MappingException If there is an error performing the mapping
+     */
     @Override
     public Object mapSymbol(SexprSymbol symbol) throws MappingException {
         Object enumVal = symbolToEnumMap.get(symbol.value);
@@ -116,12 +131,19 @@ public class ModelMapper implements SexprMapper {
         } else {
             if (symbolExprClass == null) {
                 throw new MappingException(
-                        String.format("No mapping for symbol %s and no symbol value class was found", symbol.value));
+                        String.format("No mapping for symbol %s and no symbol value class was found", symbol.value),
+                        symbol.filename, symbol.lineNumber);
             }
             return symbolExprClass;
         }
     }
 
+    /** Map an S-expression symbol to a class
+     *
+     * @param symbol The symbol to map
+     * @return The class the symbol maps to
+     * @throws MappingException If there is an error performing the mapping
+     */
     @Override
     public Class mapSymbolToClass(SexprSymbol symbol) throws MappingException {
 
@@ -131,17 +153,25 @@ public class ModelMapper implements SexprMapper {
         } else {
             if (symbolExprClass == null) {
                 throw new MappingException(
-                        String.format("No mapping for symbol %s and no symbol value class was found", symbol.value));
+                        String.format("No mapping for symbol %s and no symbol value class was found", symbol.value),
+                        symbol.filename, symbol.lineNumber);
             }
             return symbolExprClass;
         }
     }
 
+    /** Map an S-expression double value to an object
+     *
+     * @param d The double value to map
+     * @return The object the value maps to
+     * @throws MappingException If there is an error performing the mapping
+     */
     @Override
     public Object mapDouble(SexprDouble d) throws MappingException {
         if (doubleValueClass == null) {
             throw new MappingException(
-                    String.format("No mapping for double value class was found"));
+                    String.format("No mapping for double value class was found"),
+                    d.filename, d.lineNumber);
         }
         try {
             for (Constructor cons : doubleValueClass.getConstructors()) {
@@ -153,7 +183,8 @@ public class ModelMapper implements SexprMapper {
                 }
             }
             throw new MappingException(
-                    String.format("No viable constructor in double value class was found"));
+                    String.format("No viable constructor in double value class was found"),
+                    d.filename, d.lineNumber);
         } catch (InvocationTargetException e) {
             throw new MappingException(e, d.filename, d.lineNumber);
         } catch (InstantiationException e) {
@@ -163,11 +194,18 @@ public class ModelMapper implements SexprMapper {
         }
     }
 
+    /** Map an S-expression int to an object
+     *
+     * @param i The S-expression int that should be mapped
+     * @return The object the int maps to
+     * @throws MappingException If there is an error performing the mapping
+     */
     @Override
     public Object mapInt(SexprInt i) throws MappingException {
         if (intValueClass == null) {
             throw new MappingException(
-                    String.format("No mapping for int value class was found"));
+                    String.format("No mapping for int value class was found"),
+                    i.filename, i.lineNumber);
         }
         try {
             for (Constructor cons : intValueClass.getConstructors()) {
@@ -179,7 +217,8 @@ public class ModelMapper implements SexprMapper {
                 }
             }
             throw new MappingException(
-                    String.format("No viable constructor in int value class was found"));
+                    String.format("No viable constructor in int value class was found"),
+                    i.filename, i.lineNumber);
         } catch (InvocationTargetException e) {
             throw new MappingException(e, i.filename, i.lineNumber);
         } catch (InstantiationException e) {
@@ -189,11 +228,18 @@ public class ModelMapper implements SexprMapper {
         }
     }
 
+    /** Map an S-expression string to an object
+     *
+     * @param s The string to map
+     * @return The object the string maps to
+     * @throws MappingException If there is an error performing the mapping
+     */
     @Override
     public Object mapString(SexprString s) throws MappingException {
         if (stringValueClass == null) {
             throw new MappingException(
-                    String.format("No mapping for string value class was found"));
+                    String.format("No mapping for string value class was found"),
+                    s.filename, s.lineNumber);
         }
         try {
             for (Constructor cons : stringValueClass.getConstructors()) {
@@ -205,7 +251,8 @@ public class ModelMapper implements SexprMapper {
                 }
             }
             throw new MappingException(
-                    String.format("No viable constructor in double value class was found"));
+                    String.format("No viable constructor in double value class was found"),
+                    s.filename, s.lineNumber);
         } catch (InvocationTargetException e) {
             throw new MappingException(e, s.filename, s.lineNumber);
         } catch (InstantiationException e) {
@@ -215,6 +262,13 @@ public class ModelMapper implements SexprMapper {
         }
     }
 
+    /** Map an S-expression list to an object
+     *
+     * @param l The list to map
+     * @param targetClass The class that the object is expected to map to
+     * @return The object that the list has been mapped into
+     * @throws MappingException If there is an error performing the mapping
+     */
     @Override
     public Object mapList(SexprList l, Class targetClass) throws MappingException {
         ArrayList<SexprItem> list = l.value;
@@ -233,9 +287,5 @@ public class ModelMapper implements SexprMapper {
         }
 
         return defaultClassForTarget.get(targetClass);
-    }
-
-    public Class getDefaultForTargetClass(Class clazz) {
-        return defaultClassForTarget.get(clazz);
     }
 }

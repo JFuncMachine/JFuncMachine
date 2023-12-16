@@ -1,6 +1,8 @@
 package org.jfuncmachine.compiler.model.types;
 
+/** A byte type */
 public record ByteType() implements Type {
+    /** The Java class name of the equivalent box type */
     public static final String BOX_TYPE = "java.lang.Byte";
 
     public String getBoxTypeName() { return BOX_TYPE; }
@@ -20,7 +22,7 @@ public record ByteType() implements Type {
         return other instanceof ByteType;
     }
 
-    public int hash() { return 2; }
+    public int hashCode() { return 2; }
 
     public String toString() { return "ByteType"; }
 }

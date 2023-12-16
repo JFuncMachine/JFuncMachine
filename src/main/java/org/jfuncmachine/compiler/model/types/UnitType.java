@@ -1,12 +1,13 @@
 package org.jfuncmachine.compiler.model.types;
 
+/** A string type */
 public record UnitType() implements Type {
 
     public boolean equals(Object other) {
         return other instanceof UnitType;
     }
 
-    public int hash() { return 19; }
+    public int hashCode() { return 19; }
 
     public String toString() { return "UnitType"; }
 }

@@ -12,7 +12,7 @@ import org.jfuncmachine.util.unification.UnificationException;
 
 @ModelItem(includeStartSymbol = true)
 public class StringBinaryExpr extends StringExpr {
-    @ModelItem(isExprStart = true, exprLength=3)
+    @ModelItem(isExprStart = true)
     public enum ExprType {
         Concat("++");
 

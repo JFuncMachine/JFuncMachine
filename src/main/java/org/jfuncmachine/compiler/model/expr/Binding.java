@@ -26,16 +26,23 @@ public class Binding extends Expression {
     /**
      * The Visibility parameter controls whether or not binding variables are visible to other binding pair
      * expressions within the same binding.
-     * <pre>Separate</pre> means that a binding expression does not see its own variable nor those of any of the
+     * <ul>
+     * <li><pre>Separate</pre> means that a binding expression does not see its own variable nor those of any of the
      * other BindingPair objects in this binding (but if this binding occurs inside another binding, it can see
      * all the variables in the outer binding).
-     * <p>
+     * </li>
+     * <li>
      * <pre>Previous</pre> means that each binding pair can see the variables in the binding pairs that came before
      * it in the current binding (as well as any variables defined in a parent binding).
-     * <p>
+     * </li>
+     * </ul>
      */
     public enum Visibility {
+        /** The binding expression does not see its own variable or any others in the current binding */
         Separate,
+        /** The binding expression does not see its own variable but sees those in the current binding that
+         * occur before it
+         */
         Previous
     }
 

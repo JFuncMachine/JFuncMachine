@@ -11,7 +11,11 @@ public class BoolFalse extends BooleanExpr {
     /** The test to execute if this one is false */
     public BooleanExpr falsePath;
 
-    /** Create a false constant */
+    /** Create a false constant
+     *
+     * @param filename The source file containing this constant
+     * @param lineNumber The line number in the source file where this constant is declared
+     */
     public BoolFalse(String filename, int lineNumber) {
         super(filename, lineNumber);
     }
@@ -37,6 +41,14 @@ public class BoolFalse extends BooleanExpr {
         return this;
     }
 
+    /** Generate Java bytecode for this constant
+     *
+     * In the boolean expressions, a false constant means to take the false path.
+     *
+     * @param generator The class generator that is generating the current class
+     * @param env The environment containing all visible variables
+     * @param next The next boolean expr in the chain
+     */
     public void generate(ClassGenerator generator, Environment env, BooleanExpr next) {
         if (label != null) {
             generator.instGen.label(label);
