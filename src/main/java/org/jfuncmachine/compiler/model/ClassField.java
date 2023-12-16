@@ -19,6 +19,8 @@ public class ClassField extends SourceElement {
     /** Create a new ClassField
      * @param name The name of the field
      * @param type The type of the field
+     * @param access The access flags for the field
+     * @param defaultValue The default value for the field (may be null)
      */
     public ClassField(String name, Type type, int access, Object defaultValue) {
         super(null, 0);
@@ -31,6 +33,8 @@ public class ClassField extends SourceElement {
     /** Create a new ClassField
      * @param name The name of the field
      * @param type The type of the field
+     * @param access The access flags for the field
+     * @param defaultValue The default value for the field (may be null)
      * @param filename The name of the file where this field is defined
      * @param lineNumber The line number in the source file where this field is defined
      */
