@@ -32,7 +32,13 @@ gradlew publish
 ```
 
 ## Getting Started
+There is a [JFuncMachineExamples](https://github.com/JFuncMachine/JFuncMachineExamples.git)
+repo with examples, but before diving into those,
+check out the [documentation](http://www.jfuncmachine.org).
 
+
+To get a quick feel for what JFuncMachine provides, here is a program that
+generates a HelloWorld program:
 ```java
 
 package org.jfuncmachine.examples;
@@ -66,13 +72,14 @@ public class HelloWorld {
                     // call the println method on the static PrintStream field named out in the System class
                     // So create an expression that calls the println method
                     new CallJavaMethod("java.io.PrintStream", "println",
+                            // The println method has a return type of Unit
+                            SimpleTypes.UNIT,
                             // Get the PrintStream object from System.out, that is the object
                             // that we will be calling println on
-                            SimpleTypes.UNIT, new GetJavaStaticField("java.lang.System", "out",
+                            new GetJavaStaticField("java.lang.System", "out",
                                     new ObjectType("java.io.PrintStream")),
                             // Load up the arguments to println, which is just one, that is a string constant
                             new Expression[] { new StringConstant("Hello World!") }
-                            // the function returns void (which in functional languages is called Unit)
                     ));
 
             // Create a org.jfuncmachine.test.HelloWorld class
@@ -119,5 +126,3 @@ After the MethodDef in the above Hello World program you could just do:
             generator.invokeMethod(main, (Object) new String[0]);
 
 ```
-
-[Javadoc](http://www.jfuncmachine.org/javadoc/)
