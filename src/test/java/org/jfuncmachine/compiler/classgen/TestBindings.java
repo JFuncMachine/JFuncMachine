@@ -288,4 +288,26 @@ public class TestBindings {
         Object result = generator.invokeMethod("TestBinding",method, 10000000);
         Assertions.assertEquals((long) 0, (Long) result);
     }
+
+    @TestAllImplementations
+    public void testSetIntVariable(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("bindingtest", Access.PUBLIC, new Field[] { },
+                SimpleTypes.INT,
+                new Binding(
+                        new Binding.BindingPair[] {
+                            new Binding.BindingPair("x", new IntConstant(20))
+                        },
+                        Binding.Visibility.Separate,
+                        new Block(new Expression[] {
+                                new SetValue("x",
+                                        new InlineCall(Inlines.IntAdd, new Expression[]{
+                                                new GetValue("x", SimpleTypes.INT),
+                                                new IntConstant(22)
+                                        })),
+                                new GetValue("x", SimpleTypes.INT)
+                        })));
+
+        Object result = generator.invokeMethod("TestBinding",method);
+        Assertions.assertEquals(42, (Integer) result);
+    }
 }

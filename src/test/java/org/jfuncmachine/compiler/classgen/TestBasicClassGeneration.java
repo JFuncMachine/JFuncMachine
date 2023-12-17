@@ -1,10 +1,8 @@
 package org.jfuncmachine.compiler.classgen;
 
-import org.jfuncmachine.compiler.model.Access;
-import org.jfuncmachine.compiler.model.ClassDef;
-import org.jfuncmachine.compiler.model.ClassField;
-import org.jfuncmachine.compiler.model.MethodDef;
+import org.jfuncmachine.compiler.model.*;
 import org.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.compiler.model.expr.GetValue;
 import org.jfuncmachine.compiler.model.expr.InlineCall;
 import org.jfuncmachine.compiler.model.expr.NewArrayWithValues;
 import org.jfuncmachine.compiler.model.expr.boxing.Box;
@@ -14,6 +12,7 @@ import org.jfuncmachine.compiler.model.expr.conv.ToByte;
 import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
 import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaStaticMethod;
 import org.jfuncmachine.compiler.model.expr.javainterop.GetJavaStaticField;
+import org.jfuncmachine.compiler.model.expr.javainterop.SetJavaStaticField;
 import org.jfuncmachine.compiler.model.inline.Inlines;
 import org.jfuncmachine.compiler.model.types.*;
 import org.junit.jupiter.api.Assertions;
@@ -21,6 +20,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -201,6 +202,54 @@ public class TestBasicClassGeneration {
             Assertions.assertEquals(newClass.packageName, loadedClass.getPackageName());
             Assertions.assertEquals(newClass.name, loadedClass.getSimpleName());
             Assertions.assertEquals(newClass.getFullClassName(), loadedClass.getName());
+        }
+    }
+
+    @Test
+    public void testField()
+            throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+
+        ClassField field = new ClassField("aField", SimpleTypes.STRING,
+                Access.PUBLIC + Access.STATIC, "foo");
+
+        // Create a public static method named "main"
+        MethodDef getField = new MethodDef("getField", Access.PUBLIC + Access.STATIC,
+                new Field[] { },
+                SimpleTypes.STRING,
+                new GetJavaStaticField("org.jfuncmachine.test.FieldTest", "aField",
+                        SimpleTypes.STRING));
+
+        MethodDef setField = new MethodDef("setField", Access.PUBLIC + Access.STATIC,
+                new Field[] { new Field("x", SimpleTypes.STRING )},
+                SimpleTypes.UNIT,
+                new SetJavaStaticField("org.jfuncmachine.test.FieldTest", "aField",
+                        SimpleTypes.STRING, new GetValue("x", SimpleTypes.STRING)));
+
+        // Create a org.jfuncmachine.test.HelloWorld class
+        ClassDef newClass = new ClassDef("org.jfuncmachine.test", "FieldTest",
+                // Make it a public class
+                Access.PUBLIC,
+                // Containing one method, the main method, and no fields
+                new MethodDef[] { getField, setField, ConstructorDef.generateWith(new Field[0])},
+                new ClassField[] { field }, new String[0]);
+
+        ClassGenerator gen = new ClassGenerator();
+
+        gen.generate(newClass, "testclasspath");
+        try (var loader = new URLClassLoader(new URL[] {
+                new File("testclasspath").toURI().toURL()
+        })) {
+            var loadedClass = loader.loadClass(newClass.getFullClassName());
+            Object instance = loadedClass.getConstructors()[0].newInstance();
+            Method getFieldMethod = loadedClass.getMethod("getField");
+            Method setFieldMethod = loadedClass.getMethod("setField", String.class);
+
+            Assertions.assertEquals("foo", getFieldMethod.invoke(instance),
+                    "Initial value should be foo");
+            setFieldMethod.invoke(instance, "bar");
+            Assertions.assertEquals("bar", getFieldMethod.invoke(instance),
+                    "Changed value should be bar");
+
         }
     }
 }
