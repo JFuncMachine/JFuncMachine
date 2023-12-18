@@ -28,8 +28,8 @@ public class TestSwitch {
                 SimpleTypes.STRING,
                 new Switch(new GetValue("x", SimpleTypes.INT),
                         new SwitchCase[] {
-                            new SwitchCase(1, new StringConstant("moe")),
                             new SwitchCase(2, new StringConstant("larry")),
+                            new SwitchCase(1, new StringConstant("moe")),
                             new SwitchCase(3, new StringConstant("curly")),
                         },
                     new StringConstant("nobody")));
@@ -52,8 +52,8 @@ public class TestSwitch {
                 SimpleTypes.STRING,
                 new Switch(new GetValue("x", SimpleTypes.INT),
                         new SwitchCase[] {
-                                new SwitchCase(1, new StringConstant("moe")),
                                 new SwitchCase(42, new StringConstant("larry")),
+                                new SwitchCase(1, new StringConstant("moe")),
                                 new SwitchCase(73, new StringConstant("curly")),
                         },
                         new StringConstant("nobody")));
