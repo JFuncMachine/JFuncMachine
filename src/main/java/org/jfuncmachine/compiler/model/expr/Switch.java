@@ -292,7 +292,8 @@ public class Switch extends Expression {
             generator.instGen.lookupswitch(defaultLabel, labelKeys, switchLabels.toArray(new Label[0]));
 
             pos = 0;
-            for (SwitchCase switchCase : cases) {
+            for (Integer key : caseMap.keySet()) {
+                SwitchCase switchCase = caseMap.get(key);
                 generator.instGen.label(switchLabels.get(pos++));
                 switchCase.expr.generate(generator, env, inTailPosition);
                 generator.instGen.gotolabel(switchEndLabel);
