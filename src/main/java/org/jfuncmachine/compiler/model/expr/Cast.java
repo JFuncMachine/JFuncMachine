@@ -62,6 +62,9 @@ public class Cast extends Expression {
             generator.instGen.checkcast(generator.getTypeDescriptor(arrayType));
         } else if (castClass instanceof StringType) {
             generator.instGen.checkcast(generator.className("java.lang.String"));
+        } else {
+            throw generateException("Cannot use cast on type "+castClass+". Use conv package to convert numbers.");
+
         }
     }
 }
