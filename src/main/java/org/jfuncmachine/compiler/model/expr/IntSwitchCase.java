@@ -5,7 +5,7 @@ import org.jfuncmachine.compiler.model.SourceElement;
 /** Defines a case value for a switch statement containing a target value and the
  * expression to be executed if the switch value matches the case value
  */
-public class SwitchCase extends SourceElement {
+public class IntSwitchCase extends SourceElement {
     /** The value of this case */
     public final int value;
     /** The expression to execute if the switch value equals this case value */
@@ -15,7 +15,7 @@ public class SwitchCase extends SourceElement {
      * @param value The value of this case
      * @param expr The expression to execute if the switch value equals this case value
      */
-    public SwitchCase(int value, Expression expr) {
+    public IntSwitchCase(int value, Expression expr) {
         super(null, 0);
         this.value = value;
         this.expr = expr;
@@ -28,7 +28,7 @@ public class SwitchCase extends SourceElement {
      * @param filename The source filename containing this case
      * @param lineNumber The line number in the source filename where this case starts
      */
-    public SwitchCase(int value, Expression expr, String filename, int lineNumber) {
+    public IntSwitchCase(int value, Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.value = value;
         this.expr = expr;

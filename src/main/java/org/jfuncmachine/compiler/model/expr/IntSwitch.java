@@ -22,13 +22,13 @@ import java.util.TreeMap;
  * consecutive. A lookup switch performs a binary search on a sorted array of case values
  * to determine which case value to execute.
  */
-public class Switch extends Expression {
+public class IntSwitch extends Expression {
     /** The expression generating the value to be switched on */
     public final Expression expr;
     /** A case containing a numeric value and an expression to be executed if the switch expression
      * equals the case value
      */
-    public final SwitchCase[] cases;
+    public final IntSwitchCase[] cases;
     /** The expression to be executed if none of the cases match the switch value */
     public final Expression defaultCase;
     /** The maximum number of empty spaces between switch values allowed before the switch
@@ -38,7 +38,7 @@ public class Switch extends Expression {
     /** If true, this switch is using the tableswitch instruction */
     protected boolean useTableSwitch;
     /** A sorted map containing the cases sorted by value */
-    protected final TreeMap<Integer,SwitchCase> caseMap;
+    protected final TreeMap<Integer, IntSwitchCase> caseMap;
 
     /** Create a Switch expression
      * @param expr The expression generating the value to be switched on
@@ -46,7 +46,7 @@ public class Switch extends Expression {
      *              equals the case value
      * @param defaultCase The expression to be executed if none of the cases match the switch value
      */
-    public Switch(Expression expr, SwitchCase[] cases, Expression defaultCase) {
+    public IntSwitch(Expression expr, IntSwitchCase[] cases, Expression defaultCase) {
         super(null, 0);
         this.expr = expr;
         this.cases = cases;
@@ -77,8 +77,8 @@ public class Switch extends Expression {
      * @param filename The name of the source file where this switch is defined
      * @param lineNumber The line number in the source file where this switch starts
      */
-    public Switch(Expression expr, SwitchCase[] cases, Expression defaultCase,
-                  String filename, int lineNumber) {
+    public IntSwitch(Expression expr, IntSwitchCase[] cases, Expression defaultCase,
+                     String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;
         this.cases = cases;
@@ -108,7 +108,7 @@ public class Switch extends Expression {
      * @param gapThreshold The maximum number of empty spaces between switch values allowed before the switch
      *                     is converted to a lookup switch.
      */
-    public Switch(Expression expr, SwitchCase[] cases, Expression defaultCase, int gapThreshold) {
+    public IntSwitch(Expression expr, IntSwitchCase[] cases, Expression defaultCase, int gapThreshold) {
         super(null, 0);
         this.expr = expr;
         this.cases = cases;
@@ -140,8 +140,8 @@ public class Switch extends Expression {
      * @param filename The name of the source file where this switch is defined
      * @param lineNumber The line number in the source file where this switch starts
      */
-    public Switch(Expression expr, SwitchCase[] cases, Expression defaultCase, int gapThreshold,
-                  String filename, int lineNumber) {
+    public IntSwitch(Expression expr, IntSwitchCase[] cases, Expression defaultCase, int gapThreshold,
+                     String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;
         this.cases = cases;
@@ -195,15 +195,15 @@ public class Switch extends Expression {
     @Override
     public void reset() {
         expr.reset();
-        for (SwitchCase switchCase: cases) {
-            switchCase.expr.reset();
+        for (IntSwitchCase intSwitchCase : cases) {
+            intSwitchCase.expr.reset();
         }
     }
 
     public void findCaptured(Environment env) {
         expr.findCaptured(env);
-        for (SwitchCase switchCase: cases) {
-            switchCase.expr.findCaptured(env);
+        for (IntSwitchCase intSwitchCase : cases) {
+            intSwitchCase.expr.findCaptured(env);
         }
     }
 
@@ -225,13 +225,13 @@ public class Switch extends Expression {
             int minValue = cases[0].value;
             int maxValue = cases[0].value;
 
-            Map<Integer, SwitchCase> caseMap = new TreeMap<>();
+            Map<Integer, IntSwitchCase> caseMap = new TreeMap<>();
 
-            for (SwitchCase switchCase : cases) {
-                caseMap.put(switchCase.value, switchCase);
+            for (IntSwitchCase intSwitchCase : cases) {
+                caseMap.put(intSwitchCase.value, intSwitchCase);
 
-                if (switchCase.value < minValue) minValue = switchCase.value;
-                if (switchCase.value > maxValue) maxValue = switchCase.value;
+                if (intSwitchCase.value < minValue) minValue = intSwitchCase.value;
+                if (intSwitchCase.value > maxValue) maxValue = intSwitchCase.value;
             }
 
             Label defaultLabel = switchEndLabel;
@@ -254,8 +254,8 @@ public class Switch extends Expression {
                     generator.instGen.label(switchLabels.get(i - minValue));
 
                     if (caseMap.containsKey(i)) {
-                        SwitchCase switchCase = caseMap.get(i);
-                        switchCase.expr.generate(generator, env, inTailPosition);
+                        IntSwitchCase intSwitchCase = caseMap.get(i);
+                        intSwitchCase.expr.generate(generator, env, inTailPosition);
                         generator.instGen.gotolabel(switchEndLabel);
                     } else {
                         generator.instGen.gotolabel(defaultLabel);
@@ -276,9 +276,9 @@ public class Switch extends Expression {
 
                 pos = 0;
                 for (Integer key : caseMap.keySet()) {
-                    SwitchCase switchCase = caseMap.get(key);
+                    IntSwitchCase intSwitchCase = caseMap.get(key);
                     generator.instGen.label(switchLabels.get(pos++));
-                    switchCase.expr.generate(generator, env, inTailPosition);
+                    intSwitchCase.expr.generate(generator, env, inTailPosition);
                     generator.instGen.gotolabel(switchEndLabel);
                 }
             }
