@@ -61,4 +61,23 @@ public sealed interface Type
      */
     default boolean hasIntRepresentation() { return false; }
 
+    default char getJVMTypeRepresentation() {
+        return switch (this) {
+            case BooleanType b -> 'I';
+            case ByteType b -> 'I';
+            case CharType c -> 'I';
+            case DoubleType d -> 'D';
+            case FloatType f -> 'F';
+            case IntType i -> 'I';
+            case LongType l -> 'J';
+            case ShortType c -> 'I';
+            default -> 'A';
+        };
+    }
+
+    default boolean sameJavaType(Type other) {
+        return getJVMTypeRepresentation() == other.getJVMTypeRepresentation();
+    }
+
+    default boolean isEnum() { return false; }
 }

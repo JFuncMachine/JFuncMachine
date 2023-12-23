@@ -25,7 +25,7 @@ public class TestCast {
         MethodDef method = new MethodDef("casttest", Access.PUBLIC, new Field[] {
                 new Field("x", new ObjectType())},
                 SimpleTypes.STRING,
-                new Cast("java.lang.String", new GetValue("x", new ObjectType())));
+                new Cast(SimpleTypes.STRING, new GetValue("x", new ObjectType())));
 
         Object result = generator.invokeMethod("TestCast",method, "foo");
         Assertions.assertEquals(result, "foo");

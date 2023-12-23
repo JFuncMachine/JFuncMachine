@@ -121,7 +121,7 @@ public class Switch extends Expression {
 
         Type switchType = cases[0].expr.getType();
         for (int i=1; i < cases.length; i++) {
-            if (!switchType.equals(cases[i].expr.getType())) {
+            if (!switchType.sameJavaType(cases[i].expr.getType())) {
                 throw cases[i].generateException("Switch expressions must all be the same type");
             }
         }
@@ -164,6 +164,8 @@ public class Switch extends Expression {
     }
 
     protected void computeSwitchType() {
+        if (expr.getType().getJVMTypeRepresentation() != 'I') return;
+
         for (int i=0; i < cases.length; i++) {
             caseMap.put(cases[i].value, cases[i]);
         }
@@ -210,102 +212,86 @@ public class Switch extends Expression {
 
         Type exprType = expr.getType();
 
-        boolean autobox = false;
+        if ((exprType.getJVMTypeRepresentation() == 'I') || (exprType.isBoxType() && generator.options.autobox)) {
+            boolean autobox = exprType.isBoxType();
 
-        if (exprType instanceof ObjectType t) {
-            String tclass = t.className;
-            if (!(tclass.equals("java.lang.Boolean") || tclass.equals("java.lang.Byte") ||
-                    tclass.equals("java.lang.Char") || tclass.equals("java.lang.Integer") ||
-                    tclass.equals("java.lang.Long") || tclass.equals("java.lang.Short"))) {
-                throw generateException("Switch expression must be some type of int");
-            }
-            if (!generator.options.autobox) {
-                throw generateException("Switch is a boxed integer, but autoboxing is not enabled");
-            }
-            autobox = true;
-
-        } else if (!((exprType instanceof BooleanType) || (exprType instanceof CharType) ||
-                (exprType instanceof IntType) || (exprType instanceof LongType) ||
-                (exprType instanceof ShortType))) {
-            throw generateException("Switch expression must be some type of int");
-        }
-
-        if (autobox) {
-            new Unbox(expr, SimpleTypes.INT).generate(generator, env, false);
-        } else {
-            expr.generate(generator, env, false);
-        }
-
-        Label switchEndLabel = new Label();
-        int minValue = cases[0].value;
-        int maxValue = cases[0].value;
-
-        Map<Integer, SwitchCase> caseMap = new TreeMap<>();
-
-        for (SwitchCase switchCase: cases) {
-            caseMap.put(switchCase.value, switchCase);
-
-            if (switchCase.value < minValue) minValue = switchCase.value;
-            if (switchCase.value > maxValue) maxValue = switchCase.value;
-        }
-
-        Label defaultLabel = switchEndLabel;
-        if (defaultCase != null) {
-            defaultLabel = new Label();
-        } else {
-            defaultLabel = switchEndLabel;
-        }
-
-        if (useTableSwitch) {
-            List<Label> switchLabels = new ArrayList<>();
-
-            for (int i=minValue; i <= maxValue; i++) {
-                switchLabels.add(new Label());
+            if (autobox) {
+                new Unbox(expr, SimpleTypes.INT).generate(generator, env, false);
+            } else {
+                expr.generate(generator, env, false);
             }
 
-            generator.instGen.lineNumber(lineNumber);
-            generator.instGen.tableswitch(minValue, maxValue, defaultLabel,
-                    switchLabels.toArray(new Label[0]));
+            Label switchEndLabel = new Label();
+            int minValue = cases[0].value;
+            int maxValue = cases[0].value;
 
-            for (int i=minValue; i <= maxValue; i++) {
-                generator.instGen.label(switchLabels.get(i-minValue));
+            Map<Integer, SwitchCase> caseMap = new TreeMap<>();
 
-                if (caseMap.containsKey(i)) {
-                    SwitchCase switchCase = caseMap.get(i);
+            for (SwitchCase switchCase : cases) {
+                caseMap.put(switchCase.value, switchCase);
+
+                if (switchCase.value < minValue) minValue = switchCase.value;
+                if (switchCase.value > maxValue) maxValue = switchCase.value;
+            }
+
+            Label defaultLabel = switchEndLabel;
+            if (defaultCase != null) {
+                defaultLabel = new Label();
+            }
+
+            if (useTableSwitch) {
+                List<Label> switchLabels = new ArrayList<>();
+
+                for (int i = minValue; i <= maxValue; i++) {
+                    switchLabels.add(new Label());
+                }
+
+                generator.instGen.lineNumber(lineNumber);
+                generator.instGen.tableswitch(minValue, maxValue, defaultLabel,
+                        switchLabels.toArray(new Label[0]));
+
+                for (int i = minValue; i <= maxValue; i++) {
+                    generator.instGen.label(switchLabels.get(i - minValue));
+
+                    if (caseMap.containsKey(i)) {
+                        SwitchCase switchCase = caseMap.get(i);
+                        switchCase.expr.generate(generator, env, inTailPosition);
+                        generator.instGen.gotolabel(switchEndLabel);
+                    } else {
+                        generator.instGen.gotolabel(defaultLabel);
+                    }
+                }
+            } else {
+                List<Label> switchLabels = new ArrayList<>();
+
+                int[] labelKeys = new int[caseMap.size()];
+                int pos = 0;
+                for (Integer key : caseMap.keySet()) {
+                    switchLabels.add(new Label());
+                    labelKeys[pos++] = key;
+                }
+
+                generator.instGen.lineNumber(lineNumber);
+                generator.instGen.lookupswitch(defaultLabel, labelKeys, switchLabels.toArray(new Label[0]));
+
+                pos = 0;
+                for (Integer key : caseMap.keySet()) {
+                    SwitchCase switchCase = caseMap.get(key);
+                    generator.instGen.label(switchLabels.get(pos++));
                     switchCase.expr.generate(generator, env, inTailPosition);
                     generator.instGen.gotolabel(switchEndLabel);
-                } else {
-                    generator.instGen.gotolabel(defaultLabel);
                 }
             }
+
+            generator.instGen.label(defaultLabel);
+            if (defaultCase != null) {
+                defaultCase.generate(generator, env, inTailPosition);
+
+            }
+
+            generator.instGen.label(switchEndLabel);
         } else {
-            List<Label> switchLabels = new ArrayList<>();
-
-            int[] labelKeys = new int[caseMap.size()];
-            int pos = 0;
-            for (Integer key : caseMap.keySet()) {
-                switchLabels.add(new Label());
-                labelKeys[pos++] = key;
-            }
-
-            generator.instGen.lineNumber(lineNumber);
-            generator.instGen.lookupswitch(defaultLabel, labelKeys, switchLabels.toArray(new Label[0]));
-
-            pos = 0;
-            for (Integer key : caseMap.keySet()) {
-                SwitchCase switchCase = caseMap.get(key);
-                generator.instGen.label(switchLabels.get(pos++));
-                switchCase.expr.generate(generator, env, inTailPosition);
-                generator.instGen.gotolabel(switchEndLabel);
-            }
+            throw generateException("Switch expression must be some type of int");
         }
-
-        generator.instGen.label(defaultLabel);
-        if (defaultCase != null) {
-            defaultCase.generate(generator, env, inTailPosition);
-
-        }
-
-        generator.instGen.label(switchEndLabel);
     }
 }

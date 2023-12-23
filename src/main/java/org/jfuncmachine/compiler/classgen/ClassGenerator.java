@@ -275,6 +275,7 @@ public class ClassGenerator {
         }
 
         try {
+            generate(classDef, "test");
             generateAndLoad(classDef);
 
             String targetMethodName = methodDef.name;

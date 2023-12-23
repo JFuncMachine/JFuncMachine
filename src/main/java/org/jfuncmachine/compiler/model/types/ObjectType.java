@@ -7,9 +7,13 @@ public final class ObjectType implements Type {
     /** The class name of the object */
     public final String className;
 
+    /** True if this class represents an enum */
+    public final boolean representsEnum;
+
     /** Create an object type for java.lang.Object */
     public ObjectType() {
         this.className = "java.lang.Object";
+        this.representsEnum = false;
     }
 
     public Type getUnboxedType() {
@@ -71,6 +75,7 @@ public final class ObjectType implements Type {
     public ObjectType(String className) {
 
         this.className = className;
+        this.representsEnum = false;
     }
 
     /** Create an object type from the given class
@@ -79,6 +84,18 @@ public final class ObjectType implements Type {
      */
     public ObjectType(Class clazz) {
         this.className = clazz.getName();
+        this.representsEnum = clazz.isEnum();
+    }
+
+    /** Create an object type for the given class name
+     *
+     * @param className The class name of this object type
+     * @param representsEnum True if this class is an enum
+     */
+    public ObjectType(String className, boolean representsEnum) {
+
+        this.className = className;
+        this.representsEnum = representsEnum;
     }
 
     public boolean equals(Object other) {

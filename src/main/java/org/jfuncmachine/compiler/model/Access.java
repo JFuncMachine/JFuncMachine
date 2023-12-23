@@ -23,6 +23,9 @@ public class Access {
     public static final int PUBLIC = Opcodes.ACC_PUBLIC;
     /** The field or method is static */
     public static final int STATIC = Opcodes.ACC_STATIC;
+    /** The class is an enum */
+    public static final int ENUM = Opcodes.ACC_ENUM;
+
     /** The field or method is synthetic (compiler-generated, doesn't appear in source code) */
     public static final int SYNTHETIC = Opcodes.ACC_SYNTHETIC;
     /** Use the newer invokespecial instruction for super classes */
