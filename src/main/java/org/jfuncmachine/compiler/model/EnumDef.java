@@ -57,6 +57,45 @@ public class EnumDef extends ClassDef {
                 interfaces, filename, lineNumber);
     }
 
+    /** Create a class definition
+     * @param packageName The package name of the class (may be null)
+     * @param name The name of the class
+     * @param access Any access flags for the class (can be a sum of values from the Access class)
+     * @param methodDefs The methods defined for this class
+     * @param fields The fields defined for this class
+     * @param names The names of each enum value
+     * @param interfaces The interfaces this class implements
+     */
+    public EnumDef(String packageName, String name,
+                   int access,
+                   MethodDef[] methodDefs, ClassField[] fields, String[] names,
+                   String[] interfaces) {
+        super(packageName, name, "java.lang", "Enum", access,
+                generateMethodDefs(packageName+"."+name, methodDefs, fields, generateInitializers(names)),
+                generateEnumFields(packageName+"."+name, fields, generateInitializers(names)), interfaces);
+    }
+
+    /** Create a class definition
+     * @param packageName The package name of the class (may be null)
+     * @param name The name of the class
+     * @param access Any access flags for the class (can be a sum of values from the Access class)
+     * @param methodDefs The methods defined for this class
+     * @param fields The fields defined for this class
+     * @param names The names of each enum value
+     * @param filename The source code filename this class was generated from
+     * @param lineNumber The starting line number in the source code where this class is defined
+     */
+    public EnumDef(String packageName, String name,
+                   int access,
+                   MethodDef[] methodDefs, ClassField[] fields, String[] names,
+                   String[] interfaces,
+                   String filename, int lineNumber) {
+        super(packageName, name, "java.lang", "Enum", access,
+                generateMethodDefs(packageName+"."+name, methodDefs, fields, generateInitializers(names)),
+                generateEnumFields(packageName+"."+name, fields, generateInitializers(names)),
+                interfaces, filename, lineNumber);
+    }
+
     public static MethodDef[] generateMethodDefs(String className, MethodDef[] initialMethodDefs, ClassField[] fields,
                                                  EnumInitializer[] initializers) {
         List<ClassField> memberFields = new ArrayList<>();
@@ -139,8 +178,8 @@ public class EnumDef extends ClassDef {
            Expression[] inits = new Expression[initializers[i].initializers.length+2];
            inits[0] = new StringConstant(initializers[i].name);
            inits[1] = new IntConstant(i);
-           System.arraycopy(inits, 2, initializers[i].initializers,
-                   0, initializers[i].initializers.length);
+           System.arraycopy(initializers[i].initializers, 0, inits,
+                   2, initializers[i].initializers.length);
            staticInitExprs[i] = new SetJavaStaticField(className, initializers[i].name,
                    new ObjectType(className),
                    new CallJavaConstructor(className, inits));
@@ -164,5 +203,13 @@ public class EnumDef extends ClassDef {
         }
 
         return newFields;
+    }
+
+    public static EnumInitializer[] generateInitializers(String[] names) {
+        EnumInitializer[] initializers = new EnumInitializer[names.length];
+        for (int i=0; i < names.length; i++) {
+            initializers[i] = new EnumInitializer(names[i], new Expression[0]);
+        }
+        return initializers;
     }
 }

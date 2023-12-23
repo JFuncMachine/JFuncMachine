@@ -537,7 +537,9 @@ public class ClassGenerator {
             // Add the method to the current class
             newNode.methods.add(methodNode);
 
-            if (!methodDef.name.equals("<init>") && options.fullTailCalls && !methodDef.isTailCallable) {
+            if (!methodDef.name.equals("<init>") && !methodDef.name.equals("<clinit>") &&
+                    !(classDef instanceof EnumDef) &&
+                    options.fullTailCalls && !methodDef.isTailCallable) {
                 // Update the currentMethod field to indicate what method we are currently working on
                 currentMethod = methodDef.getTailCallVersion();
 
