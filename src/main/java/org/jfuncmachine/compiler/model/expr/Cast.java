@@ -4,6 +4,7 @@ import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.types.ArrayType;
 import org.jfuncmachine.compiler.model.types.ObjectType;
+import org.jfuncmachine.compiler.model.types.StringType;
 import org.jfuncmachine.compiler.model.types.Type;
 
 /** Define a cast to a particular class type */
@@ -59,6 +60,8 @@ public class Cast extends Expression {
             generator.instGen.checkcast(generator.className(objectType.className));
         } else if (castClass instanceof ArrayType arrayType) {
             generator.instGen.checkcast(generator.getTypeDescriptor(arrayType));
+        } else if (castClass instanceof StringType) {
+            generator.instGen.checkcast(generator.className("java.lang.String"));
         }
     }
 }
