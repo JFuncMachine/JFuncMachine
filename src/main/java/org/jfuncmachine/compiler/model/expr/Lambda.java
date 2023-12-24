@@ -215,7 +215,11 @@ public class Lambda extends Expression {
         Field[] capturedFields = new Field[envVars.length];
         for (int i=0; i < capturedParameterTypes.length; i++) {
             capturedParameterTypes[i] = envVars[i].type;
-            capturedFields[i] = new Field(envVars[i].name, envVars[i].type);
+            String varName = envVars[i].name;
+            if (varName.equals("this")) {
+                varName = "$this";
+            }
+            capturedFields[i] = new Field(varName, envVars[i].type);
         }
 
         // The lambda's actual type will be a combination of the captured variables
@@ -253,12 +257,12 @@ public class Lambda extends Expression {
                     parameterTypes, lambdaReturnType));
         }
 
-        String methodName;
         MethodDef lambdaMethod;
         // Create a declaration for the lambda method
         lambdaMethod = new MethodDef(lambdaInfo.name,
                 Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
                 allFields, lambdaReturnType, body);
+        lambdaMethod.numCapturedParameters = capturedFields.length;
 
         // Schedule the generation of the lambda method
         generator.addMethodToGenerate(lambdaMethod);

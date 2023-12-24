@@ -22,6 +22,13 @@ public class MethodDef extends SourceElement {
     /** If true, this method can be called using the tail call elimination mechanism implemented by JFuncMachine */
     public final boolean isTailCallable;
 
+    /** Used by Lambda to indicate how many method parameters were captured from
+     * the lambda environment. This allows the Recur method to know how many parameters
+     * to expect and how to call the lambda function properly.
+     */
+    public int numCapturedParameters = 0;
+
+
     /** Create a method definition
      *
      * @param name The name of the method

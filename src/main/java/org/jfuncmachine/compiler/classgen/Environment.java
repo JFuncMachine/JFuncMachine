@@ -79,6 +79,7 @@ public class Environment {
         // First assign the loc as the next index
         int loc = nextVar;
 
+        if (name.equals("$this")) name = "this";
         // If there are holes, use one of those
         if (!holes.isEmpty()) {
 
@@ -190,6 +191,7 @@ public class Environment {
      * @return An object containing the name, type, and index of the variable
      */
     public EnvVar getVar(String name) {
+        if (name.equals("$this")) name = "this";
         EnvVar envVar = vars.get(name);
         if (envVar == null) {
             if (parent == null) {
@@ -209,6 +211,7 @@ public class Environment {
      * @param binding The binding the key is associated with
      */
     public void putBinding(String key, Binding binding) {
+        if (key.equals("$this")) key = "this";
         bindings.put(key, binding);
     }
 
@@ -218,6 +221,7 @@ public class Environment {
      * @return The binding associated with the variable identified by key
      */
     public Binding getBinding(String key) {
+        if (key.equals("$this")) key = "this";
         Binding binding = bindings.get(key);
         if (binding == null) {
             if (parent == null) {
@@ -261,6 +265,7 @@ public class Environment {
      * @param name The name to check
      */
     public void checkCaptured(String name) {
+        if (name.equals("$this")) name = "this";
         // If this is the head of capture, then if the variable is contained here or in any
         // parent, the variable is captured
         if (headOfCapture) {
@@ -292,6 +297,7 @@ public class Environment {
      * @param headOfCapture The environment that contains the list of captured variables
      */
     public void checkCaptured(String name, Environment headOfCapture) {
+        if (name.equals("$this")) name = "this";
         if (vars.containsKey(name)) {
             // If this environment contains the variable, add it to the list of captured variables
             // in the headOfCapture environment
