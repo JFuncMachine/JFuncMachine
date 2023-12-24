@@ -59,7 +59,7 @@ public class IntSwitch extends Expression {
 
         Type switchType = cases[0].expr.getType();
         for (int i=1; i < cases.length; i++) {
-            if (!switchType.equals(cases[i].expr.getType())) {
+            if (switchType.getJVMTypeRepresentation() != cases[i].expr.getType().getJVMTypeRepresentation()) {
                 throw cases[i].generateException("Switch expressions must all be the same type");
             }
         }
@@ -91,7 +91,7 @@ public class IntSwitch extends Expression {
 
         Type switchType = cases[0].expr.getType();
         for (int i=1; i < cases.length; i++) {
-            if (!switchType.equals(cases[i].expr.getType())) {
+            if (switchType.getJVMTypeRepresentation() != cases[i].expr.getType().getJVMTypeRepresentation()) {
                 throw cases[i].generateException("Switch expressions must all be the same type");
             }
         }
@@ -121,7 +121,7 @@ public class IntSwitch extends Expression {
 
         Type switchType = cases[0].expr.getType();
         for (int i=1; i < cases.length; i++) {
-            if (!switchType.sameJavaType(cases[i].expr.getType())) {
+            if (switchType.getJVMTypeRepresentation() != cases[i].expr.getType().getJVMTypeRepresentation()) {
                 throw cases[i].generateException("Switch expressions must all be the same type");
             }
         }
@@ -154,7 +154,7 @@ public class IntSwitch extends Expression {
 
         Type switchType = cases[0].expr.getType();
         for (int i=1; i < cases.length; i++) {
-            if (!switchType.equals(cases[i].expr.getType())) {
+            if (switchType.getJVMTypeRepresentation() != cases[i].expr.getType().getJVMTypeRepresentation()) {
                 throw cases[i].generateException("Switch expressions must all be the same type");
             }
         }
