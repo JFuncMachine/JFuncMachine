@@ -225,7 +225,6 @@ public class TestBasicClassGeneration {
                 new SetJavaStaticField("org.jfuncmachine.test.FieldTest", "aField",
                         SimpleTypes.STRING, new GetValue("x", SimpleTypes.STRING)));
 
-        // Create a org.jfuncmachine.test.HelloWorld class
         ClassDef newClass = new ClassDef("org.jfuncmachine.test", "FieldTest",
                 // Make it a public class
                 Access.PUBLIC,

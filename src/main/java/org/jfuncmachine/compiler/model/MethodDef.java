@@ -14,7 +14,7 @@ public class MethodDef extends SourceElement {
     /** The name and type of each parameter */
     public final Field[] parameters;
     /** The expression that this method executes */
-    public final Expression body;
+    public Expression body;
     /** The return type of the method */
     public final Type returnType;
     /** A label pointing to the start of the method */

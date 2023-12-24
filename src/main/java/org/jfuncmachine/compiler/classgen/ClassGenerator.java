@@ -2,10 +2,13 @@ package org.jfuncmachine.compiler.classgen;
 
 import org.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import org.jfuncmachine.compiler.model.*;
+import org.jfuncmachine.compiler.model.expr.Block;
 import org.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.compiler.model.expr.GetValue;
 import org.jfuncmachine.compiler.model.expr.boxing.Autobox;
+import org.jfuncmachine.compiler.model.expr.constants.*;
 import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaSuperConstructor;
+import org.jfuncmachine.compiler.model.expr.javainterop.SetJavaField;
 import org.jfuncmachine.compiler.model.types.*;
 import org.jfuncmachine.runtime.TCOReturn;
 import org.jfuncmachine.runtime.TailCall;
@@ -519,6 +522,36 @@ public class ClassGenerator {
                             Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC + Opcodes.ACC_FINAL));
         } else {
             newNode.superName = className(classDef.superPackageName, classDef.superName);
+        }
+
+        List<Expression> fieldInitializers = new ArrayList<>();
+        for (ClassField field: classDef.fields) {
+            if (field.defaultValue != null) {
+                fieldInitializers.add(new SetJavaField(classDef.getFullClassName(),
+                        field.name, field.type, new GetValue("this", new ObjectType(classDef.getFullClassName())),
+                        switch (field.defaultValue) {
+                            case Integer i -> new IntConstant(i);
+                            case Float f -> new FloatConstant(f);
+                            case Double d -> new DoubleConstant(d);
+                            case Long l -> new LongConstant(l);
+                            case String s -> new StringConstant(s);
+                            default -> throw field.generateException("Field initializer must be an int, long, float, double, or string");
+                        }
+                        ));
+            }
+        }
+
+        if (!fieldInitializers.isEmpty()) {
+            for (MethodDef methodDef : classDef.methodDefs) {
+                if (methodDef.name.equals("<init>")) {
+                    Expression[] blockExprs = new Expression[fieldInitializers.size() + 1];
+                    for (int i = 0; i < fieldInitializers.size(); i++) {
+                        blockExprs[i] = fieldInitializers.get(i);
+                    }
+                    blockExprs[blockExprs.length - 1] = methodDef.body;
+                    methodDef.body = new Block(blockExprs);
+                }
+            }
         }
 
         for (MethodDef methodDef : classDef.methodDefs) {

@@ -142,6 +142,7 @@ public class Box extends Expression {
             switch (expr) {
                 case CallStaticMethod csm -> { expr.generate(generator, env, inTailPosition); return; }
                 case CallMethod cm -> { expr.generate(generator, env, inTailPosition); return; }
+                case Recurse r -> { expr.generate(generator, env, inTailPosition); return; }
                 default -> {}
             }
         } else {

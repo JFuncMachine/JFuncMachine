@@ -116,7 +116,6 @@ public class Recurse extends Expression {
     @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String invokeClassName = generator.currentClass.getFullClassName();
-        int[] argumentLocations = new int[arguments.length];
 
         MethodDef currentMethod = generator.currentMethod;
         Type[] parameterTypes = new Type[currentMethod.parameters.length];
@@ -155,21 +154,30 @@ public class Recurse extends Expression {
         } else {
             if (!makeTailCall) {
                 generator.instGen.lineNumber(lineNumber);
+                Type callReturnType = returnType;
+                if (generator.options.fullTailCalls) {
+                    callReturnType = new ObjectType();
+                }
                 if ((currentMethod.access & Access.STATIC) == 0) {
                     generator.instGen.invokevirtual(
                             generator.className(invokeClassName),
-                            currentMethod.name, generator.methodDescriptor(parameterTypes, returnType));
+                            currentMethod.name, generator.methodDescriptor(parameterTypes, callReturnType));
                 } else {
                     generator.instGen.invokestatic(
                             generator.className(invokeClassName),
-                            currentMethod.name, generator.methodDescriptor(parameterTypes, returnType));
-
+                            currentMethod.name, generator.methodDescriptor(parameterTypes, callReturnType));
                 }
             } else {
                 generator.instGen.lineNumber(lineNumber);
-                generator.instGen.invokevirtual(
-                        generator.className(invokeClassName),
-                        currentMethod.name+"$$TC$$", generator.methodDescriptor(parameterTypes, new ObjectType()));
+                if ((currentMethod.access & Access.STATIC) == 0) {
+                    generator.instGen.invokevirtual(
+                            generator.className(invokeClassName),
+                            currentMethod.name, generator.methodDescriptor(parameterTypes, new ObjectType()));
+                } else {
+                    generator.instGen.invokestatic(
+                            generator.className(invokeClassName),
+                            currentMethod.name, generator.methodDescriptor(parameterTypes, new ObjectType()));
+                }
                 if (!tailCallReturn) {
                     Label loopStart = new Label();
                     Label loopEnd = new Label();
