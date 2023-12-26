@@ -156,20 +156,11 @@ public class Binding extends Expression {
     @Override
     public Expression convertToFullTailCalls(boolean inTailPosition) {
         if (inTailPosition) {
-            BindingPair[] newBindings = new BindingPair[bindings.length];
-            for (int i=0; i < bindings.length; i++) {
-                if (bindings[i].value instanceof Lambda) {
-                    newBindings[i] = new BindingPair(bindings[i].name,
-                            bindings[i].value.convertToFullTailCalls(true));
-                } else {
-                    newBindings[i] = bindings[i];
-                }
-            }
             Expression newExpr = expr.convertToFullTailCalls(true);
             if (newExpr.getType().getJVMTypeRepresentation() != 'A') {
                 return new Box(this);
             } else {
-                return new Binding(name, newBindings, visibility, newExpr, filename, lineNumber);
+                return this;
             }
         }
         return this;

@@ -4,7 +4,6 @@ import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.expr.*;
 import org.jfuncmachine.compiler.model.expr.constants.NullConstant;
-import org.jfuncmachine.compiler.model.expr.conv.ToUnit;
 import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaStaticMethod;
 import org.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.compiler.model.types.SimpleTypes;
@@ -158,7 +157,7 @@ public class Box extends Expression {
             switch (expr) {
                 case CallStaticMethod csm -> { expr.generate(generator, env, inTailPosition); return; }
                 case CallMethod cm -> { expr.generate(generator, env, inTailPosition); return; }
-                case Recurse r -> { expr.generate(generator, env, inTailPosition); return; }
+                case LocalRecurse r -> { expr.generate(generator, env, inTailPosition); return; }
                 default -> {}
             }
         } else {

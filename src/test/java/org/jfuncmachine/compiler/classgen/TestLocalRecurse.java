@@ -4,28 +4,17 @@ import org.jfuncmachine.compiler.model.*;
 import org.jfuncmachine.compiler.model.expr.*;
 import org.jfuncmachine.compiler.model.expr.bool.BinaryComparison;
 import org.jfuncmachine.compiler.model.expr.bool.tests.Tests;
-import org.jfuncmachine.compiler.model.expr.boxing.Box;
 import org.jfuncmachine.compiler.model.expr.constants.IntConstant;
-import org.jfuncmachine.compiler.model.expr.constants.StringConstant;
-import org.jfuncmachine.compiler.model.expr.javainterop.SetJavaField;
-import org.jfuncmachine.compiler.model.expr.javainterop.SetJavaStaticField;
 import org.jfuncmachine.compiler.model.inline.Inlines;
 import org.jfuncmachine.compiler.model.types.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.function.Supplier;
 
-public class TestRecurse {
+public class TestLocalRecurse {
     @ParameterizedTest(name = "{0}")
     @ArgumentsSource(ClassGeneratorProvider.class)
     @Retention(RetentionPolicy.RUNTIME)
@@ -46,7 +35,7 @@ public class TestRecurse {
                                                 new GetValue("n", SimpleTypes.INT),
                                                 new IntConstant(2)),
                                                 new GetValue("acc", SimpleTypes.INT),
-                                                new Recurse(SimpleTypes.INT, new Expression[] {
+                                                new LocalRecurse(SimpleTypes.INT, new Expression[] {
                                                         new InlineCall(Inlines.IntSub, new Expression[] {
                                                                 new GetValue("n", SimpleTypes.INT),
                                                                 new IntConstant(1)

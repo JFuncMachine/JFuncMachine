@@ -205,11 +205,6 @@ public class Lambda extends Expression {
 
     @Override
     public Expression convertToFullTailCalls(boolean inTailPosition) {
-        if (inTailPosition) {
-            return new Lambda(interfaceType, interfaceMethodName, parameters,
-                    new ObjectType(), useObjectInterface, body.convertToFullTailCalls(true),
-                    filename, lineNumber);
-        }
         return this;
     }
 

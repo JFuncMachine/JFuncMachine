@@ -64,9 +64,7 @@ public class InlineCall extends Expression {
     @Override
     public Expression convertToFullTailCalls(boolean inTailPosition) {
         if (inTailPosition && func.getReturnType().getJVMTypeRepresentation() != 'A') {
-            InlineCall newCall = new InlineCall(func, arguments, filename, lineNumber);
-            newCall.returnType = new ObjectType();
-            return new Box(newCall);
+            return new Box(this);
         }
         return this;
     }
