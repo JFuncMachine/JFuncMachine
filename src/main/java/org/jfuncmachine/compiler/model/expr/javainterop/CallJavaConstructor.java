@@ -106,6 +106,11 @@ public class CallJavaConstructor extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         generator.instGen.lineNumber(lineNumber);
         String currClassName = className;

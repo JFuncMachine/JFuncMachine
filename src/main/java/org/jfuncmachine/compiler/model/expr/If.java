@@ -147,6 +147,20 @@ public class If extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            if (falseExpr != null) {
+                return new If(test, trueExpr.convertToFullTailCalls(true),
+                        falseExpr.convertToFullTailCalls(true), filename, lineNumber);
+            } else {
+                return new If(test, trueExpr.convertToFullTailCalls(true),
+                        null, filename, lineNumber);
+            }
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         generator.instGen.lineNumber(lineNumber);
         Label endLabel = new Label();

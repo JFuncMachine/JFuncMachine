@@ -3,6 +3,7 @@ package org.jfuncmachine.compiler.model.expr;
 import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.EnvVar;
 import org.jfuncmachine.compiler.classgen.Environment;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
 import org.jfuncmachine.compiler.model.types.Type;
 
 /** An expression to retrieve a local variable value */
@@ -40,6 +41,14 @@ public class GetValue extends Expression {
 
     public void findCaptured(Environment env) {
         env.checkCaptured(name);
+    }
+
+    @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition && type.getJVMTypeRepresentation() != 'A') {
+            return new Box(this);
+        }
+        return this;
     }
 
     @Override

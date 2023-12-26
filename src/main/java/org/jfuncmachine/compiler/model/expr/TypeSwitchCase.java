@@ -10,7 +10,7 @@ public class TypeSwitchCase extends SourceElement {
     public final Object target;
 
     /** An additional expression to execute to check whether target matches this
-     * case value. @see "org.jfuncmachine.compiler.expr.ClassSwitch"
+     * case value. @see "org.jfuncmachine.compiler.expr.TypeSwitch"
      *
      * This value can be null.
      */

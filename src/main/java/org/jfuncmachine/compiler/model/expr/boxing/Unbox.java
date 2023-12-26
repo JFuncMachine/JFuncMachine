@@ -72,6 +72,15 @@ public class Unbox extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (!inTailPosition) {
+            return this;
+        } else {
+            return expr.convertToFullTailCalls(true);
+        }
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Type exprType = expr.getType();
         String className = (exprType instanceof ObjectType ot) ? ot.className : null;

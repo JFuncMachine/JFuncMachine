@@ -37,6 +37,8 @@ public abstract class Expression extends SourceElement {
 
     }
 
+    public abstract Expression convertToFullTailCalls(boolean inTailPosition);
+
     /**
      * Generate the bytecode for this expression
      * @param generator The generator for generating instructions and additional declarations

@@ -3,6 +3,7 @@ package org.jfuncmachine.compiler.model.expr;
 import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.expr.boxing.Autobox;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
 import org.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
@@ -44,6 +45,9 @@ public class ArrayGet extends Expression {
     }
 
     public Type getType() {
+        if (array.getType() instanceof ArrayType at) {
+            return at.containedType();
+        }
         return array.getType();
     }
 
@@ -56,6 +60,19 @@ public class ArrayGet extends Expression {
     public void findCaptured(Environment env) {
         array.findCaptured(env);
         index.findCaptured(env);
+    }
+
+    @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            Type arrayType = array.getType();
+            if (arrayType instanceof ArrayType at) {
+                if (at.containedType().getJVMTypeRepresentation() != 'A') {
+                    return new Box(this);
+                }
+            }
+        }
+        return this;
     }
 
     @Override
@@ -87,10 +104,6 @@ public class ArrayGet extends Expression {
 
             generator.instGen.lineNumber(lineNumber);
             generator.instGen.rawOpcode(opcode);
-
-            if (inTailPosition && generator.currentMethod.isTailCallable) {
-                generator.instGen.generateBox(containedType);
-            }
         } else {
             throw generateException(
                     String.format("Tried to do ArrayGet on type %s", arrayType));

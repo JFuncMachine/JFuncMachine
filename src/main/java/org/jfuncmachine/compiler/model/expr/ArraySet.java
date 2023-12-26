@@ -3,6 +3,7 @@ package org.jfuncmachine.compiler.model.expr;
 import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.expr.boxing.Autobox;
+import org.jfuncmachine.compiler.model.expr.conv.ToUnit;
 import org.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
@@ -68,6 +69,14 @@ public class ArraySet extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            return new ToUnit(this).convertToFullTailCalls(true);
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Type arrayType = array.getType();
 
@@ -99,10 +108,6 @@ public class ArraySet extends Expression {
 
             generator.instGen.lineNumber(lineNumber);
             generator.instGen.rawOpcode(opcode);
-
-            if (inTailPosition && generator.currentMethod.isTailCallable) {
-                generator.instGen.aconst_null();
-            }
         } else {
             throw generateException(
                     String.format("Tried to do ArrayGet on type %s", arrayType));

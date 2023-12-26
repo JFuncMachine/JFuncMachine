@@ -56,6 +56,20 @@ public class Block extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition && getType().getJVMTypeRepresentation() != 'A') {
+            Expression[] newExpressions = new Expression[expressions.length];
+            for (int i = 0; i < expressions.length - 1; i++) {
+                newExpressions[i] = expressions[i];
+            }
+            newExpressions[expressions.length-1] =
+                    expressions[expressions.length-1].convertToFullTailCalls(true);
+            return new Block(newExpressions);
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         for (int i=0; i < expressions.length; i++) {
             expressions[i].generate(generator, env, i == expressions.length-1);

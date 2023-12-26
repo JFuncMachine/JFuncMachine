@@ -4,6 +4,7 @@ import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.compiler.model.expr.boxing.Autobox;
+import org.jfuncmachine.compiler.model.expr.conv.ToUnit;
 import org.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.compiler.model.types.Type;
 
@@ -57,6 +58,14 @@ public class SetJavaStaticField extends Expression {
 
     public void findCaptured(Environment env) {
         expr.findCaptured(env);
+    }
+
+    @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            return (new ToUnit(this, filename, lineNumber)).convertToFullTailCalls(true);
+        }
+        return this;
     }
 
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {

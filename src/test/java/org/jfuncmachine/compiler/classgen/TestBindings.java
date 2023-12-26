@@ -245,6 +245,7 @@ public class TestBindings {
                                 new LongConstant(2l)),
                             new GetValue("acc", SimpleTypes.LONG),
                             new BindingRecurse("func",
+                                    SimpleTypes.LONG,
                                     new Expression[] {
                                             new InlineCall(Inlines.LongSub, new Expression[] {
                                                     new GetValue("n", SimpleTypes.LONG),
@@ -274,6 +275,7 @@ public class TestBindings {
                                 new LongConstant(2l)),
                                 new GetValue("acc", SimpleTypes.LONG),
                                 new BindingRecurse("func",
+                                        SimpleTypes.LONG,
                                         new Expression[] {
                                                 new InlineCall(Inlines.LongSub, new Expression[] {
                                                         new GetValue("n", SimpleTypes.LONG),

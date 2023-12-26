@@ -3,6 +3,7 @@ package org.jfuncmachine.compiler.model.expr;
 import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.EnvVar;
 import org.jfuncmachine.compiler.classgen.Environment;
+import org.jfuncmachine.compiler.model.expr.conv.ToUnit;
 import org.jfuncmachine.compiler.model.types.*;
 import org.objectweb.asm.Opcodes;
 
@@ -46,6 +47,14 @@ public class SetValue extends Expression {
 
     public void findCaptured(Environment env) {
         expression.findCaptured(env);
+    }
+
+    @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            return (new ToUnit(this, filename, lineNumber)).convertToFullTailCalls(true);
+        }
+        return this;
     }
 
     @Override

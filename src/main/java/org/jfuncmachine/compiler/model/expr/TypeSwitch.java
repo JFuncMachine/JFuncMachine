@@ -111,6 +111,20 @@ public class TypeSwitch extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            TypeSwitchCase[] newCases = new TypeSwitchCase[cases.length];
+            for (int i=0; i < newCases.length; i++) {
+                newCases[i] = new TypeSwitchCase(cases[i].target, cases[i].additionalComparison,
+                        cases[i].expr.convertToFullTailCalls(true), filename, lineNumber);
+            }
+            return new TypeSwitch(expr, newCases, defaultCase.convertToFullTailCalls(true),
+                    filename, lineNumber);
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Label switchStartLabel = new Label();
         generator.instGen.label(switchStartLabel);

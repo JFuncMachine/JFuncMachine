@@ -159,6 +159,20 @@ public class Invoke extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            if (targetType instanceof FunctionType funcType) {
+                return new Invoke(intMethod, new FunctionType(funcType.parameterTypes, new ObjectType()),
+                        parameterTypes, new ObjectType(), target, arguments, filename, lineNumber);
+            } else {
+                return new Invoke(intMethod, targetType,
+                        parameterTypes, new ObjectType(), target, arguments, filename, lineNumber);
+            }
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String intMethodName = intMethod;
 
@@ -169,6 +183,9 @@ public class Invoke extends Expression {
             intMethodName = generator.options.lambdaMethodName;
         }
 
+        if (makeTailCall) {
+            intMethodName = intMethodName+"$$TC$$";
+        }
         target.generate(generator, env, false);
         for (int i=0; i < arguments.length; i++) {
             Expression expr = arguments[i];

@@ -4,6 +4,8 @@ import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.InlineFunction;
 import org.jfuncmachine.compiler.model.expr.boxing.Autobox;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
+import org.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.compiler.model.types.Type;
 
 /** Perform an inline function call.
@@ -16,6 +18,8 @@ public class InlineCall extends Expression {
     /** The function arguments */
     public final Expression[] arguments;
 
+    private Type returnType;
+
     /** Create an inline function call
      * @param func The inline function to invoke
      * @param arguments The function arguments
@@ -24,6 +28,7 @@ public class InlineCall extends Expression {
         super(null, 0);
         this.func = func;
         this.arguments = arguments;
+        this.returnType = func.returnType;
     }
 
     /** Create an inline function call
@@ -36,10 +41,11 @@ public class InlineCall extends Expression {
         super(filename, lineNumber);
         this.func = func;
         this.arguments = arguments;
+        this.returnType = func.returnType;
     }
 
     public Type getType() {
-        return func.getReturnType();
+        return returnType;
     }
 
     @Override
@@ -53,6 +59,16 @@ public class InlineCall extends Expression {
         for (Expression expr: arguments) {
             expr.findCaptured(env);
         }
+    }
+
+    @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition && func.getReturnType().getJVMTypeRepresentation() != 'A') {
+            InlineCall newCall = new InlineCall(func, arguments, filename, lineNumber);
+            newCall.returnType = new ObjectType();
+            return new Box(newCall);
+        }
+        return this;
     }
 
     @Override

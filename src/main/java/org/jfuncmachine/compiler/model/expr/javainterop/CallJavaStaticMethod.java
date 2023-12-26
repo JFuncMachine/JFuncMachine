@@ -4,6 +4,7 @@ import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.compiler.model.expr.boxing.Autobox;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
 import org.jfuncmachine.compiler.model.types.Type;
 
 /** An expression to invoke a static Java method */
@@ -113,6 +114,14 @@ public class CallJavaStaticMethod extends Expression {
         for (Expression expr: arguments) {
             expr.findCaptured(env);
         }
+    }
+
+    @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition && returnType.getJVMTypeRepresentation() != 'A') {
+            return new Box(this);
+        }
+        return this;
     }
 
     @Override

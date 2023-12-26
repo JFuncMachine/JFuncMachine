@@ -2,7 +2,12 @@ package org.jfuncmachine.compiler.model.expr.conv;
 
 import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
+import org.jfuncmachine.compiler.model.expr.Block;
 import org.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
+import org.jfuncmachine.compiler.model.expr.boxing.Unbox;
+import org.jfuncmachine.compiler.model.expr.constants.NullConstant;
+import org.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.compiler.model.types.Type;
 import org.jfuncmachine.compiler.model.types.UnitType;
@@ -46,6 +51,15 @@ public class ToUnit extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            return new Block(new Expression[] { expr, new NullConstant(filename, lineNumber)});
+        } else {
+            return this;
+        }
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         generator.instGen.lineNumber(lineNumber);
         Type exprType = expr.getType();
@@ -62,11 +76,6 @@ public class ToUnit extends Expression {
                     generator.instGen.pop();
                 }
             }
-        }
-
-        if (inTailPosition && generator.currentMethod.isTailCallable) {
-            // Return a null as the void value
-            generator.instGen.aconst_null();
         }
     }
 }

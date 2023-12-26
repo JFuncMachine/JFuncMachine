@@ -38,6 +38,11 @@ public class DoubleConstant extends Expression {
     public void findCaptured(Environment env) {}
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator gen, Environment env, boolean inTailPosition) {
         gen.instGen.lineNumber(lineNumber);
         gen.instGen.ldc(value);

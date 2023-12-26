@@ -65,37 +65,6 @@ public class Recurse extends Expression {
         this.returnType = returnType;
     }
 
-    /** Create a new method call expression
-     * @param name The name of the method
-     * @param parameterTypes The types of the method parameters
-     * @param returnType The return type of the method
-     * @param target The object to invoke the method on
-     * @param arguments The method argument values
-     */
-    public Recurse(String name, Type[] parameterTypes, Type returnType,
-                   Expression target, Expression[] arguments) {
-        super(null, 0);
-        this.arguments = arguments;
-        this.returnType = returnType;
-    }
-
-    /** Create a new method call expression
-     * @param name The name of the method
-     * @param parameterTypes The types of the method parameters
-     * @param returnType The return type of the method
-     * @param target The object to invoke the method on
-     * @param arguments The method argument values
-     * @param filename The source filename this expression is associated with
-     * @param lineNumber The source line number this expression is associated with
-     */
-    public Recurse(String name, Type[] parameterTypes, Type returnType,
-                   Expression target, Expression[] arguments,
-                   String filename, int lineNumber) {
-        super(filename, lineNumber);
-        this.arguments = arguments;
-        this.returnType = returnType;
-    }
-
     public Type getType() {
         return returnType;
     }
@@ -114,10 +83,29 @@ public class Recurse extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            return new Recurse(new ObjectType(), arguments, filename, lineNumber);
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String invokeClassName = generator.currentClass.getFullClassName();
 
+        int[] argumentLocations = new int[arguments.length];
+        int argPos = 1;
+
         MethodDef currentMethod = generator.currentMethod;
+        if ((currentMethod.access & Access.STATIC) != 0) {
+            argPos = 0;
+        }
+
+        for (int i=0; i < currentMethod.numCapturedParameters; i++) {
+            argPos += currentMethod.parameters[i].type.getStackSize();
+        }
+
         Type[] parameterTypes = new Type[currentMethod.parameters.length];
         for (int i=0; i < parameterTypes.length; i++) {
             parameterTypes[i] = currentMethod.parameters[i+currentMethod.numCapturedParameters].type;
@@ -132,20 +120,21 @@ public class Recurse extends Expression {
             new GetValue("this", new ObjectType()).generate(generator, env, false);
         }
 
-        if (!tailCallReturn) {
+        if (localCall || !tailCallReturn) {
             for (int i = 0; i < arguments.length; i++) {
                 Expression expr = arguments[i];
                 if (generator.options.autobox) {
-                    expr = Autobox.autobox(expr, parameterTypes[i]);
+                    expr = Autobox.autobox(expr, parameterTypes[i+currentMethod.numCapturedParameters]);
                 }
                 expr.generate(generator, env, false);
+                argumentLocations[i] = argPos;
+                argPos += parameterTypes[i].getStackSize();
             }
         }
 
         if (localCall) {
             for (int i = arguments.length-1; i >= 0; i--) {
-                EnvVar argVar = env.getVar(currentMethod.parameters[i].name);
-                argVar.generateSet(generator);
+                generator.instGen.rawIntOpcode(EnvVar.setOpcode(arguments[i].getType()), argumentLocations[i]);
             }
             generator.instGen.lineNumber(lineNumber);
             generator.instGen.gotolabel(currentMethod.startLabel);
@@ -154,18 +143,14 @@ public class Recurse extends Expression {
         } else {
             if (!makeTailCall) {
                 generator.instGen.lineNumber(lineNumber);
-                Type callReturnType = returnType;
-                if (generator.options.fullTailCalls) {
-                    callReturnType = new ObjectType();
-                }
                 if ((currentMethod.access & Access.STATIC) == 0) {
                     generator.instGen.invokevirtual(
                             generator.className(invokeClassName),
-                            currentMethod.name, generator.methodDescriptor(parameterTypes, callReturnType));
+                            currentMethod.name, generator.methodDescriptor(parameterTypes, returnType));
                 } else {
                     generator.instGen.invokestatic(
                             generator.className(invokeClassName),
-                            currentMethod.name, generator.methodDescriptor(parameterTypes, callReturnType));
+                            currentMethod.name, generator.methodDescriptor(parameterTypes, returnType));
                 }
             } else {
                 generator.instGen.lineNumber(lineNumber);

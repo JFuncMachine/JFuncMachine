@@ -3,6 +3,7 @@ package org.jfuncmachine.compiler.model.expr.javainterop;
 import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
 import org.jfuncmachine.compiler.model.types.Type;
 
 /** An expression to retrieve a static Java field value */
@@ -47,6 +48,14 @@ public class GetJavaStaticField extends Expression {
     }
 
     public void findCaptured(Environment env) {}
+
+    @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition && fieldType.getJVMTypeRepresentation() != 'A') {
+            return new Box(this);
+        }
+        return this;
+    }
 
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         generator.instGen.lineNumber(lineNumber);

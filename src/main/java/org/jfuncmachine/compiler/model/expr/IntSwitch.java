@@ -208,6 +208,20 @@ public class IntSwitch extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            IntSwitchCase[] newCases = new IntSwitchCase[cases.length];
+            for (int i=0; i < newCases.length; i++) {
+                newCases[i] = new IntSwitchCase(cases[i].value,
+                        cases[i].expr.convertToFullTailCalls(true), filename, lineNumber);
+            }
+            return new IntSwitch(expr, newCases, defaultCase.convertToFullTailCalls(true), gapThreshold,
+                    filename, lineNumber);
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
 
         Type exprType = expr.getType();

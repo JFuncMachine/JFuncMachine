@@ -31,20 +31,20 @@ public class TestTypeSwitch {
                 SimpleTypes.STRING,
                 new TypeSwitch(new GetValue("x", new ObjectType()),
                         new TypeSwitchCase[] {
-                            new TypeSwitchCase("java.lang.Boolean", new StringConstant("larry")),
-                            new TypeSwitchCase("java.lang.Double", new StringConstant("moe")),
-                            new TypeSwitchCase("java.lang.Character", new StringConstant("curly")),
+                            new TypeSwitchCase(new ObjectType("java.lang.Boolean"), new StringConstant("larry")),
+                            new TypeSwitchCase(new ObjectType("java.lang.Double"), new StringConstant("moe")),
+                            new TypeSwitchCase(new ObjectType("java.lang.Character"), new StringConstant("curly")),
                         },
                     new StringConstant("nobody")));
 
         Object result = generator.invokeMethod("TestSwitch",method, 3.14);
-        Assertions.assertEquals(result, "moe");
+        Assertions.assertEquals("moe", result);
         result = generator.invokeMethod("TestSwitch",method, true);
-        Assertions.assertEquals(result, "larry");
+        Assertions.assertEquals("larry", result);
         result = generator.invokeMethod("TestSwitch",method, 'c');
-        Assertions.assertEquals(result, "curly");
+        Assertions.assertEquals("curly", result);
         result = generator.invokeMethod("TestSwitch",method, 4);
-        Assertions.assertEquals(result, "nobody");
+        Assertions.assertEquals("nobody", result);
     }
 
     @TestAllImplementations
@@ -80,20 +80,20 @@ public class TestTypeSwitch {
                         new StringConstant("nobody")));
 
         Object result = generator.invokeMethod("TestSwitch",method, 3.14);
-        Assertions.assertEquals(result, "moe");
+        Assertions.assertEquals("moe", result);
         result = generator.invokeMethod("TestSwitch",method, true);
-        Assertions.assertEquals(result, "larry");
+        Assertions.assertEquals("larry", result);
         result = generator.invokeMethod("TestSwitch",method, 'c');
-        Assertions.assertEquals(result, "curly");
+        Assertions.assertEquals("curly", result);
         result = generator.invokeMethod("TestSwitch",method, 's');
-        Assertions.assertEquals(result, "shemp");
+        Assertions.assertEquals("shemp", result);
         result = generator.invokeMethod("TestSwitch",method, 'j');
-        Assertions.assertEquals(result, "curly joe");
+        Assertions.assertEquals("curly joe", result);
         result = generator.invokeMethod("TestSwitch",method, "foobar");
-        Assertions.assertEquals(result, "barbaz");
+        Assertions.assertEquals("barbaz", result);
         result = generator.invokeMethod("TestSwitch",method, 42);
-        Assertions.assertEquals(result, "universe");
+        Assertions.assertEquals("universe", result);
         result = generator.invokeMethod("TestSwitch",method, 4);
-        Assertions.assertEquals(result, "nobody");
+        Assertions.assertEquals("nobody", result);
     }
 }

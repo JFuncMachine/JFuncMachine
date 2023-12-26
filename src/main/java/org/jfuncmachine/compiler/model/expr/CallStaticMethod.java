@@ -120,6 +120,15 @@ public class CallStaticMethod extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            return new CallStaticMethod(className, name, parameterTypes, returnType, arguments,
+                    filename, lineNumber);
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String invokeClassName = className;
         if (invokeClassName == null) {

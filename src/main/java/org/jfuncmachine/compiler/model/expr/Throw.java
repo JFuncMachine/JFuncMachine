@@ -47,6 +47,11 @@ public class Throw extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         expr.generate(generator, env, false);
         generator.instGen.athrow();

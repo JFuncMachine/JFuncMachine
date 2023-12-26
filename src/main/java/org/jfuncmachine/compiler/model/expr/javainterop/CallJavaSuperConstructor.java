@@ -98,6 +98,11 @@ public class CallJavaSuperConstructor extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         target.generate(generator, env, false);
         for (int i=0; i < arguments.length; i++) {

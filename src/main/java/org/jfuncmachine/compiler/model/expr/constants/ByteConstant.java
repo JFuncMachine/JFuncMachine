@@ -38,6 +38,11 @@ public class ByteConstant extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator gen, Environment env, boolean inTailPosition) {
         gen.instGen.lineNumber(lineNumber);
         gen.instGen.bipush(value);

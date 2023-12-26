@@ -53,6 +53,11 @@ public class Cast extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         body.generate(generator, env, false);
         generator.instGen.lineNumber(lineNumber);

@@ -3,6 +3,7 @@ package org.jfuncmachine.compiler.model.expr.javainterop;
 import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
 import org.jfuncmachine.compiler.model.types.Type;
 
 /** An expression to retrieve a Java field value */
@@ -64,15 +65,19 @@ public class GetJavaField extends Expression {
         target.findCaptured(env);
     }
 
+    @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition && fieldType.getJVMTypeRepresentation() != 'A') {
+            return new Box(this);
+        }
+        return this;
+    }
+
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         target.generate(generator, env, false);
 
         generator.instGen.lineNumber(lineNumber);
         generator.instGen.getfield(generator.className(className),
                 fieldName, generator.getTypeDescriptor(fieldType));
-
-        if (inTailPosition && generator.currentMethod.isTailCallable) {
-            generator.instGen.generateBox(fieldType);
-        }
     }
 }

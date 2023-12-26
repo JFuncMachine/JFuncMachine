@@ -3,6 +3,7 @@ package org.jfuncmachine.compiler.model.expr.boxing;
 import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.expr.*;
+import org.jfuncmachine.compiler.model.expr.constants.NullConstant;
 import org.jfuncmachine.compiler.model.expr.conv.ToUnit;
 import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaStaticMethod;
 import org.jfuncmachine.compiler.model.types.ObjectType;
@@ -124,6 +125,19 @@ public class Box extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            Expression convertedExpression = expr.convertToFullTailCalls(true);
+            if (convertedExpression.getType().equals(desiredBoxType)) {
+                return convertedExpression;
+            }
+            return new Box(expr.convertToFullTailCalls(false), boxType, desiredBoxType,
+                    filename, lineNumber);
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String boxName;
 
@@ -133,8 +147,10 @@ public class Box extends Expression {
             boxName = ((ObjectType) desiredBoxType).className;
         }
 
-        if (expr.getType().equals(SimpleTypes.UNIT) && desiredBoxType.equals(new ObjectType())) {
-            new ToUnit(expr, expr.filename, expr.lineNumber).generate(generator, env, inTailPosition);
+        if (expr.getType().equals(SimpleTypes.UNIT) && (desiredBoxType == null ||
+                desiredBoxType.equals(new ObjectType()))) {
+            expr.generate(generator, env, inTailPosition);
+            new NullConstant().generate(generator, env, inTailPosition);
             return;
         }
 

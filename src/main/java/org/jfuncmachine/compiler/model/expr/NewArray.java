@@ -49,6 +49,11 @@ public class NewArray extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         if (generator.options.autobox) {
             Autobox.autobox(arraySize, SimpleTypes.INT).generate(generator, env, false);

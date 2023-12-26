@@ -3,6 +3,8 @@ package org.jfuncmachine.compiler.model.expr.conv;
 import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.expr.Expression;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
+import org.jfuncmachine.compiler.model.expr.boxing.Unbox;
 import org.jfuncmachine.compiler.model.types.*;
 
 /** Converts an expression to a double */
@@ -42,6 +44,15 @@ public class ToDouble extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition) {
+            return new Box(this);
+        } else {
+            return this;
+        }
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         generator.instGen.lineNumber(lineNumber);
         Type exprType = expr.getType();
@@ -59,10 +70,6 @@ public class ToDouble extends Expression {
             case ShortType s -> generator.instGen.i2d();
             default -> throw generateException(
                     String.format("Can't convert %s into double", exprType));
-        }
-
-        if (inTailPosition && generator.currentMethod.isTailCallable) {
-            generator.instGen.generateBox(SimpleTypes.DOUBLE.getBoxType());
         }
     }
 }

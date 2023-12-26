@@ -162,8 +162,9 @@ public class TestJavaInterop {
                 new SetJavaStaticField(ToyClass.class.getName(), "staticString", SimpleTypes.STRING,
                         new GetValue("str", SimpleTypes.STRING)));
 
+        ToyClass.staticString = "Foo";
         Object result = generator.invokeMethod("TestJava", method, "Quux");
-        Assertions.assertEquals(ToyClass.staticString, "Quux");
+        Assertions.assertEquals("Quux", ToyClass.staticString);
         ToyClass.staticString = "Foo";
     }
 }

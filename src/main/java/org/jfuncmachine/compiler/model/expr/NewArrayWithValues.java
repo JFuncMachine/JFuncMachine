@@ -54,6 +54,11 @@ public class NewArrayWithValues extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         new IntConstant(arrayValues.length, filename, lineNumber).generate(generator, env, false);
         switch (arrayType) {

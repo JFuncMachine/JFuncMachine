@@ -132,6 +132,15 @@ public class CallMethod extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition && getType().getJVMTypeRepresentation() != 'A') {
+            return new CallMethod(className, name, parameterTypes, new ObjectType(),
+                    target, arguments, filename, lineNumber);
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         String invokeClassName = className;
         if (invokeClassName == null) {
@@ -153,7 +162,7 @@ public class CallMethod extends Expression {
             target.generate(generator, env, false);
         }
 
-        if (!tailCallReturn) {
+        if (localCall || !tailCallReturn) {
             for (int i = 0; i < arguments.length; i++) {
                 Expression expr = arguments[i];
                 if (generator.options.autobox) {

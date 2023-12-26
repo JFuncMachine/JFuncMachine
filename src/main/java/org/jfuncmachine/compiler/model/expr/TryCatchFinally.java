@@ -82,6 +82,22 @@ public class TryCatchFinally extends Expression {
         }
     }
 
+    @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition && finallyBody == null) {
+            Catch[] newCatchExprs = new Catch[catchExprs.length];
+            for (int i=0; i < newCatchExprs.length; i++) {
+                newCatchExprs[i] = new Catch(catchExprs[i].catchClass,
+                        catchExprs[i].catchVariable,
+                        catchExprs[i].body.convertToFullTailCalls(true),
+                        filename, lineNumber);
+            }
+            return new TryCatchFinally(tryBody.convertToFullTailCalls(true),
+                    newCatchExprs, null, filename, lineNumber);
+        }
+        return this;
+    }
+
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Label blockEnd = new Label();
 

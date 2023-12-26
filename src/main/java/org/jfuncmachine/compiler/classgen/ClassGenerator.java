@@ -526,6 +526,7 @@ public class ClassGenerator {
 
         List<Expression> fieldInitializers = new ArrayList<>();
         for (ClassField field: classDef.fields) {
+            if ((field.access & Access.STATIC) != 0) continue;
             if (field.defaultValue != null) {
                 fieldInitializers.add(new SetJavaField(classDef.getFullClassName(),
                         field.name, field.type, new GetValue("this", new ObjectType(classDef.getFullClassName())),
@@ -587,8 +588,6 @@ public class ClassGenerator {
 
                 // Add the method to the current class
                 newNode.methods.add(methodNode);
-
-
             }
         }
 
@@ -608,7 +607,25 @@ public class ClassGenerator {
 
             // Add the method to the current class
             newNode.methods.add(methodNode);
+
+            if (options.fullTailCalls && !methodDef.isTailCallable) {
+                // Update the currentMethod field to indicate what method we are currently working on
+                currentMethod = methodDef.getTailCallVersion();
+
+                // Generate the bytecode for the method
+                methodNode = generateMethod(currentMethod, classDef);
+
+                // If the method defined any try-catch blocks, add them to the method node
+                methodNode.tryCatchBlocks.addAll(tryCatchBlocks);
+
+                // Clear out the accumulated try catch blocks
+                tryCatchBlocks.clear();
+
+                // Add the method to the current class
+                newNode.methods.add(methodNode);
+            }
         }
+
         // Clear out the accumulated lambdas
         addedLambdas.clear();
 

@@ -4,6 +4,8 @@ import org.jfuncmachine.compiler.classgen.ClassGenerator;
 import org.jfuncmachine.compiler.classgen.Environment;
 import org.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.compiler.model.expr.boxing.Autobox;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
+import org.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.compiler.model.types.Type;
 
 /** An expression to call a Java interface method */
@@ -125,6 +127,14 @@ public class CallJavaInterface extends Expression {
     }
 
     @Override
+    public Expression convertToFullTailCalls(boolean inTailPosition) {
+        if (inTailPosition && returnType.getJVMTypeRepresentation() != 'A') {
+            return new Box(this);
+        }
+        return this;
+    }
+
+    @Override
     public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
         target.generate(generator, env, false);
         for (int i=0; i < arguments.length; i++) {
@@ -138,9 +148,5 @@ public class CallJavaInterface extends Expression {
         generator.instGen.invokeinterface(
                 generator.className(interfaceName),
                 methodName, generator.methodDescriptor(parameterTypes, returnType));
-
-        if (inTailPosition && generator.currentMethod.isTailCallable) {
-            generator.instGen.generateBox(returnType);
-        }
     }
 }

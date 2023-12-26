@@ -119,8 +119,13 @@ public class MethodDef extends SourceElement {
      * @return A tail-callable version of this method
      */
     public MethodDef getTailCallVersion() {
-        return new MethodDef(name+"$$TC$$", access, parameters, returnType, true,
-                body, filename, lineNumber);
+        if (body != null) {
+            return new MethodDef(name + "$$TC$$", access, parameters, returnType, true,
+                    body.convertToFullTailCalls(true), filename, lineNumber);
+        } else {
+            return new MethodDef(name + "$$TC$$", access, parameters, returnType, true,
+                    body, filename, lineNumber);
+        }
     }
 
     /** Gets the return type of this method
