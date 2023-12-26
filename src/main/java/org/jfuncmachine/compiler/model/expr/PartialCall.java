@@ -84,7 +84,9 @@ public class PartialCall extends Expression {
         body.reset();
     }
 
-    public void findCaptured(Environment env) {}
+    public void findCaptured(Environment env) {
+        body.findCaptured(env);
+    }
 
     @Override
     public Expression convertToFullTailCalls(boolean inTailPosition) {
@@ -222,94 +224,4 @@ public class PartialCall extends Expression {
                 // Create an another ASM Type descriptor for this descriptor
                 org.objectweb.asm.Type.getType(generator.methodDescriptor(restParameterTypes, returnType)));
     }
-    /*
-    @Override
-    public void generate(ClassGenerator generator, Environment env, boolean inTailPosition) {
-        // Start a capture analysis to see what variables this lambda captures
-        env.startCaptureAnalysis();
-        body.findCaptured(env);
-        Set<EnvVar> capturedValues = env.getCaptured();
-
-        EnvVar[] envVars = capturedValues.toArray(new EnvVar[0]);
-        // extendedType is the type of the lambda with the captured parameters included
-        FunctionType extendedType;
-
-        Field[] restOfParameters = new Field[parameters.length - partialArguments.length];
-        Type[] restOfParameterTypes = new Type[parameters.length - partialArguments.length];
-        for (int i=0; i < restOfParameterTypes.length; i++) {
-            restOfParameters[i] = parameters[i+partialArguments.length];
-            restOfParameterTypes[i] = parameters[i+ partialArguments.length].type;
-        }
-        Type[] capturedParameterTypes = new Type[partialArguments.length];
-        for (int i=0; i < capturedParameterTypes.length; i++) {
-            capturedParameterTypes[i] = parameters[i].type;
-        }
-
-        extendedType = new FunctionType(parameterTypes, returnType);
-
-        LambdaIntInfo intInfo = null;
-        LambdaInfo lambdaInfo = generator.allocateLambda(extendedType);
-
-        if (interfaceType == null) {
-            // If there was no interface specified to indicate the return type, create one (if necessary)
-            intInfo = generator.allocateLambdaInt(new FunctionType(
-                    restOfParameterTypes, returnType));
-        }
-
-        MethodDef lambdaMethod = new MethodDef(lambdaInfo.name,
-                Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
-                parameters, returnType, body, true, filename, lineNumber);
-        lambdaMethod.numCapturedParameters = partialArguments.length;
-
-        // Schedule the generation of the lambda method
-        generator.addMethodToGenerate(lambdaMethod);
-
-        for (Expression expr: partialArguments) {
-            expr.generate(generator, env, false);
-        }
-
-        String indyClass;
-        if (interfaceType == null) {
-            // If there was no interface type specified, get the name of the interface generated for this lambda
-            indyClass = intInfo.packageName + "." + intInfo.name;
-        } else {
-            indyClass = ((ObjectType) interfaceType).className;
-        }
-
-        org.objectweb.asm.Type signatureType;
-        if (useObjectInterface || generator.options.genericLambdas) {
-            ObjectType[] objectParams = new ObjectType[restOfParameterTypes.length];
-            for (int i = 0; i < objectParams.length; i++) objectParams[i] = new ObjectType();
-            signatureType = org.objectweb.asm.Type.getType(generator.methodDescriptor(objectParams, new ObjectType()));
-        } else {
-            signatureType = org.objectweb.asm.Type.getType(generator.methodDescriptor(restOfParameterTypes,
-                    returnType));
-        }
-
-        String inDyMethodName = generator.options.lambdaMethodName;
-        if (interfaceMethodName != null) {
-            inDyMethodName = interfaceMethodName;
-        }
-
-        Handle handle = new Handle(Handle.INVOKESTATIC, generator.className(generator.currentClass), lambdaInfo.name,
-                    generator.methodDescriptor(parameterTypes, returnType),
-                    false);
-
-        generator.instGen.lineNumber(lineNumber);
-        // Call invokedynamic to generate a lambda method handle
-        generator.instGen.invokedynamic(inDyMethodName,
-                generator.lambdaInDyDescriptor(capturedParameterTypes, indyClass),
-                // Boilerplate for Java's built-in lambda bootstrap
-                new Handle(Handle.INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
-                        "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
-                        false),
-                // Create an ASM Type descriptor for this descriptor
-                signatureType,
-                // Create a handle for the generated lambda method
-                handle,
-                // Create an another ASM Type descriptor for this descriptor
-                org.objectweb.asm.Type.getType(generator.methodDescriptor(restOfParameterTypes, returnType)));
-    }
-
-     */
 }

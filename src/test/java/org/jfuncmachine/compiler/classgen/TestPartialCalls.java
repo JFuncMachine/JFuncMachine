@@ -2,6 +2,7 @@ package org.jfuncmachine.compiler.classgen;
 
 import org.jfuncmachine.compiler.model.Access;
 import org.jfuncmachine.compiler.model.MethodDef;
+import org.jfuncmachine.compiler.model.MethodPtrs;
 import org.jfuncmachine.compiler.model.PartialCalls;
 import org.jfuncmachine.compiler.model.expr.Expression;
 import org.jfuncmachine.compiler.model.expr.GetValue;
@@ -379,6 +380,62 @@ public class TestPartialCalls {
 
 
         Object result = generator.invokeMethod("TestPartialCalls",method, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
+    public void testPartialInvoke(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyForPartials.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialInvoke(
+                                new FunctionType(new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT},
+                                        SimpleTypes.INT),
+                                MethodPtrs.makeJavaMethodPtr(ToyForPartials.class.getName(),
+                                        "addThree",
+                                        new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT},
+                                        SimpleTypes.INT,
+                                        new GetValue("obj", new ObjectType(ToyForPartials.class))),
+                                new Expression[] { new GetValue("a", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("b", SimpleTypes.INT),
+                                new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
+    public void testPartialInvoke2(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyForPartials.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialInvoke(
+                                new FunctionType(new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT},
+                                        SimpleTypes.INT),
+                                MethodPtrs.makeJavaMethodPtr(ToyForPartials.class.getName(),
+                                        "addThree",
+                                        new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT},
+                                        SimpleTypes.INT,
+                                        new GetValue("obj", new ObjectType(ToyForPartials.class))),
+                                new Expression[] { new GetValue("a", SimpleTypes.INT),
+                                    new GetValue("b", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
         Assertions.assertEquals(42, result);
     }
 }

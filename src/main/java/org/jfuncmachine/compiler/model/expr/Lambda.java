@@ -201,7 +201,9 @@ public class Lambda extends Expression {
         body.reset();
     }
 
-    public void findCaptured(Environment env) {}
+    public void findCaptured(Environment env) {
+        body.findCaptured(env);
+    }
 
     @Override
     public Expression convertToFullTailCalls(boolean inTailPosition) {
