@@ -258,7 +258,7 @@ public class Lambda extends Expression {
 
         MethodDef lambdaMethod = new MethodDef(lambdaInfo.name,
                 Access.PRIVATE + Access.STATIC + Access.SYNTHETIC,
-                allFields, returnType, body);
+                allFields, returnType, body, true, filename, lineNumber);
         lambdaMethod.numCapturedParameters = capturedFields.length;
 
         // Schedule the generation of the lambda method

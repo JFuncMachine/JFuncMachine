@@ -162,7 +162,11 @@ public class Invoke extends Expression {
     @Override
     public Expression convertToFullTailCalls(boolean inTailPosition) {
         if (inTailPosition) {
-            return new Box(this);
+            if (this.returnType.getJVMTypeRepresentation() != 'A') {
+                return new Box(this);
+            } else if (!this.returnType.equals(new ObjectType())) {
+                return new Cast(this.returnType, this);
+            }
         }
         return this;
     }

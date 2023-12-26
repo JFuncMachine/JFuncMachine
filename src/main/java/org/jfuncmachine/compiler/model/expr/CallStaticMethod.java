@@ -122,8 +122,14 @@ public class CallStaticMethod extends Expression {
     @Override
     public Expression convertToFullTailCalls(boolean inTailPosition) {
         if (inTailPosition) {
-            return new CallStaticMethod(className, name, parameterTypes, returnType, arguments,
-                    filename, lineNumber);
+            if (getType().getJVMTypeRepresentation() != 'A') {
+                return new CallStaticMethod(className, name, parameterTypes, new ObjectType(), arguments,
+                        filename, lineNumber);
+            } else if (getType() instanceof ObjectType objType && !objType.equals(new ObjectType())) {
+                return new Cast(objType,
+                        new CallStaticMethod(className, name, parameterTypes, new ObjectType(), arguments,
+                        filename, lineNumber));
+            }
         }
         return this;
     }
@@ -232,6 +238,10 @@ public class CallStaticMethod extends Expression {
                             default -> {
                             }
                         }
+                    } else if (returnType instanceof StringType) {
+                        generator.instGen.checkcast("java/lang/String");
+                    } else if (returnType instanceof ObjectType objectType && !objectType.equals(new ObjectType())) {
+                        generator.instGen.checkcast(generator.className(objectType.className));
                     }
                 }
             }

@@ -249,6 +249,10 @@ public class CallMethod extends Expression {
                             default -> {
                             }
                         }
+                    } else if (returnType instanceof StringType) {
+                        generator.instGen.checkcast("java/lang/String");
+                    } else if (returnType instanceof ObjectType objectType && !objectType.equals(new ObjectType())) {
+                        generator.instGen.checkcast(generator.className(objectType.className));
                     }
                 }
             }

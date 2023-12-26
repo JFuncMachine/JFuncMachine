@@ -28,6 +28,8 @@ public class MethodDef extends SourceElement {
      */
     public int numCapturedParameters = 0;
 
+    /** True if this method def is for a lambda */
+    public final boolean isLambda;
 
     /** Create a method definition
      *
@@ -46,6 +48,7 @@ public class MethodDef extends SourceElement {
         this.returnType = returnType;
         this.startLabel = new Label();
         this.isTailCallable = false;
+        this.isLambda = false;
     }
 
     /** Create a method definition
@@ -68,6 +71,31 @@ public class MethodDef extends SourceElement {
         this.returnType = returnType;
         this.startLabel = new Label();
         this.isTailCallable = false;
+        this.isLambda = false;
+    }
+
+    /** Create a method definition
+     *
+     * @param name The name of the method
+     * @param access The access flags of the method
+     * @param parameters The name and type of each parameter
+     * @param returnType The return type of the method
+     * @param body The expression that this method executes
+     * @param filename The name of the source file this method is defined in
+     * @param lineNumber The line number in the source file where this method definition starts
+     */
+    public MethodDef(String name, int access, Field[] parameters, Type returnType, Expression body,
+                     boolean isLambda,
+                     String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.name = name;
+        this.access = access;
+        this.parameters = parameters;
+        this.body = body;
+        this.returnType = returnType;
+        this.startLabel = new Label();
+        this.isTailCallable = false;
+        this.isLambda = isLambda;
     }
 
     /** Create a method definition
@@ -89,6 +117,7 @@ public class MethodDef extends SourceElement {
         this.returnType = returnType;
         this.startLabel = new Label();
         this.isTailCallable = isTailCallable;
+        this.isLambda = false;
     }
 
     /** Create a method definition
@@ -112,6 +141,7 @@ public class MethodDef extends SourceElement {
         this.returnType = returnType;
         this.startLabel = new Label();
         this.isTailCallable = isTailCallable;
+        this.isLambda = false;
     }
 
     /** Returns a version of this method that can be called from the JFuncMachines tail call optimization

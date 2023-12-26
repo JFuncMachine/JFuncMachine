@@ -16,11 +16,15 @@ public class ToyClass implements ToyInterface {
         return str + staticString;
     }
 
+    public static Object addStatic$$TC$$(String str) {
+        return str + staticString;
+    }
+
     public int addMember(int x) {
         return x + memberInt;
     }
 
-    public Integer addMember$$TC$$(int x) {
+    public Object addMember$$TC$$(int x) {
         return x + memberInt;
     }
 }
