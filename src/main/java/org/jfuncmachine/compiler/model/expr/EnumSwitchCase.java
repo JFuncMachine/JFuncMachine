@@ -2,11 +2,12 @@ package org.jfuncmachine.compiler.model.expr;
 
 import org.jfuncmachine.compiler.model.SourceElement;
 
-/** Defines a case value for a class switch statement containing a target value, an optional
+/** Defines a case value for an enum switch statement containing a target value, an optional
  * extra comparison, and an expression to be executed if the switch value matches the case value.
  */
-public class TypeSwitchCase extends SourceElement {
-    /** The class (ObjectType value) that this case matches, or a string, or an int */
+public class EnumSwitchCase extends SourceElement {
+    /** The string name of an enum value of the swith target's enum class, or a class (ObjectType)
+     * that can match against the switch target */
     public final Object target;
 
     /** An additional expression to execute to check whether target matches this
@@ -23,7 +24,7 @@ public class TypeSwitchCase extends SourceElement {
      * @param target The class that this case matches
      * @param expr The expression to execute if the switch value equals this case value
      */
-    public TypeSwitchCase(Object target, Expression expr) {
+    public EnumSwitchCase(Object target, Expression expr) {
         super(null, 0);
         this.target = target;
         this.additionalComparison = null;
@@ -37,7 +38,7 @@ public class TypeSwitchCase extends SourceElement {
      * @param filename The source filename containing this case
      * @param lineNumber The line number in the source filename where this case starts
      */
-    public TypeSwitchCase(Object target, Expression expr, String filename, int lineNumber) {
+    public EnumSwitchCase(Object target, Expression expr, String filename, int lineNumber) {
         super(filename, lineNumber);
         this.target = target;
         this.additionalComparison = null;
@@ -49,7 +50,7 @@ public class TypeSwitchCase extends SourceElement {
      * @param additionalComparison An additional comparison to execute to make sure the target matches this case
      * @param expr The expression to execute if the switch value equals this case value
      */
-    public TypeSwitchCase(Object target, Expression additionalComparison, Expression expr) {
+    public EnumSwitchCase(Object target, Expression additionalComparison, Expression expr) {
         super(null, 0);
         this.target = target;
         this.additionalComparison = additionalComparison;
@@ -64,7 +65,7 @@ public class TypeSwitchCase extends SourceElement {
      * @param filename The source filename containing this case
      * @param lineNumber The line number in the source filename where this case starts
      */
-    public TypeSwitchCase(Object target, Expression additionalComparison, Expression expr,
+    public EnumSwitchCase(Object target, Expression additionalComparison, Expression expr,
                           String filename, int lineNumber) {
         super(filename, lineNumber);
         this.target = target;

@@ -6,7 +6,7 @@ import org.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.compiler.model.types.Type;
 
-/** A switch expression that matches on cases, and then allows additional
+/** A switch expression that matches on enums, and then allows additional
  * comparisons.
  *
  * This expression relies on a feature that was added as a preview feature
@@ -14,8 +14,12 @@ import org.jfuncmachine.compiler.model.types.Type;
  * throw an exception if you try to use this expression to generate code for
  * a JVM version lower than 17.
  *
- * The idea here is that you may want to do pattern matching against objects
- * where there may be several patterns for the same class. Each TypeSwitchClass
+ * The idea here is that you may want to do pattern matching against enums
+ * using either the names of the various fields in a specific enum,
+ * or different classes if it is possible that the switch target
+ * is one of several classes.
+ *
+ * Each EnumSwitchCase
  * contains an optional additional comparison expression, which is executed
  * if a case matches the target class. If the additional comparison returns
  * a true (non-zero integer) value, then the case expression is executed.
@@ -27,13 +31,13 @@ import org.jfuncmachine.compiler.model.types.Type;
  * it can be fetched with a GetValue expression.
  *
  */
-public class TypeSwitch extends Expression {
+public class EnumSwitch extends Expression {
     /** The expression generating the value to be switched on */
     public final Expression expr;
     /** A case containing a numeric value and an expression to be executed if the switch expression
      * equals the case value
      */
-    public final TypeSwitchCase[] cases;
+    public final EnumSwitchCase[] cases;
     /** The expression to be executed if none of the cases match the switch value */
     public final Expression defaultCase;
     /** The maximum number of empty spaces between switch values allowed before the switch
@@ -46,7 +50,7 @@ public class TypeSwitch extends Expression {
      *              equals the case value
      * @param defaultCase The expression to be executed if none of the cases match the switch value
      */
-    public TypeSwitch(Expression expr, TypeSwitchCase[] cases, Expression defaultCase) {
+    public EnumSwitch(Expression expr, EnumSwitchCase[] cases, Expression defaultCase) {
         super(null, 0);
         this.expr = expr;
         this.cases = cases;
@@ -73,7 +77,7 @@ public class TypeSwitch extends Expression {
      * @param filename The name of the source file where this switch is defined
      * @param lineNumber The line number in the source file where this switch starts
      */
-    public TypeSwitch(Expression expr, TypeSwitchCase[] cases, Expression defaultCase,
+    public EnumSwitch(Expression expr, EnumSwitchCase[] cases, Expression defaultCase,
                       String filename, int lineNumber) {
         super(filename, lineNumber);
         this.expr = expr;
@@ -98,27 +102,27 @@ public class TypeSwitch extends Expression {
     @Override
     public void reset() {
         expr.reset();
-        for (TypeSwitchCase typeSwitchCase : cases) {
-            typeSwitchCase.expr.reset();
+        for (EnumSwitchCase enumSwitchCase : cases) {
+            enumSwitchCase.expr.reset();
         }
     }
 
     public void findCaptured(Environment env) {
         expr.findCaptured(env);
-        for (TypeSwitchCase typeSwitchCase : cases) {
-            typeSwitchCase.expr.findCaptured(env);
+        for (EnumSwitchCase enumse : cases) {
+            enumse.expr.findCaptured(env);
         }
     }
 
     @Override
     public Expression convertToFullTailCalls(boolean inTailPosition) {
         if (inTailPosition) {
-            TypeSwitchCase[] newCases = new TypeSwitchCase[cases.length];
+            EnumSwitchCase[] newCases = new EnumSwitchCase[cases.length];
             for (int i=0; i < newCases.length; i++) {
-                newCases[i] = new TypeSwitchCase(cases[i].target, cases[i].additionalComparison,
+                newCases[i] = new EnumSwitchCase(cases[i].target, cases[i].additionalComparison,
                         cases[i].expr.convertToFullTailCalls(true), filename, lineNumber);
             }
-            return new TypeSwitch(expr, newCases, defaultCase.convertToFullTailCalls(true),
+            return new EnumSwitch(expr, newCases, defaultCase.convertToFullTailCalls(true),
                     filename, lineNumber);
         }
         return this;
@@ -132,7 +136,7 @@ public class TypeSwitch extends Expression {
         Label switchEndLabel = new Label();
 
         if (generator.options.javaVersion < 17) {
-            throw generateException("TypeSwitch requires Java 17 or newer");
+            throw generateException("EnumSwitch requires Java 17 or newer");
         }
 
         EnvVar targetVar = env.allocate(expr.getType());
@@ -144,18 +148,16 @@ public class TypeSwitch extends Expression {
         targetVar.generateGet(generator);
         generator.instGen.iconst_0();
 
-        Object[] typeLabels = new Object[cases.length];
+        Object[] enumLabels = new Object[cases.length];
         Label[] switchLabels = new Label[cases.length];
         for (int i=0; i < cases.length; i++) {
             if (cases[i].target instanceof ObjectType) {
-                typeLabels[i] = org.objectweb.asm.Type.getType(
+                enumLabels[i] = org.objectweb.asm.Type.getType(
                         generator.getTypeDescriptor((Type) cases[i].target));
             } else if (cases[i].target instanceof String) {
-                typeLabels[i] = cases[i].target;
-            } else if (cases[i].target instanceof Integer) {
-                typeLabels[i] = cases[i].target;
+                enumLabels[i] = cases[i].target;
             } else {
-                throw generateException("TypeSwitchCase target must be a ObjectType, String, or Integer");
+                throw generateException("EnumSwitchCase target must be a ObjectType, String");
             }
             switchLabels[i] = new Label();
         }
@@ -165,12 +167,16 @@ public class TypeSwitch extends Expression {
         Label restartLabel = new Label();
         generator.instGen.label(restartLabel);
 
-        generator.instGen.invokedynamic("typeSwitch",
-            "(Ljava/lang/Object;I)I",
+        String switchArg = "java/lang/Enum";
+        if (expr.getType() instanceof ObjectType objectType) {
+            switchArg = objectType.className.replace('.', '/');
+        }
+        generator.instGen.invokedynamic("enumSwitch",
+            "(L"+switchArg+";I)I",
                 new Handle(Handle.INVOKESTATIC,
-                        generator.className("java.lang.runtime.SwitchBootstraps"), "typeSwitch",
+                        generator.className("java.lang.runtime.SwitchBootstraps"), "enumSwitch",
                         "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;", false),
-                (Object[]) typeLabels);
+                (Object[]) enumLabels);
 
         Label defaultLabel = switchEndLabel;
         if (defaultCase != null) {
