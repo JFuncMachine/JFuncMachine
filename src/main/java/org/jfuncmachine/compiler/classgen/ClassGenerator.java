@@ -664,7 +664,7 @@ public class ClassGenerator {
         newMethod.localVariables = localVariables;
 
         // If the method is not abstract, generate the bytecode for it
-        if ((methodDef.access & Access.ABSTRACT) == 0) {
+        if ((methodDef.access & Access.ABSTRACT) == 0 && methodDef.body != null) {
 
             // Create a generator for this method
             instGen =
