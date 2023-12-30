@@ -1,10 +1,14 @@
 package org.jfuncmachine.compiler.model.expr;
 
 import org.jfuncmachine.compiler.classgen.*;
+import org.jfuncmachine.compiler.model.expr.bool.*;
 import org.jfuncmachine.compiler.model.expr.constants.IntConstant;
 import org.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.compiler.model.types.Type;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** A switch expression that matches on enums, and then allows additional
  * comparisons.
@@ -19,12 +23,10 @@ import org.jfuncmachine.compiler.model.types.Type;
  * or different classes if it is possible that the switch target
  * is one of several classes.
  *
- * Each EnumSwitchCase
- * contains an optional additional comparison expression, which is executed
- * if a case matches the target class. If the additional comparison returns
- * a true (non-zero integer) value, then the case expression is executed.
- * If it returns 0, then the switch jumps to the next case that matches, or
- * to the default case.
+ * Each EnumSwitchCase contains an optional additional comparison expression, which is executed
+ * if a case matches the target class. If the additional comparison is
+ * true, then the case expression is executed. If it is false, then the
+ * switch jumps to the next case that matches, or to the default case.
  *
  * In order to facilitate the comparisons, a variable named $caseMatchVar is
  * made available in the additional comparison expression's environment, meaning
@@ -199,18 +201,40 @@ public class EnumSwitch extends Expression {
                          switch (cases[i].target) {
                             case ObjectType ot -> ot;
                             case String s -> SimpleTypes.STRING;
-                            case Integer ix -> SimpleTypes.INT;
                             default -> new ObjectType(); // This can't happen
                          });
                 generator.instGen.generateLocalVariable(castTargetVar.name, castTargetVar.type,
                         switchLabels[i], caseExprLabel, castTargetVar.index);
                 castTargetVar.generateSet(generator);
-                cases[i].additionalComparison.generate(generator, castEnv, false);
-                generator.instGen.ifne(caseExprLabel);
+
+                List<BooleanExpr> testSequence = new ArrayList<>();
+                Result trueResult = new Result(null);
+                Result falseResult = new Result(null);
+                cases[i].additionalComparison.computeSequence(trueResult, falseResult, testSequence);
+
+                for (int j=testSequence.size()-1; j >= 0; j--) {
+                    BooleanExpr booleanExpr = testSequence.get(j);
+                    BooleanExpr nextExpr = null;
+                    if (j > 0) {
+                        nextExpr = testSequence.get(j-1);
+                    }
+                    if (booleanExpr instanceof UnaryComparison unary) {
+                        unary.generate(generator, castEnv, nextExpr);
+                    } else if (booleanExpr instanceof BinaryComparison binary) {
+                        binary.generate(generator, castEnv, nextExpr);
+                    } else if (booleanExpr instanceof InstanceofComparison instOf) {
+                        instOf.generate(generator, castEnv, nextExpr);
+                    }
+                }
+                if (falseResult.label != null) {
+                    generator.instGen.label(falseResult.label);
+                }
                 targetVar.generateGet(generator);
                 new IntConstant(i+1).generate(generator, env, false);
                 generator.instGen.gotolabel(restartLabel);
-                generator.instGen.label(caseExprLabel);
+                if (trueResult.label != null) {
+                    generator.instGen.label(trueResult.label);
+                }
             }
             cases[i].expr.generate(generator, env, inTailPosition);
             generator.instGen.gotolabel(switchEndLabel);

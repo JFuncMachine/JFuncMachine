@@ -1,10 +1,17 @@
 package org.jfuncmachine.compiler.model.expr;
 
 import org.jfuncmachine.compiler.classgen.*;
+import org.jfuncmachine.compiler.model.expr.bool.*;
 import org.jfuncmachine.compiler.model.expr.constants.IntConstant;
+import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
+import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaStaticMethod;
+import org.jfuncmachine.compiler.model.types.IntType;
 import org.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.compiler.model.types.Type;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** A switch expression that matches on cases, and then allows additional
  * comparisons.
@@ -17,10 +24,9 @@ import org.jfuncmachine.compiler.model.types.Type;
  * The idea here is that you may want to do pattern matching against objects
  * where there may be several patterns for the same class. Each TypeSwitchClass
  * contains an optional additional comparison expression, which is executed
- * if a case matches the target class. If the additional comparison returns
- * a true (non-zero integer) value, then the case expression is executed.
- * If it returns 0, then the switch jumps to the next case that matches, or
- * to the default case.
+ * if a case matches the target class. If the additional comparison is
+ * true, then the case expression is executed. If it is false, then the
+ * switch jumps to the next case that matches, or to the default case.
  *
  * In order to facilitate the comparisons, a variable named $caseMatchVar is
  * made available in the additional comparison expression's environment, meaning
@@ -181,32 +187,61 @@ public class TypeSwitch extends Expression {
 
         for (int i=0; i < cases.length; i++) {
             generator.instGen.label(switchLabels[i]);
+            Label caseExprLabel = new Label();
+            Environment castEnv = new Environment(env);
+            EnvVar castTargetVar;
+            castTargetVar = castEnv.allocate("$caseMatchVar",
+                    switch (cases[i].target) {
+                        case ObjectType ot -> ot;
+                        case String s -> SimpleTypes.STRING;
+                        case Integer ix -> SimpleTypes.INT;
+                        default -> new ObjectType(); // This can't happen
+                    });
+            generator.instGen.generateLocalVariable(castTargetVar.name, castTargetVar.type,
+                    switchLabels[i], caseExprLabel, castTargetVar.index);
+            targetVar.generateGet(generator);
+            if (cases[i].target instanceof ObjectType objectType) {
+                generator.instGen.checkcast(objectType.className);
+            } else if (cases[i].target instanceof Integer) {
+                generator.instGen.checkcast("java/lang/Integer");
+                generator.instGen.invokevirtual("java/lang/Integer", "intValue",
+                        "()I");
+            }
+            castTargetVar.generateSet(generator);
+
             if (cases[i].additionalComparison != null) {
-                Label caseExprLabel = new Label();
-                targetVar.generateGet(generator);
-                if (cases[i].target instanceof ObjectType objectType) {
-                    generator.instGen.checkcast(objectType.className);
+
+                List<BooleanExpr> testSequence = new ArrayList<>();
+                Result trueResult = new Result(null);
+                Result falseResult = new Result(null);
+                cases[i].additionalComparison.computeSequence(trueResult, falseResult, testSequence);
+
+                for (int j=testSequence.size()-1; j >= 0; j--) {
+                    BooleanExpr booleanExpr = testSequence.get(j);
+                    BooleanExpr nextExpr = null;
+                    if (j > 0) {
+                        nextExpr = testSequence.get(j-1);
+                    }
+                    if (booleanExpr instanceof UnaryComparison unary) {
+                        unary.generate(generator, castEnv, nextExpr);
+                    } else if (booleanExpr instanceof BinaryComparison binary) {
+                        binary.generate(generator, castEnv, nextExpr);
+                    } else if (booleanExpr instanceof InstanceofComparison instOf) {
+                        instOf.generate(generator, castEnv, nextExpr);
+                    }
                 }
-                Environment castEnv = new Environment(env);
-                EnvVar castTargetVar;
-                 castTargetVar = castEnv.allocate("$caseMatchVar",
-                         switch (cases[i].target) {
-                            case ObjectType ot -> ot;
-                            case String s -> SimpleTypes.STRING;
-                            case Integer ix -> SimpleTypes.INT;
-                            default -> new ObjectType(); // This can't happen
-                         });
-                generator.instGen.generateLocalVariable(castTargetVar.name, castTargetVar.type,
-                        switchLabels[i], caseExprLabel, castTargetVar.index);
-                castTargetVar.generateSet(generator);
-                cases[i].additionalComparison.generate(generator, castEnv, false);
-                generator.instGen.ifne(caseExprLabel);
+                if (falseResult.label != null) {
+                    generator.instGen.label(falseResult.label);
+                }
                 targetVar.generateGet(generator);
                 new IntConstant(i+1).generate(generator, env, false);
                 generator.instGen.gotolabel(restartLabel);
-                generator.instGen.label(caseExprLabel);
+                if (trueResult.label != null) {
+                    generator.instGen.label(trueResult.label);
+                }
             }
             cases[i].expr.generate(generator, env, inTailPosition);
+            generator.instGen.label(caseExprLabel);
             generator.instGen.gotolabel(switchEndLabel);
         }
         if (defaultCase != null) {

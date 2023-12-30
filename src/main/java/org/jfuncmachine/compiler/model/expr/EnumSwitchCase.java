@@ -1,6 +1,7 @@
 package org.jfuncmachine.compiler.model.expr;
 
 import org.jfuncmachine.compiler.model.SourceElement;
+import org.jfuncmachine.compiler.model.expr.bool.BooleanExpr;
 
 /** Defines a case value for an enum switch statement containing a target value, an optional
  * extra comparison, and an expression to be executed if the switch value matches the case value.
@@ -15,7 +16,7 @@ public class EnumSwitchCase extends SourceElement {
      *
      * This value can be null.
      */
-    public final Expression additionalComparison;
+    public final BooleanExpr additionalComparison;
 
     /** The expression to execute if the switch value equals this case value */
     public final Expression expr;
@@ -50,7 +51,7 @@ public class EnumSwitchCase extends SourceElement {
      * @param additionalComparison An additional comparison to execute to make sure the target matches this case
      * @param expr The expression to execute if the switch value equals this case value
      */
-    public EnumSwitchCase(Object target, Expression additionalComparison, Expression expr) {
+    public EnumSwitchCase(Object target, BooleanExpr additionalComparison, Expression expr) {
         super(null, 0);
         this.target = target;
         this.additionalComparison = additionalComparison;
@@ -65,7 +66,7 @@ public class EnumSwitchCase extends SourceElement {
      * @param filename The source filename containing this case
      * @param lineNumber The line number in the source filename where this case starts
      */
-    public EnumSwitchCase(Object target, Expression additionalComparison, Expression expr,
+    public EnumSwitchCase(Object target, BooleanExpr additionalComparison, Expression expr,
                           String filename, int lineNumber) {
         super(filename, lineNumber);
         this.target = target;

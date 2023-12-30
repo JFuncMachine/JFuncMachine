@@ -1,5 +1,6 @@
 package org.jfuncmachine.compiler.model.expr.bool;
 
+import org.jfuncmachine.compiler.classgen.Label;
 import org.jfuncmachine.compiler.model.expr.Expression;
 
 import java.util.List;
