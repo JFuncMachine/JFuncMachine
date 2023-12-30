@@ -38,6 +38,20 @@ public class ClassGeneratorOptions {
      */
     public final boolean genericLambdas;
 
+    /** Currently JFuncMachine uses two features that were previews between Java 17 and Java 21. If
+     * this option is true, JFuncMachine will use these features if generating for Java versions 17, 18, 19, and 20.
+     */
+    public final boolean usePreviewFeatures;
+
+    /** The TypeSwitch and EnumSwitch expressions use a feature that was a preview in Java 17, and
+     * became fully supported in Java 21. If this flag is true, JFuncMachine will convert these expressions
+     * to If expressions if generating for a JVM where the feature is not supported. If usePreviewFeatures
+     * is true, then this conversion will only happen for Java 16 or lower. If usePreviewFeatures is
+     * false, then this conversion will happen for Java 20 or lower.
+     */
+    public final boolean convertSwitchesToIf;
+
+
     /** Create a ClassGeneratorOptions instance with the default settings */
     public ClassGeneratorOptions() {
         this.javaVersion = 21;
@@ -47,6 +61,8 @@ public class ClassGeneratorOptions {
         this.sharedLambdaInterfaces = true;
         this.lambdaMethodName = "apply";
         this.genericLambdas = false;
+        this.usePreviewFeatures = false;
+        this.convertSwitchesToIf = true;
     }
 
     /** Create a ClassGeneratorOptions instance with specific settings
@@ -63,7 +79,9 @@ public class ClassGeneratorOptions {
                                  boolean fullTailCalls, boolean autobox,
                                  boolean sharedLambdaInterfaces,
                                  String lambdaMethodName,
-                                 boolean genericLambdas) {
+                                 boolean genericLambdas,
+                                 boolean usePreviewFeatures,
+                                 boolean convertSwitchesToIf) {
         this.javaVersion = javaVersion;
         this.localTailCallsToLoops = localTailCallsToLoops;
         this.fullTailCalls = fullTailCalls;
@@ -71,5 +89,7 @@ public class ClassGeneratorOptions {
         this.sharedLambdaInterfaces = sharedLambdaInterfaces;
         this.lambdaMethodName = lambdaMethodName;
         this.genericLambdas = genericLambdas;
+        this.usePreviewFeatures = usePreviewFeatures;
+        this.convertSwitchesToIf = convertSwitchesToIf;
     }
 }

@@ -2,7 +2,9 @@ package org.jfuncmachine.compiler.model.expr;
 
 import org.jfuncmachine.compiler.classgen.*;
 import org.jfuncmachine.compiler.model.expr.bool.*;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
 import org.jfuncmachine.compiler.model.expr.constants.IntConstant;
+import org.jfuncmachine.compiler.model.expr.constants.StringConstant;
 import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaMethod;
 import org.jfuncmachine.compiler.model.expr.javainterop.CallJavaStaticMethod;
 import org.jfuncmachine.compiler.model.types.IntType;
@@ -121,8 +123,17 @@ public class TypeSwitch extends Expression {
         if (inTailPosition) {
             TypeSwitchCase[] newCases = new TypeSwitchCase[cases.length];
             for (int i=0; i < newCases.length; i++) {
-                newCases[i] = new TypeSwitchCase(cases[i].target, cases[i].additionalComparison,
-                        cases[i].expr.convertToFullTailCalls(true), filename, lineNumber);
+                if (cases[i].target instanceof Integer ix) {
+                    newCases[i] = new TypeSwitchCase(ix, cases[i].expr.convertToFullTailCalls(true),
+                            filename, lineNumber);
+                } else if (cases[i].target instanceof String s) {
+                    newCases[i] = new TypeSwitchCase(s, cases[i].expr.convertToFullTailCalls(true),
+                            filename, lineNumber);
+
+                } else {
+                    newCases[i] = new TypeSwitchCase((ObjectType) cases[i].target, cases[i].additionalComparison,
+                            cases[i].expr.convertToFullTailCalls(true), filename, lineNumber);
+                }
             }
             return new TypeSwitch(expr, newCases, defaultCase.convertToFullTailCalls(true),
                     filename, lineNumber);
@@ -137,8 +148,16 @@ public class TypeSwitch extends Expression {
 
         Label switchEndLabel = new Label();
 
-        if (generator.options.javaVersion < 17) {
-            throw generateException("TypeSwitch requires Java 17 or newer");
+        if (generator.options.javaVersion < 17 ||
+            (generator.options.javaVersion < 21 && !generator.options.usePreviewFeatures)) {
+            if (!generator.options.convertSwitchesToIf) {
+                if (!generator.options.usePreviewFeatures) {
+                    throw generateException("TypeSwitch requires Java 21 or newer");
+                } else {
+                    throw generateException("TypeSwitch requires Java 17 or newer");
+                }
+            }
+            generateIf(generator, env, inTailPosition);
         }
 
         EnvVar targetVar = env.allocate(expr.getType());
@@ -210,7 +229,6 @@ public class TypeSwitch extends Expression {
             castTargetVar.generateSet(generator);
 
             if (cases[i].additionalComparison != null) {
-
                 List<BooleanExpr> testSequence = new ArrayList<>();
                 Result trueResult = new Result(null);
                 Result falseResult = new Result(null);
@@ -240,7 +258,7 @@ public class TypeSwitch extends Expression {
                     generator.instGen.label(trueResult.label);
                 }
             }
-            cases[i].expr.generate(generator, env, inTailPosition);
+            cases[i].expr.generate(generator, castEnv, inTailPosition);
             generator.instGen.label(caseExprLabel);
             generator.instGen.gotolabel(switchEndLabel);
         }
@@ -248,6 +266,97 @@ public class TypeSwitch extends Expression {
             generator.instGen.label(defaultLabel);
             defaultCase.generate(generator, env, inTailPosition);
         }
+        generator.instGen.label(switchEndLabel);
+    }
+
+    public void generateIf(ClassGenerator generator, Environment env, boolean inTailPosition) {
+        Label switchStartLabel = new Label();
+        generator.instGen.label(switchStartLabel);
+
+        Label switchEndLabel = new Label();
+
+        EnvVar targetVar = env.allocate(expr.getType());
+        generator.instGen.generateLocalVariable(targetVar.name, targetVar.type,
+                switchStartLabel, switchEndLabel, targetVar.index);
+        expr.generate(generator, env, false);
+        targetVar.generateSet(generator);
+
+        Label nextTest = new Label();
+
+        for (int i=cases.length-1; i >= 0; i--) {
+            Label currTest = nextTest;
+            generator.instGen.label(nextTest);
+            nextTest = new Label();
+
+            if (cases[i].target instanceof String s) {
+                targetVar.generateGet(generator);
+                generator.instGen.instance_of("java/lang/String");
+                generator.instGen.ifne(nextTest);
+                targetVar.generateGet(generator);
+                new StringConstant(s).generate(generator, env, false);
+                generator.instGen.if_acmpne(nextTest);
+                cases[i].expr.generate(generator, env, inTailPosition);
+                generator.instGen.gotolabel(switchEndLabel);
+                continue;
+            } else if (cases[i].target instanceof Integer ix) {
+                targetVar.generateGet(generator);
+                generator.instGen.instance_of("java/lang/Integer");
+                generator.instGen.ifne(nextTest);
+                targetVar.generateGet(generator);
+                targetVar.generateGet(generator);
+                new Box(new IntConstant(ix.intValue())).generate(generator, env, false);
+                generator.instGen.if_acmpne(nextTest);
+                cases[i].expr.generate(generator, env, inTailPosition);
+                generator.instGen.gotolabel(switchEndLabel);
+                continue;
+            }
+
+            ObjectType testObj = (ObjectType) cases[i].target;
+            targetVar.generateGet(generator);
+            generator.instGen.instance_of(generator.className(testObj.className));
+            generator.instGen.ifne(nextTest);
+
+            if (cases[i].additionalComparison != null) {
+                Environment castEnv = new Environment(env);
+                EnvVar castTargetVar;
+                castTargetVar = castEnv.allocate("$caseMatchVar", testObj);
+                generator.instGen.generateLocalVariable(castTargetVar.name, castTargetVar.type,
+                        currTest, nextTest, castTargetVar.index);
+                targetVar.generateGet(generator);
+                generator.instGen.checkcast(testObj.className);
+                castTargetVar.generateSet(generator);
+
+                Result trueResult = new Result(null);
+                trueResult.label = nextTest;
+                Result falseResult = new Result(null);
+
+                List<BooleanExpr> testSequence = new ArrayList<>();
+                cases[i].additionalComparison.computeSequence(trueResult, falseResult, testSequence);
+
+                for (int j = testSequence.size() - 1; j >= 0; j--) {
+                    BooleanExpr booleanExpr = testSequence.get(j);
+                    BooleanExpr nextExpr = null;
+                    if (j > 0) {
+                        nextExpr = testSequence.get(j - 1);
+                    }
+                    if (booleanExpr instanceof UnaryComparison unary) {
+                        unary.generate(generator, castEnv, nextExpr);
+                    } else if (booleanExpr instanceof BinaryComparison binary) {
+                        binary.generate(generator, castEnv, nextExpr);
+                    } else if (booleanExpr instanceof InstanceofComparison instOf) {
+                        instOf.generate(generator, castEnv, nextExpr);
+                    }
+                }
+
+                if (falseResult.label != null) {
+                    generator.instGen.label(falseResult.label);
+                }
+                cases[i].expr.generate(generator, castEnv, inTailPosition);
+                generator.instGen.gotolabel(switchEndLabel);
+            }
+        }
+        generator.instGen.label(nextTest);
+        defaultCase.generate(generator, env, true);
         generator.instGen.label(switchEndLabel);
     }
 }

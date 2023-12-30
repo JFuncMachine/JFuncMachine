@@ -2,6 +2,7 @@ package org.jfuncmachine.compiler.model.expr;
 
 import org.jfuncmachine.compiler.model.SourceElement;
 import org.jfuncmachine.compiler.model.expr.bool.BooleanExpr;
+import org.jfuncmachine.compiler.model.types.ObjectType;
 
 /** Defines a case value for a class switch statement containing a target value, an optional
  * extra comparison, and an expression to be executed if the switch value matches the case value.
@@ -20,26 +21,73 @@ public class TypeSwitchCase extends SourceElement {
     /** The expression to execute if the switch value equals this case value */
     public final Expression expr;
 
-    /** Create a switch case
-     * @param target The class that this case matches
+    /** Create a switch case for a string target
+     * @param target The String to match against the switch target
      * @param expr The expression to execute if the switch value equals this case value
      */
-    public TypeSwitchCase(Object target, Expression expr) {
+    public TypeSwitchCase(String target, Expression expr) {
         super(null, 0);
         this.target = target;
         this.additionalComparison = null;
         this.expr = expr;
-
     }
 
-    /** Create a switch case
-     * @param target The class that this case matches
+    /** Create a switch case for an integer target
+     * @param target The String to match against the switch target
+     * @param expr The expression to execute if the switch value equals this case value
+     */
+    public TypeSwitchCase(Integer target, Expression expr) {
+        super(null, 0);
+        this.target = target;
+        this.additionalComparison = null;
+        this.expr = expr;
+    }
+
+    /** Create a switch case for a class target
+     * @param target The String to match against the switch target
+     * @param expr The expression to execute if the switch value equals this case value
+     */
+    public TypeSwitchCase(ObjectType target, Expression expr) {
+        super(null, 0);
+        this.target = target;
+        this.additionalComparison = null;
+        this.expr = expr;
+    }
+
+    /** Create a switch case for a string target
+     * @param target The String to match against the switch target
      * @param expr The expression to execute if the switch value equals this case value
      * @param filename The source filename containing this case
      * @param lineNumber The line number in the source filename where this case starts
      */
-    public TypeSwitchCase(Object target, Expression expr, String filename, int lineNumber) {
-        super(filename, lineNumber);
+    public TypeSwitchCase(String target, Expression expr, String filename, int lineNumber) {
+        super(null, 0);
+        this.target = target;
+        this.additionalComparison = null;
+        this.expr = expr;
+    }
+
+    /** Create a switch case for an integer target
+     * @param target The String to match against the switch target
+     * @param expr The expression to execute if the switch value equals this case value
+     * @param filename The source filename containing this case
+     * @param lineNumber The line number in the source filename where this case starts
+     */
+    public TypeSwitchCase(Integer target, Expression expr, String filename, int lineNumber) {
+        super(null, 0);
+        this.target = target;
+        this.additionalComparison = null;
+        this.expr = expr;
+    }
+
+    /** Create a switch case for a class target
+     * @param target The String to match against the switch target
+     * @param expr The expression to execute if the switch value equals this case value
+     * @param filename The source filename containing this case
+     * @param lineNumber The line number in the source filename where this case starts
+     */
+    public TypeSwitchCase(ObjectType target, Expression expr, String filename, int lineNumber) {
+        super(null, 0);
         this.target = target;
         this.additionalComparison = null;
         this.expr = expr;
@@ -50,7 +98,7 @@ public class TypeSwitchCase extends SourceElement {
      * @param additionalComparison An additional comparison to execute to make sure the target matches this case
      * @param expr The expression to execute if the switch value equals this case value
      */
-    public TypeSwitchCase(Object target, BooleanExpr additionalComparison, Expression expr) {
+    public TypeSwitchCase(ObjectType target, BooleanExpr additionalComparison, Expression expr) {
         super(null, 0);
         this.target = target;
         if (additionalComparison != null) {
@@ -69,7 +117,7 @@ public class TypeSwitchCase extends SourceElement {
      * @param filename The source filename containing this case
      * @param lineNumber The line number in the source filename where this case starts
      */
-    public TypeSwitchCase(Object target, BooleanExpr additionalComparison, Expression expr,
+    public TypeSwitchCase(ObjectType target, BooleanExpr additionalComparison, Expression expr,
                           String filename, int lineNumber) {
         super(filename, lineNumber);
         this.target = target;

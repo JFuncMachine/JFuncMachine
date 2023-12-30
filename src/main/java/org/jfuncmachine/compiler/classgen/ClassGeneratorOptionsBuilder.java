@@ -45,6 +45,19 @@ public class ClassGeneratorOptionsBuilder {
      */
     public boolean genericLambdas;
 
+    /** Currently JFuncMachine uses two features that were previews between Java 17 and Java 21. If
+     * this option is true, JFuncMachine will use these features if generating for Java versions 17, 18, 19, and 20.
+     */
+    public boolean usePreviewFeatures;
+
+    /** The TypeSwitch and EnumSwitch expressions use a feature that was a preview in Java 17, and
+     * became fully supported in Java 21. If this flag is true, JFuncMachine will convert these expressions
+     * to If expressions if generating for a JVM where the feature is not supported. If usePreviewFeatures
+     * is true, then this conversion will only happen for Java 16 or lower. If usePreviewFeatures is
+     * false, then this conversion will happen for Java 20 or lower.
+     */
+    public boolean convertSwitchesToIf;
+
     /** Create a ClassGeneratorOptionsBuilder instance with the default settings */
     public ClassGeneratorOptionsBuilder() {
         ClassGeneratorOptions defaults = new ClassGeneratorOptions();
@@ -55,6 +68,8 @@ public class ClassGeneratorOptionsBuilder {
         this.sharedLambdaInterfaces = defaults.sharedLambdaInterfaces;
         this.lambdaMethodName = defaults.lambdaMethodName;
         this.genericLambdas = defaults.genericLambdas;
+        this.convertSwitchesToIf = defaults.convertSwitchesToIf;
+        this.usePreviewFeatures = defaults.usePreviewFeatures;
 
     }
 
@@ -129,12 +144,31 @@ public class ClassGeneratorOptionsBuilder {
     }
 
     /**
+     * Change the option to use preview features
+     * @param option True if JFuncMachine should use JVM features that are currently in preview
+     * @return The current ClassGeneratorOptionsBuilder (for chaining calls)
+     */
+    public ClassGeneratorOptionsBuilder withUsePreviewFeatures(boolean option) {
+        this.usePreviewFeatures = option;
+        return this;
+    }
+
+    /** Change the option to convert TypeSwitch and EnumSwitch expressions to
+     * If expressions if the JVM doesn't support them (Java 21 is required if usePreviewFeatures
+     * is false, or Java 17 if usePreviewFeatures is true).
+     */
+    public ClassGeneratorOptionsBuilder withConvertSwitchesToIf(boolean option) {
+        this.convertSwitchesToIf = option;
+        return this;
+    }
+
+    /**
      * Generate a new ClassGeneratorOptions object with the desired changes.
      * @return a new ClassGeneratorOptions containing all the options set by this builder
      */
     public ClassGeneratorOptions build() {
         return new ClassGeneratorOptions(javaVersion, localTailCallsToLoops,
                 fullTailCalls, autobox, sharedLambdaInterfaces,
-                lambdaMethodName, genericLambdas);
+                lambdaMethodName, genericLambdas, usePreviewFeatures, convertSwitchesToIf);
     }
 }

@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public class TestTypeSwitch {
     @ParameterizedTest(name = "{0}")
-    @ArgumentsSource(ClassGeneratorProvider.class)
+    @ArgumentsSource(ClassGeneratorWithJava16Provider.class)
     @Retention(RetentionPolicy.RUNTIME)
     private @interface TestAllImplementations {}
 
@@ -54,19 +54,19 @@ public class TestTypeSwitch {
                 SimpleTypes.STRING,
                 new TypeSwitch(new GetValue("x", new ObjectType()),
                         new TypeSwitchCase[] {
-                                new TypeSwitchCase(SimpleTypes.BOOLEAN.getBoxType(), new StringConstant("larry")),
-                                new TypeSwitchCase(SimpleTypes.DOUBLE.getBoxType(), new StringConstant("moe")),
-                                new TypeSwitchCase(SimpleTypes.CHAR.getBoxType(),
+                                new TypeSwitchCase((ObjectType)SimpleTypes.BOOLEAN.getBoxType(), new StringConstant("larry")),
+                                new TypeSwitchCase((ObjectType)SimpleTypes.DOUBLE.getBoxType(), new StringConstant("moe")),
+                                new TypeSwitchCase((ObjectType)SimpleTypes.CHAR.getBoxType(),
                                         new BinaryComparison(Tests.EQ,
                                             new GetValue("$caseMatchVar", SimpleTypes.CHAR.getBoxType()),
                                             new CharConstant('c')),
                                         new StringConstant("curly")),
-                                new TypeSwitchCase(SimpleTypes.CHAR.getBoxType(),
+                                new TypeSwitchCase((ObjectType)SimpleTypes.CHAR.getBoxType(),
                                         new BinaryComparison(Tests.EQ,
                                             new GetValue("$caseMatchVar", SimpleTypes.CHAR.getBoxType()),
                                             new CharConstant('s')),
                                         new StringConstant("shemp")),
-                                new TypeSwitchCase(SimpleTypes.CHAR.getBoxType(),
+                                new TypeSwitchCase((ObjectType)SimpleTypes.CHAR.getBoxType(),
                                         new BinaryComparison(Tests.EQ,
                                             new GetValue("$caseMatchVar", SimpleTypes.CHAR.getBoxType()),
                                             new CharConstant('j')),
