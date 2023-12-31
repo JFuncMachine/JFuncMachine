@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public class TestEnumSwitch {
     @ParameterizedTest(name = "{0}")
-    @ArgumentsSource(ClassGeneratorProvider.class)
+    @ArgumentsSource(ClassGeneratorWithJava16Provider.class)
     @Retention(RetentionPolicy.RUNTIME)
     private @interface TestAllImplementations {}
 

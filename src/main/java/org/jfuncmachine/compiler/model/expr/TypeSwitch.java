@@ -160,7 +160,8 @@ public class TypeSwitch extends Expression {
             generateIf(generator, env, inTailPosition);
         }
 
-        EnvVar targetVar = env.allocate(expr.getType());
+        Environment switchEnv = new Environment(env);
+        EnvVar targetVar = switchEnv.allocate(expr.getType());
         generator.instGen.generateLocalVariable(targetVar.name, targetVar.type,
                 switchStartLabel, switchEndLabel, targetVar.index);
         expr.generate(generator, env, false);
@@ -207,7 +208,7 @@ public class TypeSwitch extends Expression {
         for (int i=0; i < cases.length; i++) {
             generator.instGen.label(switchLabels[i]);
             Label caseExprLabel = new Label();
-            Environment castEnv = new Environment(env);
+            Environment castEnv = new Environment(switchEnv);
             EnvVar castTargetVar;
             castTargetVar = castEnv.allocate("$caseMatchVar",
                     switch (cases[i].target) {
@@ -275,7 +276,8 @@ public class TypeSwitch extends Expression {
 
         Label switchEndLabel = new Label();
 
-        EnvVar targetVar = env.allocate(expr.getType());
+        Environment switchEnv = new Environment(env);
+        EnvVar targetVar = switchEnv.allocate(expr.getType());
         generator.instGen.generateLocalVariable(targetVar.name, targetVar.type,
                 switchStartLabel, switchEndLabel, targetVar.index);
         expr.generate(generator, env, false);
@@ -291,22 +293,21 @@ public class TypeSwitch extends Expression {
             if (cases[i].target instanceof String s) {
                 targetVar.generateGet(generator);
                 generator.instGen.instance_of("java/lang/String");
-                generator.instGen.ifne(nextTest);
+                generator.instGen.ifeq(nextTest);
                 targetVar.generateGet(generator);
-                new StringConstant(s).generate(generator, env, false);
+                new StringConstant(s).generate(generator, switchEnv, false);
                 generator.instGen.if_acmpne(nextTest);
-                cases[i].expr.generate(generator, env, inTailPosition);
+                cases[i].expr.generate(generator, switchEnv, inTailPosition);
                 generator.instGen.gotolabel(switchEndLabel);
                 continue;
             } else if (cases[i].target instanceof Integer ix) {
                 targetVar.generateGet(generator);
                 generator.instGen.instance_of("java/lang/Integer");
-                generator.instGen.ifne(nextTest);
+                generator.instGen.ifeq(nextTest);
                 targetVar.generateGet(generator);
-                targetVar.generateGet(generator);
-                new Box(new IntConstant(ix.intValue())).generate(generator, env, false);
+                new Box(new IntConstant(ix)).generate(generator, switchEnv, false);
                 generator.instGen.if_acmpne(nextTest);
-                cases[i].expr.generate(generator, env, inTailPosition);
+                cases[i].expr.generate(generator, switchEnv, inTailPosition);
                 generator.instGen.gotolabel(switchEndLabel);
                 continue;
             }
@@ -314,10 +315,10 @@ public class TypeSwitch extends Expression {
             ObjectType testObj = (ObjectType) cases[i].target;
             targetVar.generateGet(generator);
             generator.instGen.instance_of(generator.className(testObj.className));
-            generator.instGen.ifne(nextTest);
+            generator.instGen.ifeq(nextTest);
 
             if (cases[i].additionalComparison != null) {
-                Environment castEnv = new Environment(env);
+                Environment castEnv = new Environment(switchEnv);
                 EnvVar castTargetVar;
                 castTargetVar = castEnv.allocate("$caseMatchVar", testObj);
                 generator.instGen.generateLocalVariable(castTargetVar.name, castTargetVar.type,
@@ -356,7 +357,7 @@ public class TypeSwitch extends Expression {
             }
         }
         generator.instGen.label(nextTest);
-        defaultCase.generate(generator, env, true);
+        defaultCase.generate(generator, switchEnv, inTailPosition);
         generator.instGen.label(switchEndLabel);
     }
 }

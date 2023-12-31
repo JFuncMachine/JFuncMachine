@@ -2,7 +2,9 @@ package org.jfuncmachine.compiler.model.expr;
 
 import org.jfuncmachine.compiler.classgen.*;
 import org.jfuncmachine.compiler.model.expr.bool.*;
+import org.jfuncmachine.compiler.model.expr.boxing.Box;
 import org.jfuncmachine.compiler.model.expr.constants.IntConstant;
+import org.jfuncmachine.compiler.model.expr.constants.StringConstant;
 import org.jfuncmachine.compiler.model.types.ObjectType;
 import org.jfuncmachine.compiler.model.types.SimpleTypes;
 import org.jfuncmachine.compiler.model.types.Type;
@@ -121,7 +123,7 @@ public class EnumSwitch extends Expression {
         if (inTailPosition) {
             EnumSwitchCase[] newCases = new EnumSwitchCase[cases.length];
             for (int i=0; i < newCases.length; i++) {
-                newCases[i] = new EnumSwitchCase(cases[i].target, cases[i].additionalComparison,
+                newCases[i] = new EnumSwitchCase(cases[i].target,
                         cases[i].expr.convertToFullTailCalls(true), filename, lineNumber);
             }
             return new EnumSwitch(expr, newCases, defaultCase.convertToFullTailCalls(true),
@@ -137,14 +139,23 @@ public class EnumSwitch extends Expression {
 
         Label switchEndLabel = new Label();
 
-        if (generator.options.javaVersion < 17) {
-            throw generateException("EnumSwitch requires Java 17 or newer");
+        if (generator.options.javaVersion < 17 ||
+                (generator.options.javaVersion < 21 && !generator.options.usePreviewFeatures)) {
+            if (!generator.options.convertSwitchesToIf) {
+                if (!generator.options.usePreviewFeatures) {
+                    throw generateException("TypeSwitch requires Java 21 or newer");
+                } else {
+                    throw generateException("TypeSwitch requires Java 17 or newer");
+                }
+            }
+            generateIf(generator, env, inTailPosition);
         }
 
-        EnvVar targetVar = env.allocate(expr.getType());
+        Environment switchEnv = new Environment(env);
+        EnvVar targetVar = switchEnv.allocate(expr.getType());
         generator.instGen.generateLocalVariable(targetVar.name, targetVar.type,
                 switchStartLabel, switchEndLabel, targetVar.index);
-        expr.generate(generator, env, false);
+        expr.generate(generator, switchEnv, false);
         targetVar.generateSet(generator);
 
         targetVar.generateGet(generator);
@@ -153,14 +164,7 @@ public class EnumSwitch extends Expression {
         Object[] enumLabels = new Object[cases.length];
         Label[] switchLabels = new Label[cases.length];
         for (int i=0; i < cases.length; i++) {
-            if (cases[i].target instanceof ObjectType) {
-                enumLabels[i] = org.objectweb.asm.Type.getType(
-                        generator.getTypeDescriptor((Type) cases[i].target));
-            } else if (cases[i].target instanceof String) {
-                enumLabels[i] = cases[i].target;
-            } else {
-                throw generateException("EnumSwitchCase target must be a ObjectType, String");
-            }
+            enumLabels[i] = cases[i].target;
             switchLabels[i] = new Label();
         }
 
@@ -189,60 +193,44 @@ public class EnumSwitch extends Expression {
 
         for (int i=0; i < cases.length; i++) {
             generator.instGen.label(switchLabels[i]);
-            if (cases[i].additionalComparison != null) {
-                Label caseExprLabel = new Label();
-                targetVar.generateGet(generator);
-                if (cases[i].target instanceof ObjectType objectType) {
-                    generator.instGen.checkcast(objectType.className);
-                }
-                Environment castEnv = new Environment(env);
-                EnvVar castTargetVar;
-                 castTargetVar = castEnv.allocate("$caseMatchVar",
-                         switch (cases[i].target) {
-                            case ObjectType ot -> ot;
-                            case String s -> SimpleTypes.STRING;
-                            default -> new ObjectType(); // This can't happen
-                         });
-                generator.instGen.generateLocalVariable(castTargetVar.name, castTargetVar.type,
-                        switchLabels[i], caseExprLabel, castTargetVar.index);
-                castTargetVar.generateSet(generator);
-
-                List<BooleanExpr> testSequence = new ArrayList<>();
-                Result trueResult = new Result(null);
-                Result falseResult = new Result(null);
-                cases[i].additionalComparison.computeSequence(trueResult, falseResult, testSequence);
-
-                for (int j=testSequence.size()-1; j >= 0; j--) {
-                    BooleanExpr booleanExpr = testSequence.get(j);
-                    BooleanExpr nextExpr = null;
-                    if (j > 0) {
-                        nextExpr = testSequence.get(j-1);
-                    }
-                    if (booleanExpr instanceof UnaryComparison unary) {
-                        unary.generate(generator, castEnv, nextExpr);
-                    } else if (booleanExpr instanceof BinaryComparison binary) {
-                        binary.generate(generator, castEnv, nextExpr);
-                    } else if (booleanExpr instanceof InstanceofComparison instOf) {
-                        instOf.generate(generator, castEnv, nextExpr);
-                    }
-                }
-                if (falseResult.label != null) {
-                    generator.instGen.label(falseResult.label);
-                }
-                targetVar.generateGet(generator);
-                new IntConstant(i+1).generate(generator, env, false);
-                generator.instGen.gotolabel(restartLabel);
-                if (trueResult.label != null) {
-                    generator.instGen.label(trueResult.label);
-                }
-            }
-            cases[i].expr.generate(generator, env, inTailPosition);
+            cases[i].expr.generate(generator, switchEnv, inTailPosition);
             generator.instGen.gotolabel(switchEndLabel);
         }
         if (defaultCase != null) {
             generator.instGen.label(defaultLabel);
-            defaultCase.generate(generator, env, inTailPosition);
+            defaultCase.generate(generator, switchEnv, inTailPosition);
         }
+        generator.instGen.label(switchEndLabel);
+    }
+
+    public void generateIf(ClassGenerator generator, Environment env, boolean inTailPosition) {
+        Label switchStartLabel = new Label();
+        generator.instGen.label(switchStartLabel);
+
+        Label switchEndLabel = new Label();
+
+        Environment switchEnv = new Environment(env);
+        EnvVar targetVar = switchEnv.allocate(expr.getType());
+        generator.instGen.generateLocalVariable(targetVar.name, targetVar.type,
+                switchStartLabel, switchEndLabel, targetVar.index);
+        expr.generate(generator, switchEnv, false);
+        targetVar.generateSet(generator);
+
+        Label nextTest = new Label();
+
+        for (int i=cases.length-1; i >= 0; i--) {
+            generator.instGen.label(nextTest);
+            nextTest = new Label();
+
+            targetVar.generateGet(generator);
+            generator.instGen.invokevirtual("java/lang/Enum", "name", "()Ljava/lang/String;");
+            new StringConstant(cases[i].target).generate(generator, switchEnv, false);
+            generator.instGen.if_acmpne(nextTest);
+            cases[i].expr.generate(generator, switchEnv, inTailPosition);
+            generator.instGen.gotolabel(switchEndLabel);
+        }
+        generator.instGen.label(nextTest);
+        defaultCase.generate(generator, switchEnv, inTailPosition);
         generator.instGen.label(switchEndLabel);
     }
 }
