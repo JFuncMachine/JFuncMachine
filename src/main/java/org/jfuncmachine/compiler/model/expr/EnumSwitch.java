@@ -12,27 +12,18 @@ import org.jfuncmachine.compiler.model.types.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-/** A switch expression that matches on enums, and then allows additional
- * comparisons.
+/** A switch expression that matches on enums
+ *
+ * Each case contains the name of an enum value for the enum being matched.
+ * If the name of a EnumSwitchCase matches the enum value returned by expr, then it executes
+ * the expression associated with that case. Otherwise it executes the default case.
  *
  * This expression relies on a feature that was added as a preview feature
- * in Java 17, and became a full part of the JVM in Java 21. JFuncMachine will
- * throw an exception if you try to use this expression to generate code for
- * a JVM version lower than 17.
- *
- * The idea here is that you may want to do pattern matching against enums
- * using either the names of the various fields in a specific enum,
- * or different classes if it is possible that the switch target
- * is one of several classes.
- *
- * Each EnumSwitchCase contains an optional additional comparison expression, which is executed
- * if a case matches the target class. If the additional comparison is
- * true, then the case expression is executed. If it is false, then the
- * switch jumps to the next case that matches, or to the default case.
- *
- * In order to facilitate the comparisons, a variable named $caseMatchVar is
- * made available in the additional comparison expression's environment, meaning
- * it can be fetched with a GetValue expression.
+ * in Java 17, and became a full part of the JVM in Java 21. JFuncMachine
+ * will, by default, generate equivalent if statements for the switch
+ * if generating for Java 20 or lower, although if the usePreviewFeatures
+ * generator option is set, it will only generate the if version for
+ * Java 16 or below.
  *
  */
 public class EnumSwitch extends Expression {

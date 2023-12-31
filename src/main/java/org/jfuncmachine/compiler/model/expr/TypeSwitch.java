@@ -19,9 +19,11 @@ import java.util.List;
  * comparisons.
  *
  * This expression relies on a feature that was added as a preview feature
- * in Java 17, and became a full part of the JVM in Java 21. JFuncMachine will
- * throw an exception if you try to use this expression to generate code for
- * a JVM version lower than 17.
+ * in Java 17, and became a full part of the JVM in Java 21. JFuncMachine
+ * will, by default, generate equivalent if statements for the switch
+ * if generating for Java 20 or lower, although if the usePreviewFeatures
+ * generator option is set, it will only generate the if version for
+ * Java 16 or below.
  *
  * The idea here is that you may want to do pattern matching against objects
  * where there may be several patterns for the same class. Each TypeSwitchClass
