@@ -81,6 +81,7 @@ public class MethodDef extends SourceElement {
      * @param parameters The name and type of each parameter
      * @param returnType The return type of the method
      * @param body The expression that this method executes
+     * @param isLambda True if this method def is for a lambda function
      * @param filename The name of the source file this method is defined in
      * @param lineNumber The line number in the source file where this method definition starts
      */

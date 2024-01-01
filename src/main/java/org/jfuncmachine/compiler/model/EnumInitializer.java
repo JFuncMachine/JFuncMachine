@@ -2,6 +2,7 @@ package org.jfuncmachine.compiler.model;
 
 import org.jfuncmachine.compiler.model.expr.Expression;
 
+/** An expression to initialize an enum value */
 public class EnumInitializer extends SourceElement {
     /** The name of the enum value */
     public final String name;

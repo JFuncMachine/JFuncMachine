@@ -309,4 +309,6 @@ public class MethodPtrs {
         }
         return getArgs;
     }
+
+    private MethodPtrs() {}
 }

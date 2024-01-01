@@ -156,6 +156,8 @@ public class ClassGeneratorOptionsBuilder {
     /** Change the option to convert TypeSwitch and EnumSwitch expressions to
      * If expressions if the JVM doesn't support them (Java 21 is required if usePreviewFeatures
      * is false, or Java 17 if usePreviewFeatures is true).
+     * @param option True if JFuncMachine should use preview features
+     * @return The current ClassGeneratorOptionsBuilder (for chaining calls)
      */
     public ClassGeneratorOptionsBuilder withConvertSwitchesToIf(boolean option) {
         this.convertSwitchesToIf = option;

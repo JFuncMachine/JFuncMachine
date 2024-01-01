@@ -74,6 +74,8 @@ public class ClassGeneratorOptions {
      * @param sharedLambdaInterfaces Any lambdas generated for one class can be shared by all classes in the same package
      * @param lambdaMethodName The name used for the single method in a lambda interface
      * @param genericLambdas generate Java-compatible generic object interfaces for each lambda
+     * @param usePreviewFeatures Use features that are only available as a preview in the target Java version
+     * @param convertSwitchesToIf Automatically convert type and enum switches to if expressions if the Java version doesn't support them
      */
     public ClassGeneratorOptions(int javaVersion, boolean localTailCallsToLoops,
                                  boolean fullTailCalls, boolean autobox,

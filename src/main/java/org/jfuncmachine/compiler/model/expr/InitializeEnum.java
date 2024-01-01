@@ -10,8 +10,11 @@ import org.objectweb.asm.Opcodes;
 
 /** An expression that is the static initializer for an enum */
 public class InitializeEnum extends Expression {
+    /** The name of the enum class */
     public final String enumClass;
+    /** The class fields representing the enum values */
     public final ClassField[] enumInstanceFields;
+    /** The initializers for each enum value */
     public final EnumInitializer[] initializers;
 
     /** Create a static method invocation

@@ -37,6 +37,11 @@ public abstract class Expression extends SourceElement {
 
     }
 
+    /**
+     * Converts this expression to one that is compatible with full tail call optimization
+     * @param inTailPosition True if this expression is called from the tail position
+     * @return A version of this expression whose types are compatible with full tail call optimization
+     */
     public abstract Expression convertToFullTailCalls(boolean inTailPosition);
 
     /**
