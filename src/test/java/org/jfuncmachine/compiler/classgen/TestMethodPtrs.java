@@ -80,6 +80,26 @@ public class TestMethodPtrs {
     }
 
     @TestAllImplementations
+    public void testJavaInterfacePtrWithoutObject(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("methodptrtest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyClass.class)),
+                new Field("x", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyInterface.class.getName()),
+                        SimpleTypes.INT }, SimpleTypes.INT),
+                        MethodPtrs.makeJavaInterfaceMethodPtr(ToyInterface.class.getName(), "addMember",
+                                new Type[] { SimpleTypes.INT }, SimpleTypes.INT),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyInterface.class.getName())),
+                                new GetValue("x", SimpleTypes.INT)}));
+
+
+        ToyClass toy = new ToyClass(20);
+        Object result = generator.invokeMethod("TestMethodPtrs",method, toy, 22);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
     public void testJavaMethodPtr(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("methodptrtest", Access.PUBLIC, new Field[] {
                 new Field("obj", new ObjectType(ToyClass.class)),
@@ -91,6 +111,26 @@ public class TestMethodPtrs {
                                 new Type[] { SimpleTypes.INT }, SimpleTypes.INT,
                                 new GetValue("obj", new ObjectType(ToyClass.class))),
                         new Expression[] { new GetValue("x", SimpleTypes.INT)}));
+
+
+        ToyClass toy = new ToyClass(20);
+        Object result = generator.invokeMethod("TestMethodPtrs",method, toy, 22);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
+    public void testJavaMethodPtrWithoutObject(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("methodptrtest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyClass.class)),
+                new Field("x", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyClass.class),
+                        SimpleTypes.INT }, SimpleTypes.INT),
+                        MethodPtrs.makeJavaMethodPtr(ToyClass.class.getName(), "addMember",
+                                new Type[] { SimpleTypes.INT }, SimpleTypes.INT),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyClass.class)),
+                                new GetValue("x", SimpleTypes.INT)}));
 
 
         ToyClass toy = new ToyClass(20);
@@ -134,6 +174,26 @@ public class TestMethodPtrs {
     }
 
     @TestAllImplementations
+    public void testMethodPtrWithoutObject(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("methodptrtest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyClass.class)),
+                new Field("x", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyClass.class), SimpleTypes.INT },
+                        SimpleTypes.INT),
+                        MethodPtrs.makeMethodPtr(ToyClass.class.getName(), "addMember",
+                                new Type[] { SimpleTypes.INT }, SimpleTypes.INT),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyClass.class)),
+                                new GetValue("x", SimpleTypes.INT)}));
+
+
+        ToyClass toy = new ToyClass(20);
+        Object result = generator.invokeMethod("TestMethodPtrs",method, toy, 22);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
     public void testStaticMethodPtr(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("methodptrtest", Access.PUBLIC, new Field[] {
                 new Field("x", SimpleTypes.STRING),
@@ -161,6 +221,26 @@ public class TestMethodPtrs {
                                 new Type[] { SimpleTypes.INT }, SimpleTypes.INT,
                                 new GetValue("obj", new ObjectType(ToyClass.class))),
                         new Expression[] { new GetValue("x", SimpleTypes.INT)}));
+
+
+        ToyClass toy = new ToyClass(20);
+        Object result = generator.invokeMethod("TestMethodPtrs",method, toy, 22);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
+    public void testTailCallMethodPtrWithoutObject(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("methodptrtest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyClass.class)),
+                new Field("x", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyClass.class), SimpleTypes.INT },
+                        SimpleTypes.INT),
+                        MethodPtrs.makeTailCallMethodPtr(ToyClass.class.getName(), "addMember$$TC$$",
+                                new Type[] { SimpleTypes.INT }, SimpleTypes.INT),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyClass.class)),
+                                new GetValue("x", SimpleTypes.INT)}));
 
 
         ToyClass toy = new ToyClass(20);

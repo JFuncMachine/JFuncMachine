@@ -117,6 +117,55 @@ public class TestPartialCalls {
     }
 
     @TestAllImplementations
+    public void testPartialJavaInterfaceCallWithoutObject(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyPartialsInterface.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyPartialsInterface.class),
+                        SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialJavaInterfaceMethodCall(ToyPartialsInterface.class.getName(), "addThree",
+                                new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT,
+                                new Expression[] { new GetValue("a", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyPartialsInterface.class)),
+                                new GetValue("b", SimpleTypes.INT),
+                                new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
+
+    @TestAllImplementations
+    public void testPartialJavaInterfaceCallWithoutObject2(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyPartialsInterface.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyPartialsInterface.class),
+                        SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialJavaInterfaceMethodCall(ToyPartialsInterface.class.getName(), "addThree",
+                                new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT,
+                                new Expression[] { new GetValue("a", SimpleTypes.INT),
+                                        new GetValue("b", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyPartialsInterface.class)),
+                                new GetValue("c", SimpleTypes.INT) }));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
     public void testPartialJavaMethodCall(String generatorType, ClassGenerator generator) {
         MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
                 new Field("obj", new ObjectType(ToyForPartials.class)),
@@ -155,6 +204,54 @@ public class TestPartialCalls {
                                 new Expression[] { new GetValue("a", SimpleTypes.INT),
                                     new GetValue("b", SimpleTypes.INT)}),
                         new Expression[] { new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
+    public void testPartialJavaMethodCallWithoutObject(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyForPartials.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyForPartials.class),
+                        SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialJavaMethodCall(ToyForPartials.class.getName(), "addThree",
+                                new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT,
+                                new Expression[] { new GetValue("a", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyForPartials.class)),
+                                new GetValue("b", SimpleTypes.INT),
+                                new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
+    public void testPartialJavaMethodCallWithoutObject2(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyForPartials.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyForPartials.class),
+                        SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialJavaMethodCall(ToyForPartials.class.getName(), "addThree",
+                                new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT,
+                                new Expression[] { new GetValue("a", SimpleTypes.INT),
+                                        new GetValue("b", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyForPartials.class)),
+                                new GetValue("c", SimpleTypes.INT)}));
 
 
         ToyForPartials toy = new ToyForPartials();
@@ -251,6 +348,54 @@ public class TestPartialCalls {
         Assertions.assertEquals(42, result);
     }
 
+    @TestAllImplementations
+    public void testPartialMethodCallWithoutObject(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyForPartials.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyForPartials.class),
+                        SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialMethodCall(ToyForPartials.class.getName(), "addThree",
+                                new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT,
+                                new Expression[] { new GetValue("a", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyForPartials.class)),
+                                new GetValue("b", SimpleTypes.INT),
+                                new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
+    public void testPartialMethodCallWithoutObject2(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyForPartials.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyForPartials.class), SimpleTypes.INT },
+                        SimpleTypes.INT),
+                        PartialCalls.makePartialMethodCall(ToyForPartials.class.getName(), "addThree",
+                                new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT,
+                                new Expression[] { new GetValue("a", SimpleTypes.INT),
+                                        new GetValue("b", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyForPartials.class)),
+                                new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
 
     @TestAllImplementations
     public void testPartialStaticMethodCall(String generatorType, ClassGenerator generator) {
@@ -333,6 +478,54 @@ public class TestPartialCalls {
                                 new Expression[] { new GetValue("a", SimpleTypes.INT),
                                         new GetValue("b", SimpleTypes.INT)}),
                         new Expression[] { new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
+    public void testPartialMethodTailCallWithoutObject(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyForPartials.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyForPartials.class),
+                        SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialTailCallMethodCall(ToyForPartials.class.getName(), "addThree$$TC$$",
+                                new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT,
+                                new Expression[] { new GetValue("a", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyForPartials.class)),
+                                new GetValue("b", SimpleTypes.INT),
+                                new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
+    public void testPartialMethodTailCallWithoutObject2(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyForPartials.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyForPartials.class),
+                        SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialTailCallMethodCall(ToyForPartials.class.getName(), "addThree$$TC$$",
+                                new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT,
+                                new Expression[] { new GetValue("a", SimpleTypes.INT),
+                                        new GetValue("b", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyForPartials.class)),
+                                new GetValue("c", SimpleTypes.INT)}));
 
 
         ToyForPartials toy = new ToyForPartials();

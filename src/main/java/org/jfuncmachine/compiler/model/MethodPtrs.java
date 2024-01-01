@@ -53,6 +53,22 @@ public class MethodPtrs {
                         target, makeArgs(parameterTypes)));
     }
 
+    /** Create a pointer to a Java interface method that also requires the target object to be passed in
+     *
+     * @param interfaceName The name of the Java interface containing the method
+     * @param methodName The name of the method to point to
+     * @param parameterTypes The types of the method parameters
+     * @param returnType The method return type
+     * @return A lambda that invokes the interface method
+     */
+    public static Expression makeJavaInterfaceMethodPtr(String interfaceName, String methodName,
+                                                        Type[] parameterTypes, Type returnType) {
+        return new Lambda(makeFields(new ObjectType(interfaceName), parameterTypes), returnType,
+                new CallJavaInterface(interfaceName, methodName, parameterTypes, returnType,
+                        new GetValue("$target", new ObjectType(interfaceName)),
+                        makeArgs(parameterTypes)));
+    }
+
     /** Create a pointer to a Java interface method
      *
      * @param interfaceName The name of the Java interface containing the method
@@ -71,6 +87,25 @@ public class MethodPtrs {
         return new Lambda(makeFields(parameterTypes), returnType,
                 new CallJavaInterface(interfaceName, methodName, parameterTypes, returnType,
                         target, makeArgs(parameterTypes)), filename, lineNumber);
+    }
+
+    /** Create a pointer to a Java interface method that also requires the target object to be passed in
+     *
+     * @param interfaceName The name of the Java interface containing the method
+     * @param methodName The name of the method to point to
+     * @param parameterTypes The types of the method parameters
+     * @param returnType The method return type
+     * @param filename The source file where this pointer is created
+     * @param lineNumber The line number in the source file where this pointer is created
+     * @return A lambda that invokes the interface method
+     */
+    public static Expression makeJavaInterfaceMethodPtr(String interfaceName, String methodName,
+                                                        Type[] parameterTypes, Type returnType,
+                                                        String filename, int lineNumber) {
+        return new Lambda(makeFields(new ObjectType(interfaceName), parameterTypes), returnType,
+                new CallJavaInterface(interfaceName, methodName, parameterTypes, returnType,
+                        new GetValue("$target", new ObjectType(interfaceName)),
+                        makeArgs(parameterTypes)), filename, lineNumber);
     }
 
     /** Create a pointer to a Java method
@@ -108,6 +143,41 @@ public class MethodPtrs {
         return new Lambda(makeFields(parameterTypes), returnType,
                 new CallJavaMethod(className, methodName, parameterTypes, returnType,
                         target, makeArgs(parameterTypes)), filename, lineNumber);
+    }
+
+    /** Create a pointer to a Java method
+     *
+     * @param className The name of the Java class containing the method
+     * @param methodName The name of the method to point to
+     * @param parameterTypes The types of the method parameters
+     * @param returnType The method return type
+     * @return A lambda that invokes the interface method
+     */
+    public static Expression makeJavaMethodPtr(String className, String methodName,
+                                               Type[] parameterTypes, Type returnType) {
+        return new Lambda(makeFields(new ObjectType(className), parameterTypes), returnType,
+                new CallJavaMethod(className, methodName, parameterTypes, returnType,
+                        new GetValue("$target", new ObjectType(className)),
+                        makeArgs(parameterTypes)));
+    }
+
+    /** Create a pointer to a Java method
+     *
+     * @param className The name of the Java class containing the method
+     * @param methodName The name of the method to point to
+     * @param parameterTypes The types of the method parameters
+     * @param returnType The method return type
+     * @param filename The source file where this pointer is created
+     * @param lineNumber The line number in the source file where this pointer is created
+     * @return A lambda that invokes the interface method
+     */
+    public static Expression makeJavaMethodPtr(String className, String methodName,
+                                               Type[] parameterTypes, Type returnType,
+                                               String filename, int lineNumber) {
+        return new Lambda(makeFields(new ObjectType(className), parameterTypes), returnType,
+                new CallJavaMethod(className, methodName, parameterTypes, returnType,
+                        new GetValue("$target", new ObjectType(className)),
+                        makeArgs(parameterTypes)), filename, lineNumber);
     }
 
     /** Create a pointer to a static Java method
@@ -180,6 +250,43 @@ public class MethodPtrs {
                         target, makeArgs(parameterTypes)), filename, lineNumber);
     }
 
+    /** Create a pointer to a method that may or may not do tail call optimization and requires
+     * the object to be passed in when invoked
+     *
+     * @param className The name of the class containing the method
+     * @param methodName The name of the method to point to
+     * @param parameterTypes The types of the method parameters
+     * @param returnType The method return type
+     * @return A lambda that invokes the interface method
+     */
+    public static Expression makeMethodPtr(String className, String methodName,
+                                           Type[] parameterTypes, Type returnType) {
+        return new Lambda(makeFields(new ObjectType(className), parameterTypes), returnType,
+                new CallMethod(className, methodName, parameterTypes, returnType,
+                        new GetValue("$target", new ObjectType(className)),
+                        makeArgs(parameterTypes)));
+    }
+
+    /** Create a pointer to a method that may or may not do tail call optimization and requires
+    * the object to be passed in when invoked
+     *
+     * @param className The name of the class containing the method
+     * @param methodName The name of the method to point to
+     * @param parameterTypes The types of the method parameters
+     * @param returnType The method return type
+     * @param filename The source file where this pointer is created
+     * @param lineNumber The line number in the source file where this pointer is created
+     * @return A lambda that invokes the interface method
+     */
+    public static Expression makeMethodPtr(String className, String methodName,
+                                           Type[] parameterTypes, Type returnType,
+                                           String filename, int lineNumber) {
+        return new Lambda(makeFields(parameterTypes), returnType,
+                new CallMethod(className, methodName, parameterTypes, returnType,
+                        new GetValue("$target", new ObjectType(className)),
+                        makeArgs(parameterTypes)), filename, lineNumber);
+    }
+
     /** Create a pointer to a static method that may or may not do tail call optimization
      *
      * @param className The name of the class containing the method
@@ -249,6 +356,41 @@ public class MethodPtrs {
                 new CallTailCallMethod(className, methodName, parameterTypes, returnType,
                         target, makeArgs(parameterTypes)), filename, lineNumber);
     }
+    /** Create a pointer to a method that uses tail call optimization
+     *
+     * @param className The name of the class containing the method
+     * @param methodName The name of the method to point to
+     * @param parameterTypes The types of the method parameters
+     * @param returnType The method return type
+     * @return A lambda that invokes the interface method
+     */
+    public static Expression makeTailCallMethodPtr(String className, String methodName,
+                                                   Type[] parameterTypes, Type returnType) {
+        return new Lambda(makeFields(new ObjectType(className), parameterTypes), returnType,
+                new CallTailCallMethod(className, methodName, parameterTypes, returnType,
+                        new GetValue("$target", new ObjectType(className)),
+                        makeArgs(parameterTypes)));
+    }
+
+    /** Create a pointer to a method that uses tail call optimization
+     *
+     * @param className The name of the class containing the method
+     * @param methodName The name of the method to point to
+     * @param parameterTypes The types of the method parameters
+     * @param returnType The method return type
+     * @param filename The source file where this pointer is created
+     * @param lineNumber The line number in the source file where this pointer is created
+     * @return A lambda that invokes the interface method
+     */
+    public static Expression makeTailCallMethodPtr(String className, String methodName,
+                                                   Type[] parameterTypes, Type returnType,
+                                                   String filename, int lineNumber) {
+        return new Lambda(makeFields(new ObjectType(className), parameterTypes), returnType,
+                new CallTailCallMethod(className, methodName, parameterTypes, returnType,
+                        new GetValue("$target", new ObjectType(className)),
+                        makeArgs(parameterTypes)), filename, lineNumber);
+    }
+
 
     /** Create a pointer to a static method that uses tail call optimization
      *
@@ -292,6 +434,21 @@ public class MethodPtrs {
         Field[] fields = new Field[parameterTypes.length];
         for (int i=0; i < parameterTypes.length; i++) {
             fields[i] = new Field("arg"+i, parameterTypes[i]);
+        }
+        return fields;
+    }
+
+    /** Create an array of fields for a lambda from a given list of parameter types.
+     * The field names are named arg0, arg1, ...
+     * @param objectType the type of object containing the method
+     * @param parameterTypes The types of the parameters
+     * @return A list of fields containing a name and a type
+     */
+    private static Field[] makeFields(Type objectType, Type[] parameterTypes) {
+        Field[] fields = new Field[parameterTypes.length+1];
+        fields[0] = new Field("$target", objectType);
+        for (int i=0; i < parameterTypes.length; i++) {
+            fields[i+1] = new Field("arg"+i, parameterTypes[i]);
         }
         return fields;
     }
