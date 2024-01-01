@@ -631,4 +631,65 @@ public class TestPartialCalls {
         Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
         Assertions.assertEquals(42, result);
     }
+
+    @TestAllImplementations
+    public void testPartialInvokeWithoutObject(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyForPartials.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyForPartials.class),
+                        SimpleTypes.INT, SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialInvokeWithoutObject(
+                                new FunctionType(new Type[] { new ObjectType(ToyForPartials.class),
+                                        SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT},
+                                        SimpleTypes.INT),
+                                MethodPtrs.makeJavaMethodPtr(ToyForPartials.class.getName(),
+                                        "addThree",
+                                        new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT},
+                                        SimpleTypes.INT),
+                                new Expression[] { new GetValue("a", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyForPartials.class)),
+                            new GetValue("b", SimpleTypes.INT),
+                            new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
+
+    @TestAllImplementations
+    public void testPartialInvokeWithoutObject2(String generatorType, ClassGenerator generator) {
+        MethodDef method = new MethodDef("partialcalltest", Access.PUBLIC, new Field[] {
+                new Field("obj", new ObjectType(ToyForPartials.class)),
+                new Field("a", SimpleTypes.INT),
+                new Field("b", SimpleTypes.INT),
+                new Field("c", SimpleTypes.INT),
+        },
+                SimpleTypes.INT,
+                new Invoke(new FunctionType(new Type[] { new ObjectType(ToyForPartials.class),
+                        SimpleTypes.INT }, SimpleTypes.INT),
+                        PartialCalls.makePartialInvokeWithoutObject(
+                                new FunctionType(new Type[] { new ObjectType(ToyForPartials.class),
+                                        SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT},
+                                        SimpleTypes.INT),
+                                MethodPtrs.makeJavaMethodPtr(ToyForPartials.class.getName(),
+                                        "addThree",
+                                        new Type[] { SimpleTypes.INT, SimpleTypes.INT, SimpleTypes.INT},
+                                        SimpleTypes.INT),
+                                new Expression[] {
+                                        new GetValue("a", SimpleTypes.INT),
+                                        new GetValue("b", SimpleTypes.INT)}),
+                        new Expression[] { new GetValue("obj", new ObjectType(ToyForPartials.class)),
+                                new GetValue("c", SimpleTypes.INT)}));
+
+
+        ToyForPartials toy = new ToyForPartials();
+        Object result = generator.invokeMethod("TestPartialCalls",method, toy, 10, 12, 20);
+        Assertions.assertEquals(42, result);
+    }
 }

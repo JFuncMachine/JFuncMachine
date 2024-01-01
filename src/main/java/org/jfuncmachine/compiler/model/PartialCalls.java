@@ -499,6 +499,40 @@ public class PartialCalls {
                 new Invoke(funcType, target, makeArgs(funcType.parameterTypes)), filename, lineNumber);
     }
 
+    /** Create a partial call of a Java interface method that requires the target method object to be passed in
+     * as the first parameter. This requires that the function pointer being invoked requires the object
+     * as the first parameter.
+     *
+     * @param funcType The type of the function pointer to invoke
+     * @param target The function pointer to invoke
+     * @param arguments The partial arguments to the method
+     * @return A lambda that invokes the interface method
+     */
+    public static Expression makePartialInvokeWithoutObject(FunctionType funcType, Expression target,
+                                                            Expression[] arguments) {
+        return new PartialCall(makeFields(funcType.parameterTypes, arguments.length),
+                funcType.returnType, arguments,
+                new Invoke(funcType, target, makeArgs(funcType.parameterTypes)));
+    }
+
+    /** Create a partial call of a Java interface method that requires the target method object to be passed in
+     * as the first parameter. This requires that the function pointer being invoked requires the object
+     * as the first parameter.
+     *
+     * @param funcType The type of the function pointer to invoke
+     * @param target The function pointer to invoke
+     * @param arguments The partial arguments to the method
+     * @param filename The source file where this call is created
+     * @param lineNumber The line number in the source file where this call is created
+     * @return A lambda that invokes the interface method
+     */
+    public static Expression makePartialInvokeWithoutObject(FunctionType funcType, Expression target,
+                                                            Expression[] arguments,
+                                               String filename, int lineNumber) {
+        return new PartialCall(makeFields(funcType.parameterTypes, arguments.length), funcType.returnType, arguments,
+                new Invoke(funcType, target, makeArgs(funcType.parameterTypes)), filename, lineNumber);
+    }
+
     /** Create an array of fields for a lambda from a given list of parameter types.
      * The field names are named arg0, arg1, ...
      * @param parameterTypes The types of the parameters
@@ -529,6 +563,24 @@ public class PartialCalls {
         }
         return fields;
     }
+
+    /** Create an array of fields for a lambda from a given list of parameter types.
+     * The field names are named arg0, arg1, ...
+     * @param parameterTypes The types of the parameters
+     * @return A list of fields containing a name and a type
+     */
+    private static Field[] makeFields(Type[] parameterTypes, int numPartials) {
+        Field[] fields = new Field[parameterTypes.length];
+        for (int i=0; i < numPartials; i++) {
+            fields[i] = new Field("arg"+(i+1), parameterTypes[i+1]);
+        }
+        fields[numPartials] = new Field("arg0", parameterTypes[0]);
+        for (int i=numPartials+1; i < parameterTypes.length; i++) {
+            fields[i] = new Field("arg"+i, parameterTypes[i]);
+        }
+        return fields;
+    }
+
     /** Create an array of GetValue expressions to fetch lambda arguments for a
      * call to a function. This assumes that the lambda parameters are named
      * arg0, arg1, ...
