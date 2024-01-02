@@ -288,7 +288,7 @@ public class MethodPtrs {
      * @param parameterTypes The types of the parameters
      * @return A list of fields containing a name and a type
      */
-    public static Field[] makeFields(Type[] parameterTypes) {
+    private static Field[] makeFields(Type[] parameterTypes) {
         Field[] fields = new Field[parameterTypes.length];
         for (int i=0; i < parameterTypes.length; i++) {
             fields[i] = new Field("arg"+i, parameterTypes[i]);
@@ -302,11 +302,13 @@ public class MethodPtrs {
      * @param parameterTypes The types of the arguments
      * @return An array of GetValue expressions to fetch the function call arguments
      */
-    public static Expression[] makeArgs(Type[] parameterTypes) {
+    private static Expression[] makeArgs(Type[] parameterTypes) {
         Expression[] getArgs = new Expression[parameterTypes.length];
         for (int i=0; i < parameterTypes.length; i++) {
             getArgs[i] = new GetValue("arg"+i, parameterTypes[i]);
         }
         return getArgs;
     }
+
+    private MethodPtrs() {}
 }

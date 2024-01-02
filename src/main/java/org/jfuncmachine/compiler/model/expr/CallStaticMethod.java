@@ -102,6 +102,39 @@ public class CallStaticMethod extends Expression {
         this.returnType = returnType;
     }
 
+    /** Create a static method invocation that calls the current method recursively
+     * @param parameterTypes The method parameter types
+     * @param returnType The method return type
+     * @param arguments The method argument values
+     */
+    public CallStaticMethod(Type[] parameterTypes, Type returnType,
+                            Expression[] arguments) {
+        super(null, 0);
+        this.className = null;
+        this.name = null;
+        this.arguments = arguments;
+        this.parameterTypes = parameterTypes;
+        this.returnType = returnType;
+    }
+
+    /** Create a static method invocation that calls the current method recursively
+     * @param parameterTypes The method parameter types
+     * @param returnType The method return type
+     * @param arguments The method argument values
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
+    public CallStaticMethod(Type[] parameterTypes, Type returnType,
+                            Expression[] arguments,
+                            String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.className = null;
+        this.name = null;
+        this.arguments = arguments;
+        this.parameterTypes = parameterTypes;
+        this.returnType = returnType;
+    }
+
     public Type getType() {
         return returnType;
     }
@@ -140,19 +173,34 @@ public class CallStaticMethod extends Expression {
         if (invokeClassName == null) {
             invokeClassName = generator.currentClass.getFullClassName();
         }
+
+        String methodName = name;
+
+        if (methodName == null) {
+            methodName = generator.currentMethod.name;
+            if (methodName.endsWith("$$TC$$")) {
+                methodName = methodName.substring(0, methodName.length()-6);
+            }
+        }
+
         int[] argumentLocations = new int[arguments.length];
         int argPos = 0;
 
         boolean tailCallReturn = inTailPosition && generator.currentMethod.isTailCallable;
         boolean makeTailCall = inTailPosition &&
                 !(generator.options.localTailCallsToLoops &&
-                        isCurrentFunc(generator.currentClass, generator.currentMethod)) &&
+                        (name == null || isCurrentFunc(generator.currentClass, generator.currentMethod))) &&
                 generator.options.fullTailCalls;
         boolean localCall = inTailPosition &&
                 generator.options.localTailCallsToLoops &&
-                isCurrentFunc(generator.currentClass, generator.currentMethod);
+                (name == null || isCurrentFunc(generator.currentClass, generator.currentMethod));
 
-        if (!tailCallReturn) {
+        if (generator.currentMethod.isLambda && name == null) {
+            tailCallReturn = false;
+            makeTailCall = false;
+        }
+
+        if (localCall || !tailCallReturn) {
             for (int i = 0; i < arguments.length; i++) {
                 Expression expr = arguments[i];
                 if (generator.options.autobox) {
@@ -170,18 +218,18 @@ public class CallStaticMethod extends Expression {
             generator.instGen.lineNumber(lineNumber);
             generator.instGen.gotolabel(generator.currentMethod.startLabel);
         } else if (tailCallReturn) {
-            generateTailLambda(invokeClassName, name, parameterTypes, arguments, generator, env);
+            generateTailLambda(invokeClassName, methodName, parameterTypes, arguments, generator, env);
         } else {
             if (!makeTailCall) {
                 generator.instGen.lineNumber(lineNumber);
                 generator.instGen.invokestatic(
                         generator.className(invokeClassName),
-                        name, generator.methodDescriptor(parameterTypes, returnType));
+                        methodName, generator.methodDescriptor(parameterTypes, returnType));
             } else {
                 generator.instGen.lineNumber(lineNumber);
                 generator.instGen.invokestatic(
                         generator.className(invokeClassName),
-                        name+"$$TC$$", generator.methodDescriptor(parameterTypes, new ObjectType()));
+                        methodName+"$$TC$$", generator.methodDescriptor(parameterTypes, new ObjectType()));
                 if (!tailCallReturn) {
                     Label loopStart = new Label();
                     Label loopEnd = new Label();

@@ -61,6 +61,10 @@ public sealed interface Type
      */
     default boolean hasIntRepresentation() { return false; }
 
+    /** Returns the character that the JVM uses to represent this type
+     *
+     * @return I for types represented by an int, J for Long, F for Float, D for double, A for object
+     */
     default char getJVMTypeRepresentation() {
         return switch (this) {
             case BooleanType b -> 'I';
@@ -75,9 +79,18 @@ public sealed interface Type
         };
     }
 
+    /** Tests whether this type has the same JVM representation as another type
+     *
+     * @param other The other type to compare against
+     * @return True if the types have the same representation in the JVM
+     */
     default boolean sameJavaType(Type other) {
         return getJVMTypeRepresentation() == other.getJVMTypeRepresentation();
     }
 
+    /** Tests whether this type is an enum type
+     *
+     * @return True if this type represents an enum
+     */
     default boolean isEnum() { return false; }
 }

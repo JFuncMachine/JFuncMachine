@@ -82,6 +82,7 @@ public class EnumDef extends ClassDef {
      * @param methodDefs The methods defined for this class
      * @param fields The fields defined for this class
      * @param names The names of each enum value
+     * @param interfaces The interfaces this class implements
      * @param filename The source code filename this class was generated from
      * @param lineNumber The starting line number in the source code where this class is defined
      */
@@ -96,6 +97,14 @@ public class EnumDef extends ClassDef {
                 interfaces, filename, lineNumber);
     }
 
+    /** Adds the required enum methods to the list of method definitions for this enum
+     *
+     * @param className The name of the enum class being generated
+     * @param initialMethodDefs The method defs already defined for this enum
+     * @param fields The fields for this enum
+     * @param initializers The initializers for this enum
+     * @return The original method defs plus the methods required for an enum
+     */
     public static MethodDef[] generateMethodDefs(String className, MethodDef[] initialMethodDefs, ClassField[] fields,
                                                  EnumInitializer[] initializers) {
         List<ClassField> memberFields = new ArrayList<>();
@@ -188,6 +197,13 @@ public class EnumDef extends ClassDef {
        return methods;
     }
 
+    /**
+     * Adds the class fields for the enum to the existing class fields
+     * @param className The class name being generated
+     * @param fields The current class fields
+     * @param initializers The enum initializers for this enum
+     * @return The original class fields with the enum field values added
+     */
     public static ClassField[] generateEnumFields(String className, ClassField[] fields,
                                                   EnumInitializer[] initializers) {
         ClassField[] newFields = new ClassField[fields.length + initializers.length];
@@ -205,6 +221,11 @@ public class EnumDef extends ClassDef {
         return newFields;
     }
 
+    /**
+     * Creates a list of enum initializers for each enum value name
+     * @param names The names of the initializers to generate
+     * @return An array of the enum initializers
+     */
     public static EnumInitializer[] generateInitializers(String[] names) {
         EnumInitializer[] initializers = new EnumInitializer[names.length];
         for (int i=0; i < names.length; i++) {

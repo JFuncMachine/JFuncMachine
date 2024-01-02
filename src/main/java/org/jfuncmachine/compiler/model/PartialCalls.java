@@ -362,11 +362,5 @@ public class PartialCalls {
         return getArgs;
     }
 
-    public static Binding.BindingPair[] makeBindings(Expression[] arguments) {
-        Binding.BindingPair[] bindings = new Binding.BindingPair[arguments.length];
-        for (int i=0; i < arguments.length; i++) {
-            bindings[i] = new Binding.BindingPair("arg"+i, arguments[i]);
-        }
-        return bindings;
-    }
+    private PartialCalls() {}
 }

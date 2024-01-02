@@ -194,7 +194,7 @@ public class EnumSwitch extends Expression {
         generator.instGen.label(switchEndLabel);
     }
 
-    public void generateIf(ClassGenerator generator, Environment env, boolean inTailPosition) {
+    protected void generateIf(ClassGenerator generator, Environment env, boolean inTailPosition) {
         Label switchStartLabel = new Label();
         generator.instGen.label(switchStartLabel);
 

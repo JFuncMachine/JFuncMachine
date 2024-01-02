@@ -91,6 +91,23 @@ public class CallMethod extends Expression {
         this.returnType = returnType;
     }
 
+    /** Create a new method call expression that calls the current method recursively
+     * @param parameterTypes The types of the method parameters
+     * @param returnType The return type of the method
+     * @param target The object to invoke the method on
+     * @param arguments The method argument values
+     */
+    public CallMethod(Type[] parameterTypes, Type returnType,
+                      Expression target, Expression[] arguments) {
+        super(null, 0);
+        this.className = null;
+        this.name = null;
+        this.target = target;
+        this.arguments = arguments;
+        this.parameterTypes = parameterTypes;
+        this.returnType = returnType;
+    }
+
     /** Create a new method call expression
      * @param name The name of the method
      * @param parameterTypes The types of the method parameters
@@ -106,6 +123,26 @@ public class CallMethod extends Expression {
         super(filename, lineNumber);
         this.className = null;
         this.name = name;
+        this.target = target;
+        this.arguments = arguments;
+        this.parameterTypes = parameterTypes;
+        this.returnType = returnType;
+    }
+
+    /** Create a new method call expression that calls the current method recursively
+     * @param parameterTypes The types of the method parameters
+     * @param returnType The return type of the method
+     * @param target The object to invoke the method on
+     * @param arguments The method argument values
+     * @param filename The source filename this expression is associated with
+     * @param lineNumber The source line number this expression is associated with
+     */
+    public CallMethod(Type[] parameterTypes, Type returnType,
+                      Expression target, Expression[] arguments,
+                      String filename, int lineNumber) {
+        super(filename, lineNumber);
+        this.className = null;
+        this.name = null;
         this.target = target;
         this.arguments = arguments;
         this.parameterTypes = parameterTypes;
@@ -146,17 +183,27 @@ public class CallMethod extends Expression {
         if (invokeClassName == null) {
             invokeClassName = generator.currentClass.getFullClassName();
         }
+
+        String methodName = name;
+
+        if (methodName == null) {
+            methodName = generator.currentMethod.name;
+            if (methodName.endsWith("$$TC$$")) {
+                methodName = methodName.substring(0, methodName.length()-6);
+            }
+        }
+
         int[] argumentLocations = new int[arguments.length];
         int argPos = 1;
 
         boolean tailCallReturn = inTailPosition && generator.currentMethod.isTailCallable;
         boolean makeTailCall = inTailPosition &&
                 !(generator.options.localTailCallsToLoops &&
-                        isCurrentFunc(generator.currentClass, generator.currentMethod)) &&
+                        (name == null || isCurrentFunc(generator.currentClass, generator.currentMethod))) &&
                 generator.options.fullTailCalls;
         boolean localCall = inTailPosition &&
                 generator.options.localTailCallsToLoops &&
-                        isCurrentFunc(generator.currentClass, generator.currentMethod);
+                    (name == null || isCurrentFunc(generator.currentClass, generator.currentMethod));
 
         if (!tailCallReturn && !localCall) {
             target.generate(generator, env, false);
@@ -181,18 +228,18 @@ public class CallMethod extends Expression {
             generator.instGen.lineNumber(lineNumber);
             generator.instGen.gotolabel(generator.currentMethod.startLabel);
         } else if (tailCallReturn) {
-            generateTailLambda(invokeClassName, name, parameterTypes, target, arguments, generator, env);
+            generateTailLambda(invokeClassName, methodName, parameterTypes, target, arguments, generator, env);
         } else {
             if (!makeTailCall) {
                 generator.instGen.lineNumber(lineNumber);
                 generator.instGen.invokevirtual(
                         generator.className(invokeClassName),
-                        name, generator.methodDescriptor(parameterTypes, returnType));
+                        methodName, generator.methodDescriptor(parameterTypes, returnType));
             } else {
                 generator.instGen.lineNumber(lineNumber);
                 generator.instGen.invokevirtual(
                         generator.className(invokeClassName),
-                        name+"$$TC$$", generator.methodDescriptor(parameterTypes, new ObjectType()));
+                        methodName+"$$TC$$", generator.methodDescriptor(parameterTypes, new ObjectType()));
                 if (!tailCallReturn) {
                     Label loopStart = new Label();
                     Label loopEnd = new Label();
