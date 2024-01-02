@@ -1,5 +1,6 @@
 package org.jfuncmachine.compiler.classgen;
 
+import org.jfuncmachine.compiler.exceptions.JFuncMachineException;
 import org.jfuncmachine.compiler.model.*;
 import org.jfuncmachine.compiler.model.expr.*;
 import org.jfuncmachine.compiler.model.expr.bool.BinaryComparison;
@@ -307,6 +308,121 @@ public class TestCallMethods {
 
         Object result = generator.invokeMethod(classDef, "callfact", 10);
         Assertions.assertEquals(3628800, result);
+    }
+
+    @Test
+    public void testLongMethodCall() {
+        MethodDef method = new MethodDef("summer", Access.PUBLIC + Access.STATIC, new Field[] {
+                new Field("n", SimpleTypes.INT),
+                new Field("acc", SimpleTypes.INT) },
+                SimpleTypes.INT,
+                new If(new BinaryComparison(Tests.LT, new GetValue("n", SimpleTypes.INT),
+                        new IntConstant(2)),
+                        new GetValue("acc", SimpleTypes.INT),
+                        new CallStaticMethod("summer", new Type[] { SimpleTypes.INT, SimpleTypes.INT },
+                                SimpleTypes.INT,
+                                new Expression[] {
+                                        new InlineCall(Inlines.IntSub, new Expression[] {
+                                                new GetValue("n", SimpleTypes.INT),
+                                                new IntConstant(1)
+                                        }),
+                                        new InlineCall(Inlines.IntAdd, new Expression[] {
+                                                new GetValue("n", SimpleTypes.INT),
+                                                new GetValue("acc", SimpleTypes.INT)
+                                        })
+                                })));
+
+        MethodDef[] methods = {
+                ConstructorDef.generateWith(new Field[0]),
+                method,
+        };
+
+        ClassDef classDef = new ClassDef("org.jfuncmachine.temp", "TestCall",
+                ToyClass.class.getPackageName(), ToyClass.class.getSimpleName(),
+                Access.PUBLIC, methods, new ClassField[0], new String[0]);
+
+        ClassGenerator generator = new ClassGenerator();
+        Object result = generator.invokeMethod(classDef, "summer", 100000000, 0);
+        Assertions.assertEquals(987459711, result);
+    }
+
+    @Test
+    public void testLongMethodCallWithTCO() {
+        MethodDef method = new MethodDef("summer", Access.PUBLIC + Access.STATIC, new Field[] {
+                new Field("n", SimpleTypes.INT),
+                new Field("acc", SimpleTypes.INT) },
+                SimpleTypes.INT,
+                new If(new BinaryComparison(Tests.LT, new GetValue("n", SimpleTypes.INT),
+                        new IntConstant(2)),
+                        new GetValue("acc", SimpleTypes.INT),
+                        new CallStaticMethod("summer", new Type[] { SimpleTypes.INT, SimpleTypes.INT },
+                                SimpleTypes.INT,
+                                new Expression[] {
+                                        new InlineCall(Inlines.IntSub, new Expression[] {
+                                                new GetValue("n", SimpleTypes.INT),
+                                                new IntConstant(1)
+                                        }),
+                                        new InlineCall(Inlines.IntAdd, new Expression[] {
+                                                new GetValue("n", SimpleTypes.INT),
+                                                new GetValue("acc", SimpleTypes.INT)
+                                        })
+                                })));
+
+        MethodDef[] methods = {
+                ConstructorDef.generateWith(new Field[0]),
+                method,
+        };
+
+        ClassDef classDef = new ClassDef("org.jfuncmachine.temp", "TestCall",
+                ToyClass.class.getPackageName(), ToyClass.class.getSimpleName(),
+                Access.PUBLIC, methods, new ClassField[0], new String[0]);
+
+        ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder()
+                .withLocalTailCallsToLoops(false)
+                .withFullTailCalls(true)
+                .build();
+        ClassGenerator generator = new ClassGenerator(options);
+        Object result = generator.invokeMethod(classDef, "summer", 100000000, 0);
+        Assertions.assertEquals(987459711, result);
+    }
+
+    @Test
+    public void testLongMethodCallGetsStackOverflow() {
+        MethodDef method = new MethodDef("summer", Access.PUBLIC + Access.STATIC, new Field[] {
+                new Field("n", SimpleTypes.INT),
+                new Field("acc", SimpleTypes.INT) },
+                SimpleTypes.INT,
+                new If(new BinaryComparison(Tests.LT, new GetValue("n", SimpleTypes.INT),
+                        new IntConstant(2)),
+                        new GetValue("acc", SimpleTypes.INT),
+                        new CallStaticMethod("summer", new Type[] { SimpleTypes.INT, SimpleTypes.INT },
+                                SimpleTypes.INT,
+                                new Expression[] {
+                                        new InlineCall(Inlines.IntSub, new Expression[] {
+                                                new GetValue("n", SimpleTypes.INT),
+                                                new IntConstant(1)
+                                        }),
+                                        new InlineCall(Inlines.IntAdd, new Expression[] {
+                                                new GetValue("n", SimpleTypes.INT),
+                                                new GetValue("acc", SimpleTypes.INT)
+                                        })
+                                })));
+
+        MethodDef[] methods = {
+                ConstructorDef.generateWith(new Field[0]),
+                method,
+        };
+
+        ClassDef classDef = new ClassDef("org.jfuncmachine.temp", "TestCall",
+                ToyClass.class.getPackageName(), ToyClass.class.getSimpleName(),
+                Access.PUBLIC, methods, new ClassField[0], new String[0]);
+
+        ClassGeneratorOptions options = new ClassGeneratorOptionsBuilder()
+                .withLocalTailCallsToLoops(false)
+                .build();
+        ClassGenerator generator = new ClassGenerator(options);
+        Assertions.assertThrows(JFuncMachineException.class, () ->
+            generator.invokeMethod(classDef, "summer", 100000000, 0));
     }
 
     @TestAllImplementations

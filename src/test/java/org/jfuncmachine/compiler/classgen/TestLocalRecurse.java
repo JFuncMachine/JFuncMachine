@@ -66,6 +66,18 @@ public class TestLocalRecurse {
                 new If(new BinaryComparison(Tests.LT, new GetValue("n", SimpleTypes.INT),
                         new IntConstant(2)),
                         new GetValue("acc", SimpleTypes.INT),
+                        new LocalRecurse(SimpleTypes.INT,
+                                new Expression[] {
+                                        new InlineCall(Inlines.IntSub, new Expression[] {
+                                                new GetValue("n", SimpleTypes.INT),
+                                                new IntConstant(1)
+                                        }),
+                                        new InlineCall(Inlines.IntMul, new Expression[] {
+                                                new GetValue("n", SimpleTypes.INT),
+                                                new GetValue("acc", SimpleTypes.INT)
+                                        })
+                                })
+                        /*
                         new CallMethod("fact", new Type[] { SimpleTypes.INT, SimpleTypes.INT },
                                 SimpleTypes.INT, new GetValue("this", new ObjectType()),
                                 new Expression[] {
@@ -78,6 +90,7 @@ public class TestLocalRecurse {
                                                 new GetValue("acc", SimpleTypes.INT)
                                         })
                                 })
+                         */
                 ));
 
         MethodDef callFactMethod = new MethodDef("callfact", Access.PUBLIC, new Field[]{
