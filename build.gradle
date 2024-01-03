@@ -13,7 +13,7 @@ java {
 }
 
 group = 'org.jfuncmachine'
-version = '1.0.0'
+version = '1.0.1'
 
 repositories {
     mavenLocal()
@@ -48,7 +48,7 @@ publishing {
             }
             groupId = 'org.jfuncmachine'
             artifactId = 'jfuncmachine'
-            version = '1.0.0'
+            version = '1.0.1'
 
             from components.java
         }

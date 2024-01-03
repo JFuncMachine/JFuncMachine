@@ -269,7 +269,10 @@ public class SexprToModel {
     public static void convertArrayTypes(Class[] paramTypes, Object[] params) {
         for (int i=0; i < params.length; i++) {
             if (paramTypes[i].isArray()) {
-                if (!paramTypes[i].getComponentType().equals(Object.class)) {
+                if (paramTypes[i].getComponentType().getName().equals("int") ||
+                    paramTypes[i].getComponentType().getName().equals("double")) {
+                    continue;
+                } else if (!paramTypes[i].getComponentType().equals(Object.class)) {
                     Object newArray = Array.newInstance(paramTypes[i].getComponentType(),
                             ((Object[]) params[i]).length);
                     System.arraycopy(params[i], 0, newArray, 0, ((Object[])params[i]).length);
@@ -294,10 +297,17 @@ public class SexprToModel {
         Class[] paramTypes = cons.getParameterTypes();
         if (paramTypes.length != params.length) return false;
         for (int i=0; i < paramTypes.length; i++) {
+            Object simpleConversion = trySimpleConversion(paramTypes[i], items.get(i));
+            if (simpleConversion != null) {
+                params[i] = simpleConversion;
+                continue;
+            }
             params[i] = sexprToModel(items.get(i), mapper, paramTypes[i]);
             if (paramTypes[i].isArray()) {
                 if (!params[i].getClass().isArray()) return false;
-                if (!paramTypes[i].getComponentType().isAssignableFrom(params[i].getClass().getComponentType())) {
+                if (((Object[])params[i]).length > 0 &&
+                        !paramTypes[i].getComponentType().isAssignableFrom(
+                                ((Object[])params[i])[0].getClass())) {
                     return false;
                 }
             }  else if (!paramTypes[i].isAssignableFrom(params[i].getClass())) {
@@ -327,6 +337,11 @@ public class SexprToModel {
                 paramTypes[paramTypes.length-1].getName().equals("int")) &&
             !paramTypes[paramTypes.length-1].getName().equals("java.lang.Integer")) return false;
         for (int i=0; i < params.length; i++) {
+            Object simpleConversion = trySimpleConversion(paramTypes[i], items.get(i));
+            if (simpleConversion != null) {
+                params[i] = simpleConversion;
+                continue;
+            }
             params[i] = sexprToModel(items.get(i), mapper, paramTypes[i]);
             if (paramTypes[i].isArray()) {
                 if (!params[i].getClass().isArray()) return false;
@@ -357,7 +372,10 @@ public class SexprToModel {
                 if (!paramTypes[i].getComponentType().isAssignableFrom(params[i].getClass().getComponentType())) {
                     return false;
                 }
-            }  else if (!paramTypes[i].isAssignableFrom(params[i].getClass())) {
+            } else if (!paramTypes[i].equals(params[i].getClass()) &&
+                    !paramTypes[i].isAssignableFrom(params[i].getClass()) &&
+                    !(paramTypes[i].getName().equals("int") && (params[i] instanceof Integer)) &&
+                    !(paramTypes[i].getName().equals("double") && (params[i] instanceof Double))) {
                 return false;
             }
         }
@@ -395,5 +413,95 @@ public class SexprToModel {
         return true;
     }
 
+    public static Object trySimpleConversion(Class paramType, SexprItem item) {
+        if (paramType.isAssignableFrom(String.class) && item instanceof SexprString sexprString) {
+            return sexprString.value;
+        } else if (paramType.isAssignableFrom(String.class) && item instanceof SexprSymbol sexprSymbol) {
+            return sexprSymbol.value;
+        } else if ((paramType.getName().equals("int") || (paramType.getName().equals("java.lang.Integer"))) &&
+                item instanceof SexprInt sexprInt) {
+            return sexprInt.value;
+        } else if ((paramType.getName().equals("double") || (paramType.getName().equals("java.lang.Double"))) &&
+                item instanceof SexprDouble sexprDouble) {
+            return sexprDouble.value;
+        } else if (paramType.isArray() && paramType.getComponentType().isAssignableFrom(String.class) &&
+                item instanceof SexprList sexprList) {
+            boolean allStrings = true;
+            boolean allSymbols = true;
+            for (SexprItem listItem: sexprList.value) {
+                if (!(listItem instanceof SexprString)) {
+                    allStrings = false;
+                }
+                if (!(listItem instanceof SexprSymbol)) {
+                    allSymbols = false;
+                }
+                if (!allStrings && !allSymbols) break;
+            }
+            if (allStrings) {
+                Object[] strArray = new Object[sexprList.value.size()];
+                for (int j=0; j < strArray.length; j++) {
+                    strArray[j] = ((SexprString)sexprList.value.get(j)).value;
+                }
+                return strArray;
+            } else if (allSymbols) {
+                Object[] strArray = new Object[sexprList.value.size()];
+                for (int j=0; j < strArray.length; j++) {
+                    strArray[j] = ((SexprSymbol)sexprList.value.get(j)).value;
+                }
+                return strArray;
+            }
+        } else if (paramType.isArray() && (paramType.getComponentType().getName().equals("int") ||
+                paramType.getComponentType().getName().equals("java.lang.Integer")) &&
+                item instanceof SexprList sexprList) {
+            boolean gotNonInt = false;
+            for (SexprItem listItem: sexprList.value) {
+                if (!(listItem instanceof SexprInt)) {
+                    gotNonInt = true;
+                    break;
+                }
+            }
+            if (!gotNonInt) {
+                if (paramType.getComponentType().getName().equals("int")) {
+                    int[] intArray = new int[sexprList.value.size()];
+                    for (int j = 0; j < intArray.length; j++) {
+                        intArray[j] = ((SexprInt) sexprList.value.get(j)).value;
+                    }
+                    return intArray;
+                } else {
+                    Object[] intArray = new Object[sexprList.value.size()];
+                    for (int j = 0; j < intArray.length; j++) {
+                        intArray[j] = ((SexprInt) sexprList.value.get(j)).value;
+                    }
+                    return intArray;
+
+                }
+            }
+        } else if (paramType.isArray() && (paramType.getComponentType().getName().equals("double") ||
+                paramType.getComponentType().getName().equals("java.lang.Double")) &&
+                item instanceof SexprList sexprList) {
+            boolean gotNonDouble = false;
+            for (SexprItem listItem: sexprList.value) {
+                if (!(listItem instanceof SexprDouble)) {
+                    gotNonDouble = true;
+                    break;
+                }
+            }
+            if (!gotNonDouble) {
+                if (paramType.getComponentType().getName().equals("double")) {
+                    double[] doubleArray = new double[sexprList.value.size()];
+                    for (int j = 0; j < doubleArray.length; j++) {
+                        doubleArray[j] = ((SexprDouble) sexprList.value.get(j)).value;
+                    }
+                    return doubleArray;
+                } else {
+                    Object[] doubleArray = new Object[sexprList.value.size()];
+                    for (int j = 0; j < doubleArray.length; j++) {
+                        doubleArray[j] = ((SexprDouble) sexprList.value.get(j)).value;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     private SexprToModel() {}
 }

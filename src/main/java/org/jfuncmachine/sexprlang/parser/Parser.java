@@ -57,12 +57,45 @@ public class Parser {
     /** Parses an S-expression from a String
      *
      * @param str The string to parse
+     * @return The first S-expression in the string
+     * @throws IOException If there is an error parsing the string
+     */
+    public static SexprItem parseString(String str) throws IOException {
+        return parseString(str, null, false, new JavaSymbolMatcher());
+    }
+
+    /** Parses an S-expression from a String
+     *
+     * @param str The string to parse
+     * @param parseMultipleSexprs If true, all S-expressions in the file are parsed, not just the first
+     * @return The first S-expression in the string
+     * @throws IOException If there is an error parsing the string
+     */
+    public static SexprItem parseString(String str, boolean parseMultipleSexprs) throws IOException {
+        return parseString(str, null, parseMultipleSexprs, new JavaSymbolMatcher());
+    }
+
+    /** Parses an S-expression from a String
+     *
+     * @param str The string to parse
      * @param filename The filename to use as the filename in the generated S-expressions
      * @return The first S-expression in the string
      * @throws IOException If there is an error parsing the string
      */
     public static SexprItem parseString(String str, String filename) throws IOException {
         return parseString(str, filename, false, new JavaSymbolMatcher());
+    }
+
+    /** Parses an S-expression from a String
+     *
+     * @param str The string to parse
+     * @param parseMultipleSexprs If true, all S-expressions in the file are parsed, not just the first
+     * @param filename The filename to use as the filename in the generated S-expressions
+     * @return The first S-expression in the string
+     * @throws IOException If there is an error parsing the string
+     */
+    public static SexprItem parseString(String str, boolean parseMultipleSexprs, String filename) throws IOException {
+        return parseString(str, filename, parseMultipleSexprs, new JavaSymbolMatcher());
     }
 
     /** Parses an S-expression from a file using the specified matcher to identify symbols
