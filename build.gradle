@@ -1,7 +1,9 @@
 
 plugins {
     id 'application'
+    id 'signing'
     id 'maven-publish'
+    id('io.github.gradle-nexus.publish-plugin') version '1.1.0'
 }
 
 java {
@@ -24,18 +26,18 @@ publishing {
             pom {
                 name = 'JFuncMachine'
                 description = 'A library for building functional languages'
-                url = 'https://github.com/JFuncMachine/JFuncMachine'
+                url = 'https://www.jfuncmachine.org'
                 licenses {
                     license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        name = 'MIT License'
+                        url = 'https://raw.githubusercontent.com/JFuncMachine/JFuncMachine/main/MIT-LICENSE'
                     }
                 }
                 developers {
                     developer {
-                        id = 'wutka'
+                        id = 'wutkajfm'
                         name = 'Mark Wutka'
-                        email = 'mark@wutka.com'
+                        email = 'wutka@jfuncmachine.org'
                     }
                 }
                 scm {
@@ -46,7 +48,7 @@ publishing {
             }
             groupId = 'org.jfuncmachine'
             artifactId = 'jfuncmachine'
-            version = '0.1.0'
+            version = '1.0.0'
 
             from components.java
         }
@@ -89,7 +91,38 @@ task copyJar(type: Copy) {
     rename ".*.jar", "jfuncmachine.jar"
 }
 
-jar {
-    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+//jar {
+//    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+//    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+//}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+ext.genOutputDir = file("$buildDir/generated-resources")
+task generateVersionTxt()  {
+    ext.outputFile = file("$genOutputDir/version.txt")
+    outputs.file(outputFile)
+    doLast {
+        outputFile.text = """GroupId: ${project.group}
+Name: ${project.name}
+Version: $version
+Build-time: ${java.time.LocalDateTime.now()}
+"""
+    }
 }
